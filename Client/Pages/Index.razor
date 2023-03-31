@@ -148,7 +148,7 @@
 
 
 <div class="my-3">
-    <div class="row h-100">
+    <div class="row">
         <!-- Card 1 -->
         <div class="col-md-9 h-100">
             <div class="card shadow-lg rounded">
@@ -174,7 +174,7 @@
             </div>
         </div>
         <!-- Card 2 -->
-        <div class="col-md-3">
+        <div class="col-md-3 h-100">
             <!-- Card 1 -->
             <div class="col-md-12 mb-2" h-25>
                 <div class="card shadow-lg rounded">
@@ -243,28 +243,7 @@
                 </div>
             </div>
 
-            @*     <div class="card shadow-lg rounded h-200">
-            <div class="card-body">
-            <h4 class="card-title">Visitors by Device</h4>
-            <div class="row">
-            <div class="col-8">
-            @if (_config != null)
-            {
-            <Chart Config="@_config" />
 
-            }
-            @*<img src="visitors_graph.png" alt="Visitors by Device" class="img-fluid">
-            </div>
-            <div class="col-4">
-            <p class="card-text">Desktop: 12,345</p>
-            <p class="card-text">Mobile: 9,876</p>
-            <p class="card-text">Tablet: 5,432</p>
-            <p class="card-text">Other: 1,234</p>
-            </div>
-            </div>
-            </div>
-            </div>
-            *@
 
         </div>
     </div> <!-- End of row -->
@@ -345,6 +324,7 @@
         users = await UserService.Get();
 
         messages = programSummery.GenerateSummaries();
+        if(messages.Count > 3)
         messages.RemoveRange(3, messages.Count - 3);
         //_programs = await ProgramService.Get();
         //ProgramSummery = new ProgramSummery(_programs);

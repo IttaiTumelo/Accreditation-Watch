@@ -22,6 +22,15 @@
                             </div>
                         </li>
                     }
+                else {
+                    <li>
+                        <div class="row">
+                            <div class="col">
+                                <h5>No Programs</h5>
+                            </div>
+                        </div>
+                    </li>
+                }
             </ol>
         </div>
         <div class="col">
@@ -51,6 +60,7 @@
         programSummery = new(programs);
 
         messages = programSummery.GenerateSummaries();
+        if(messages.Count > 3)
         messages.RemoveRange(3, messages.Count - 3);
         //_programs = await ProgramService.Get();
         //ProgramSummery = new ProgramSummery(_programs);

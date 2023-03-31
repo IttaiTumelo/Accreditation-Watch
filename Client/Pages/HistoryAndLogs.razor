@@ -1,51 +1,49 @@
 ﻿@page "/history_and_logs"
-@inject IProgramService ProgramService
+@inject IHistoryService HistoryService
 @using Microsoft.AspNetCore.Components.QuickGrid
 @attribute [Authorize(Roles = "Admin")]
 
 <div class="row">
-     <div class="col-lg-9">
+     <div class="col">
           <h3>History & Logs</h3>
           
-          @if(programs == null)
+          @if(HistoryService.Objects == null)
           {
                <p>Loading...</p>
           }
-          else if(programs.Count == 0)
+          else if(HistoryService.Objects.Count == 0)
           {
                <p>No programs found.</p>
           }
           else
           {
                @* <div class="grid"> *@
-               <QuickGrid Items="programs.AsQueryable()" Theme="default" Virtualize="true">
+               <QuickGrid Items="HistoryService.Objects.AsQueryable()" Theme="default" Virtualize="true">
                     <PropertyColumn Property="p => p.Id" Sortable="true"  />
                     <PropertyColumn Property="p => p.Name" Sortable="true" />
-                    <PropertyColumn Property="p => p.AccrediteStatusId" Sortable="true" />
-                    <PropertyColumn Property="p => p.ValidFrom" Sortable="true" />
-                    <PropertyColumn Property="p => p.ValidTo" Sortable="true" />
-                    <PropertyColumn Property="p => p.IsAccredited" Sortable="true" />
-                    <PropertyColumn Property="p => p.GetDuration()" Sortable="true" Title="Duration" />
-                    <PropertyColumn Property="p => p.IsExpired()" Sortable="true" Title="Is Expired" />
+                    <PropertyColumn Property="p => p.Description" Sortable="true" />
+                    <PropertyColumn Property="p => p.UserId" Sortable="true" />
+                    <PropertyColumn Property="p => p.Action" Sortable="true" />
+                    <PropertyColumn Property="p => p.Severity" Sortable="true" />
+                    <PropertyColumn Property="p => p.InitialState" Sortable="true" Title="Duration" />
+                    <PropertyColumn Property="p => p.ActionResult" Sortable="true" Title="Is Expired" />
                </QuickGrid>
                @* </div> *@
 
           <Paginator Value="@pagination" />
           }
      </div>
-     <div class="col-lg-3">
-          <h1>History & Logs</h1>
-     </div>
+
 </div>
 
 @code {
-     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };List<AWProgram> programs { get; set; }
+     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
      PaginationState pagination2 = new PaginationState { ItemsPerPage = 2 };
 
 
 protected override async void OnInitialized()
      {
-          programs = await ProgramService.Get();
+          await HistoryService.Get();
           StateHasChanged();
 
 

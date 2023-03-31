@@ -1,12 +1,21 @@
 ﻿@inject IUserService UserService
 <h3>User Management</h3>
 <div class="row">
-    <div class="col-3">
-        <h4>All Users</h4>
+    <div class="col-12">
+        <div class="row">
+            <div class="col">
+                <h4>All Users</h4>
+            </div>
+            <div class="col">
+                <button @onclick="()=>IsVisible = true" class="btn btn-primary float-end">Add User</button>
+            </div>
+        </div>
 
         <QuickGrid Items="Users.AsQueryable()" Theme="default" Virtualize="true">
             <PropertyColumn Property="p => p.Id" Sortable="true" />
             <PropertyColumn Property="p => p.Name" Sortable="true" />
+            <PropertyColumn Property="p => p.Role" Sortable="true" />
+            <PropertyColumn Property="p => p.Role" Sortable="true" />
             <PropertyColumn Property="p => p.Role" Sortable="true" />
          
             <TemplateColumn Title="Actions">
@@ -15,8 +24,19 @@
             </TemplateColumn>
         </QuickGrid>
     </div>
-    <div class="col-9">
-        <h3>Add User</h3>
+
+</div>
+
+
+<div id="@Visibility" class="d-flex justify-content-center align-items-center">
+       
+        <div style="background-color : #fff; border-radius: 10px;" class="p-5">
+          <div class="row">
+                      <h3 class="col">Add User</h3>
+                      <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
+          </div>
+            <p class="text-danger">@ErrorMessage</p>
+            <p class="text-success">@SuccessMessage</p>
         <span class="text-danger">@ErrorMessage</span>
         <EditForm Model="newUser" OnValidSubmit="AddUser">
             @*<DataAnnotationsValidator />*@
@@ -39,16 +59,23 @@
                     <option value="User">User</option>
                 </InputSelect>
             </div>
-            <button type="submit" class="btn btn-primary">Add User</button>
+            <button type="submit" class="btn btn-primary col-12 my-2">Add User</button>
         </EditForm>
-        
-    </div>
+        </div>
 </div>
 
+
 @code {
+    public bool IsVisible { get; set; } = false;
+    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    public string SuccessMessage { get; set; } = "";
+    public void Close()
+    {
+        IsVisible = false;
+    }
+    public string ErrorMessage { get; set; } = "";
     public UserDto newUser = new UserDto();
     public List<User> Users { get; set; } = new();
-    string ErrorMessage = "";
     protected override async Task OnInitializedAsync()
     {
         Users = await UserService.Get();

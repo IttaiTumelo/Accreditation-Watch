@@ -39,15 +39,28 @@
 <h1 class="bg-danger">@ErrorMessage</h1>
 <h3>@Title</h3>
 
-<div id="@UpdatingResults" class="d-flex justify-content-center align-items-center">
-    <div class="loading-section @StyleOne() p-5 " style="width:50%; background-color : #fff; border-radius: 10px;">
-        <p>Processes Document ...</p>
-        <div class="progress-container">
-            <div class="progress-bar" style="@_progressBarStyle"></div>
+
+
+<div id="@Visibility" class="d-flex justify-content-center align-items-center">
+        <div style="background-color : #fff; border-radius: 10px; width: 1000px" class="p-5">
+          <div class="row">
+                      <h3 class="col">Add User</h3>
+                      <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
+          </div>
+            <p class="text-success">@SuccessMessage</p>
+        <span class="text-danger">@ErrorMessage</span>
+        <div id="@UpdatingResults" class="d-flex justify-content-center align-items-center">
+            <div class="loading-section @StyleOne() p-5 " style="width:50%; background-color : #fff; border-radius: 10px;">
+                <p>Processes Document ...</p>
+                <div class="progress-container">
+                    <div class="progress-bar" style="@_progressBarStyle"></div>
+                </div>
+                <p class="col">@jobDiscription</p>
+            </div>
         </div>
-        <p class="col">@jobDiscription</p>
-    </div>
+        </div>
 </div>
+
 <InputFile id="fileInput" OnChange="UploadFile" />
 
 @if (dataTable != null)
@@ -79,13 +92,24 @@
 }
 
 @code {
+
+    public bool IsVisible { get; set; } = false;
+    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    public string SuccessMessage { get; set; } = "";
+    public void Close()
+    {
+        IsVisible = false;
+    }
+    public string ErrorMessage { get; set; } = "";
+
+
+
     int Progress { get; set; } = 1;
     int Total { get; set; } = 100;
     List<School> Schools { get; set; }
     List<Department> Departments { get; set; }
     List<AccrediteStatus> AccrediteStatuses { get; set; }
     DataTable dataTable;
-    String ErrorMessage { get; set; }
 
     protected override async void OnInitialized()
     {
@@ -98,6 +122,7 @@
 
     async Task UploadFile(InputFileChangeEventArgs e)
     {
+
         try
         {
             var stream = e.File.OpenReadStream();
@@ -120,6 +145,7 @@
 
     async Task UploadPrograms()
     {
+        IsVisible = true;
         List<CreateDepartmentDto> departments = new(); 
         List<CreateProgramDto> programs = new();
         List<CreateSchoolDto> schools = new();
@@ -151,7 +177,7 @@
         _progressBarStyle = $"width: {(Progress * 100) / Total}%; transition: width 0.3s ease-in-out;";
         OnInitialized();
         //Stage three
-        Schools = await SchoolService.Get();
+        Schools = await SchoolService.Get(true);
         for (Total = dataTable.Rows.Count, Progress = 0; Progress < Total; Progress++, StateHasChanged())
         {
             var departmentName = dataTable?.Rows[Progress]?.ItemArray[1]?.ToString();
@@ -187,8 +213,8 @@
             var result = await DepartmentService.Create(departments[Progress]);
             UpdateLoading();
         }
-        Departments = await DepartmentService.Get();
-        AccrediteStatuses = await AccrediteStatusService.Get();
+        Departments = await DepartmentService.Get(true);
+        AccrediteStatuses = await AccrediteStatusService.Get(true);
 
         //Stage five Extraxt programs from the table
         for (Total = dataTable.Rows.Count, Progress = 0; Progress < Total; Progress++, StateHasChanged())
@@ -236,6 +262,7 @@
                 continue;
             }
             jobDiscription = $"Stage 5 : Loading program from Excel Sheet: on  {dataTable.Rows[Progress].ItemArray[0].ToString()}";
+            await ProgramService.Get(true);
             UpdateLoading();
 
         }
@@ -247,6 +274,8 @@
             var result = await ProgramService.Create(programs[Progress]);
             UpdateLoading();
         }
+        await Task.Delay(1000);
+        IsVisible = false;
     }
 }
 

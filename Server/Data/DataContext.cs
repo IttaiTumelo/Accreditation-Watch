@@ -141,6 +141,7 @@ namespace Accreditation_Watch.Server.Data
         public DbSet<Shared.Entities.AWTask> Tasks { get; set; }
         public DbSet<TaskType> TaskTypes { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<History> Histories { get; set; }
         public DbSet<PendingImplimentation> PendingImplimentations { get; set; }
 
     }

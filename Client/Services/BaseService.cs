@@ -36,6 +36,7 @@ namespace Accreditation_Watch.Client.Services
 
         public virtual async Task<List<T>> Get()
         {
+            if(Objects.Count > 0) return Objects; // TODO: Add a check for if the objects are up to date (last updated
             var request = await _httpClient.GetAsync($"api/{typeof(T).Name}");
             if (!request.IsSuccessStatusCode) throw new Exception(request.ReasonPhrase);
             var objects = request.Content.ReadFromJsonAsync<List<T>>().Result;
@@ -44,8 +45,20 @@ namespace Accreditation_Watch.Client.Services
             return Objects;
         }
 
-        public virtual async Task<T> GetByID(int id)
+          public Task<List<T>> Get(bool forceRefresh)
+          {
+                if (forceRefresh) Objects = new();
+                return Get();
+          }
+
+          public virtual async Task<T> GetByID(int id)
         {
+            if(Object.Id == id) return Object; // TODO: Add a check for if the object is up to date (last updated
+            if(Objects.Count > 0) 
+            {
+                var obj = Objects.FirstOrDefault(o=>o.Id==id); 
+                if(obj != null) return obj; // TODO: Add a check for if the object is up to date (last updated
+            } // TODO: Add a check for if the object is up to date (last updated
             var request = await _httpClient.GetAsync($"api/{typeof(T).Name}/{id}");
             if (!request.IsSuccessStatusCode) throw new Exception(request.ReasonPhrase);
             var response = await request.Content.ReadFromJsonAsync<T>();
@@ -54,7 +67,9 @@ namespace Accreditation_Watch.Client.Services
             return Object;
         }
 
-        public virtual async Task<T> Update(T t)
+          
+
+          public virtual async Task<T> Update(T t)
         {
             var request = await _httpClient.PutAsJsonAsync<T>($"api/{typeof(T).Name}", t);
             if (!request.IsSuccessStatusCode) throw new Exception(request.ReasonPhrase);

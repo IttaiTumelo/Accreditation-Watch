@@ -19,18 +19,18 @@
 </div>
 <div class="row">
      <div class="col">
-          @if(programs == null)
+          @if(ProgramService.Objects == null)
                {
                     <Loading/>
                }
-               else if(programs.Count == 0)
+               else if(ProgramService.Objects.Count == 0)
                {
                     <p>No programs found.</p>
                }
                else
                {
                     @* <div class="grid"> *@
-                    <QuickGrid Items="programs.AsQueryable()" Pagination="@pagination" Theme="default" >
+                    <QuickGrid Items="ProgramService.Objects.AsQueryable()" Pagination="@pagination" Theme="default" >
                 <PropertyColumn Property="p => p.Department.Name" Sortable="true" Title="Department" />
                 <PropertyColumn Property="p => p.Name" Sortable="true" Title="Program Name" />
                          @*<PropertyColumn Property="p => p.Status.Name" Sortable="true" />*@
@@ -55,18 +55,18 @@
             @if (school)
             {
 
-                @if (schools == null)
+                @if (SchoolService.Objects == null)
                 {
                     <Loading />
                 }
-                else if (schools.Count == 0)
+                else if (SchoolService.Objects.Count == 0)
                 {
                     <p>No programs found.</p>
                 }
                 else
                 {
                     @* <div class="grid"> *@
-                    <QuickGrid Items="schools.AsQueryable()" Theme="default">
+                    <QuickGrid Items="SchoolService.Objects.AsQueryable()" Theme="default">
                         <PropertyColumn Property="p => p.Id" Sortable="true" />
                         <PropertyColumn Property="p => p.Name" Sortable="true" />
 
@@ -81,18 +81,18 @@
                 }
         else
                 {
-                    @if (departments == null)
+                    @if (DepartmentService.Objects == null)
                     {
                         <Loading />
                     }
-                    else if (departments.Count == 0)
+                    else if (DepartmentService.Objects.Count == 0)
                     {
                         <p>No programs found.</p>
                     }
                     else
                     {
                         @* <div class="grid"> *@
-                        <QuickGrid Items="departments.AsQueryable()" Theme="default">
+                        <QuickGrid Items="DepartmentService.Objects.AsQueryable()" Theme="default">
                             <PropertyColumn Property="p => p.Id" Sortable="true" />
                             <PropertyColumn Property="p => p.Name" Sortable="true" />
                             <TemplateColumn Title="Actions">
@@ -115,7 +115,7 @@
 <NewSchool IsVisible="@NewSchoolVisibility" />
 
 
-@if(_config != null){
+@* @if(_config != null){
      <div class="row">
           <div class="col-4">
                <Chart Config="@_config" />
@@ -130,7 +130,7 @@
                <Chart Config="@_config" />
           </div>
      </div>
-}
+} *@
 
 @code {
     public bool visible = false;
@@ -198,18 +198,16 @@
         return Task.CompletedTask;
     }
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
-    List<AWProgram> programs { get; set; }
-    List<Department> departments { get; set; }
-    List<School> schools { get; set; }
+
      AWProgram SelectedProgram { get; set; }
 
      private PieConfig _config;
 
 protected override async void OnInitialized()
      {
-          programs = await ProgramService.Get();
-        schools = await SchoolService.Get();
-        departments = await DepartmentService.Get();
+          await ProgramService.Get();
+        await SchoolService.Get();
+        await DepartmentService.Get();
           StateHasChanged();
     _config = new PieConfig
     {
