@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+@inject IAuthService _authService;
+
+<div class="page">
+    <div class="sidebar hide-">
+        <NavMenu />
+    </div>
+
+    <main >
+        <div class="hide-">
+              <div class="top-row px-4 ">
+            <img src="/images/user.svg" width="30" />
+                @if(roles is not null && roles.Count > 0)
+                {
+                    <h4 target="_blank" class="mx-5 text-white fw-bold">@roles[0] </h4>
+
+                }
+                <img @onclick="_authService.LogOut" src="/images/exit.svg" width="30" />
+        </div>
+
+        </div>
+      
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    List<string> roles { get; set; }
+    protected override async void OnInitialized()
+    {
+        roles = await _authService.WhatRoles();
+        StateHasChanged();
+    }
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

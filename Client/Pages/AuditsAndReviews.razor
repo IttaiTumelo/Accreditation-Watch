@@ -1,0 +1,111 @@
+﻿@page "/audits_and_reviews"
+@inject IProgramService ProgramService
+@using Microsoft.AspNetCore.Components.QuickGrid
+<h3>Audits & Reviews</h3>
+
+<div class="row">
+    <div class="col-lg-9">
+        <NoticeItems Notice="@Notice1" HasDocument="true"/>
+        <NoticeItems Notice="@Notice2" HasDocument="true"/>
+
+     <h3>Programs requiring audits</h3>
+     @if (programs == null)
+     {
+          <p>Loading...</p>
+     }
+     else
+     {
+     <QuickGrid Items="programs.AsQueryable()" Pagination="@pagination" Theme="default" ResizableColumns >
+          <PropertyColumn Property="p => p.Id" Sortable="true"  />
+          <PropertyColumn Property="p => p.Name" Sortable="true" />
+          @*<PropertyColumn Property="p => p.StatusId" Sortable="true" />*@
+          <PropertyColumn Property="p => p.ValidFrom" Sortable="true" />
+          <PropertyColumn Property="p => p.ValidTo" Sortable="true" />
+          <PropertyColumn Property="p => p.IsAccredited" Sortable="true" />
+          @*<PropertyColumn Property="p => p.GetDuration()" Sortable="true" Title="Duration" />*@
+          <PropertyColumn Property="p => p.IsExpired()" Sortable="true" Title="Is Expired" />
+     </QuickGrid>
+     <Paginator Value="@pagination" />
+     }
+
+
+    </div>
+    <div class="col-lg-3">
+          <p class="badge rounded-pill bg-dark py-2 px-5 float-end col-12">Download Audit Templet</p>
+          <p class="badge rounded-pill bg-dark py-2 px-5 float-end col-12">Create Auto Generated Report</p>
+          <p class="badge rounded-pill bg-dark py-2 px-5 float-end col-12">Upload Custom Audit Report</p>
+    </div>
+</div>
+
+
+@code {
+ public Notice Notice1 = new()
+        {
+            IconeUrl = "/images/triangle.svg",
+            IsAProblem = false,
+            Name = "Recent internal audits  ",
+            Issues = new()
+            {
+                new Issue()
+                {
+                    Name = "Bachelors of Science in Computer Science has not undergone internal evaluated",
+                    Url = "google.com"
+                },
+                new Issue()
+                {
+                    Name = "Masters in Cyber Security has been approved by ADC but not submitted to HEA for Approval",
+                    Url = "google.com"
+                },
+                new Issue()
+                {
+                    Name = "Accreditation request for diploma in information systems has been rejected dues to the",
+                    Url = "google.com"
+                },
+            },
+        }; 
+
+         public Notice Notice2 = new()
+        {
+            IconeUrl = "/images/triangle.svg",
+            IsAProblem = false,
+            Name = "Recent External audits  ",
+            Issues = new()
+            {
+                new Issue()
+                {
+                    Name = "Bachelors of Science in Computer Science has not undergone internal evaluated",
+                    Url = "google.com"
+                },
+                new Issue()
+                {
+                    Name = "Masters in Cyber Security has been approved by ADC but not submitted to HEA for Approval",
+                    Url = "google.com"
+                },
+                new Issue()
+                {
+                    Name = "Accreditation request for diploma in information systems has been rejected dues to the",
+                    Url = "google.com"
+                },
+            },
+        }; 
+}
+
+
+@code {
+     PaginationState pagination = new PaginationState { ItemsPerPage = 3 };List<AWProgram> programs { get; set; }
+     
+
+
+protected override async void OnInitialized()
+     {
+          programs = await ProgramService.Get();
+          StateHasChanged();
+
+
+
+
+    StateHasChanged();
+}
+  
+}
+

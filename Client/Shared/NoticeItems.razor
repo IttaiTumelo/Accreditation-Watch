@@ -1,0 +1,48 @@
+﻿
+<h3 class="d-flex">
+    <img src="@Notice.IconeUrl?" width="20" class="m-2"/>
+    @Notice?.Name
+</h3>
+<div>
+    <ol>
+        @foreach(var item in Notice.Issues)
+        {
+            <li>
+                <div class="row">
+                    <div class="col">
+                        <h5 class="@TextColor()">
+                            @item.Name
+                            @if (item.Url is not null && item.Url.Length > 0)
+                            {
+                                <a href="@item.Url" style="text-decoration : none;"> more information</a>
+
+                            }
+                            @if (item.Date is not null)
+                            {
+                                <span class="fs-6 text">@item.Date.ToString()</span>
+                            }
+                        </h5>
+                    </div>
+                    @if (HasDocument)
+                    {
+                        <div class="col-3">
+                            <span class="badge rounded-pill bg-dark py-2 px-5 float-end">Download/View Report</span>
+                        </div>
+                    }
+                </div>
+            </li>
+        }
+    </ol>
+</div>
+<div class="col">
+    <span class="badge rounded-pill bg-dark p-2 float-end">View All</span>
+</div>
+
+@code {
+    [Parameter]
+    public Notice Notice { get; set; }
+    [Parameter]
+    public bool HasDocument { get; set; } = false;
+
+    public string TextColor() => Notice.IsAProblem ? "text-danger" : "";
+}

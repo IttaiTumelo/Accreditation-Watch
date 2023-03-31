@@ -1,0 +1,153 @@
+@inject IDepartmentService DepartmentService
+@inject ISchoolService SchoolService
+@inject IAccrediteStatusService AccrediteStatusService
+@inject IProgramService ProgramService
+@if (Schools is not null && AccrediteStatuses is not null)
+{
+
+    <div id="@Visibility" class="d-flex justify-content-center align-items-center">
+        <div style="background-color : #fff; border-radius: 10px;" class="p-5">
+            <div class="row">
+                <div class="col-11"><h4>Program Details</h4></div>
+                <div class="col-1"><button @onclick="()=>Close()" class=" btn-close"></button></div>
+            </div>
+
+            @if(Program is not null && Program.Department is not null)
+            {
+                <div class="row">
+                    <div class="col">
+                        <h5>Basic Information</h5>
+                        <div class="form-group">
+                            <label for="program-name">Name</label>
+                            <input type="text" class="form-control" id="program-name" @bind="Program.Name" disabled />
+                        </div>
+                        <div class="form-group">
+                            <label for="program-name">Level</label>
+                            <input type="text" class="form-control" id="program-name" placeholder="Bachelors" disabled /> @*need to be bound to something*@
+                        </div>
+
+                        <div class="form-group">
+                            <label for="program-name">Department</label>
+                            <InputSelect @bind-Value="Program.DepartmentId" class="form-select" aria-label="Default select example" >
+                                <option value="@Program.DepartmentId">@DepartmentService.Objects.First(dep=>dep.Id==Program.DepartmentId).Name</option>
+                                @if (AccrediteStatuses is not null)
+                                {
+                                    @foreach (var item in DepartmentService.Objects)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="form-group">
+                            <label for="program-name">School</label>
+                            <input type="text" class="form-control" id="program-name" @bind="Program.Department.SchoolId" disabled /> @*must change this to the actual school name*@
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h5>Accreditation Details</h5>
+                        <div class="form-group">
+                            <label for="program-name">Duration</label>
+                            <p type="number" class="form-control   m-0" id="program-name" disabled>@Program.GetDuration()</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="program-name">Status</label>
+                            <p type="number" class="form-control  m-0" id="program-name" disabled>@Program.GetStatus()</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="program-name">Audite Information</label>
+                            <input type="number" class="form-control" id="program-name" placeholder="Audit information is still under review" disabled />
+                        </div>
+                        <div class="form-group">
+                            <label for="program-name">Status*</label>
+                            <InputSelect @bind-Value="Program.AccrediteStatusId" class="form-select" aria-label="Default select example">
+                                @if (AccrediteStatuses is not null)
+                                {
+                                    @foreach (var item in AccrediteStatuses)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+                       
+                    </div>
+                    <div class="col">
+                        @if (_config != null)
+                        {
+                            <Chart Config="@_config" />
+                        }
+
+                    </div>
+                    <button class="btn btn-info col-12 m-2 px-3" @onclick="()=>UpdateStatus()">Update</button>
+                    <button class="btn btn-danger col-12 mx-2 px-3" @onclick="()=>UpdateStatus()">Delete Program</button>
+
+                </div>
+
+            }
+         
+        </div>
+    </div>
+
+}
+@code {
+    [Parameter]
+    public AWProgram Program { get; set; } = new();
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    private PieConfig _config;
+    //public List<Department> Departments { get; set; } = new List<Department>();
+    public List<School> Schools { get; set; } = new List<School>();
+    public List<AccrediteStatus> AccrediteStatuses { get; set; }
+    Task Close()
+    {
+        IsVisible = false;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+     Task UpdateStatus()
+    {
+        var result =  ProgramService.Update(Program);
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+    protected override async void OnInitialized()
+    {
+        //Departments = await DepartmentService.Get();
+        Schools = await SchoolService.Get();
+        AccrediteStatuses = await AccrediteStatusService.Get();
+        StateHasChanged();
+        _config = new PieConfig
+            {
+                Options = new PieOptions
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = true,
+                        Text = "Time left before expiry"
+                    }
+                }
+            };
+
+        foreach (string label in new[] { "Used", "Remaining" })
+        {
+            _config.Data.Labels.Add(label);
+        }
+
+        PieDataset<int> dataset = new PieDataset<int>(new[] { Program.MonthsUsed(), Program.MonthsRemaining() })
+            {
+                BackgroundColor = new[]
+                 {
+               ColorUtil.ColorHexString(255, 99, 132), // Slice 1 aka "Red"
+               ColorUtil.ColorHexString(255, 205, 86), // Slice 2 aka "Yellow"
+          }
+            };
+
+        _config.Data.Datasets.Add(dataset);
+        StateHasChanged();
+    }
+
+}

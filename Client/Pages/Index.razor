@@ -1,0 +1,487 @@
+﻿@page "/dashboard"
+@inject IProgramService ProgramService
+@inject IDepartmentService DepartmentService
+@inject ISchoolService SchoolService
+@inject IUserService UserService
+@*@attribute [Authorize(Roles = "Admin")]*@
+
+
+
+
+<PageTitle>Dashboard</PageTitle>
+<h3>Dashboard</h3>
+<div class="my-3">
+    <div class="row h-100">
+        <!-- Card 1 -->
+        <div class="col-md-3">
+            <div class="card shadow-lg rounded h-100">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-7">
+                            <h5 class="card-title">Accredited</h5>
+                            <p class="card-text">Updated: 10 min ago</p>
+                        </div>
+                        <div class="col-5 text-center">
+                            <h1 class="card-text">@programs?.Count(x=>x.AccrediteStatusId==12)</h1>
+                        </div>
+                    </div>
+                    <p class="card-text">The number of programs that are cuurently running and are accredited</p>
+                </div>
+            </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="col-md-3">
+            <div class="card shadow-lg rounded h-100">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5 class="card-title">Pending</h5>
+                            <p class="card-text">Updated: 5 min ago</p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <h1 class="card-text">@programs?.Count(x=>x.AccrediteStatusId==6)</h1>
+                        </div>
+                    </div>
+                    <p class="card-text">These are the programs that are pending ZAQA approval</p>
+                </div>
+            </div>
+        </div>        <!-- Card 2 -->
+        <div class="col-md-3">
+            <div class="card shadow-lg rounded h-100">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5 class="card-title">Rejected</h5>
+                            <p class="card-text">Updated: 5 min ago</p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <h1 class="card-text">
+                                @programs?.Count(x=>
+                                x.AccrediteStatusId==1  ||
+                                x.AccrediteStatusId==2 ||
+                                x.AccrediteStatusId==13 ||
+                                x.AccrediteStatusId==8)
+                            </h1>
+                        </div>
+                    </div>
+                    <p class="card-text">These are programs that are rejeceted by the Sanete, CAD, HEA or has been denied approval for some specific reason</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="col-md-3">
+            <div class="card shadow-lg rounded h-100">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-7">
+                            <h5 class="card-title">Require Attention</h5>
+                            <p class="card-text">Updated: 20 min ago</p>
+                        </div>
+                        <div class="col-5 text-center">
+                            <h1 class="card-text">@programSummery?.BadCount</h1>
+                        </div>
+                    </div>
+                    <p class="card-text">These are programs that are about to expire, or need attention, or has been rejected</p>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- End of row -->
+</div> <!-- End of container -->
+
+
+
+
+<div class="my-3">
+    <div class="row h-100">
+        <!-- Card 1 -->
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded h-100">
+                <div class="card-body">
+                    @*<h4 class="card-title">Sales by Region</h4>*@
+                    <div class="row">
+                        <div class="col-8">
+                            @if (_config != null)
+                            {
+                                <Chart Config="@_config" />
+
+                            }
+                            @*<img src="sales_graph.png" alt="Sales by Region" class="img-fluid">*@
+                        </div>
+                        <div class="col-4">
+                            <p>This part show overral summery of courses and how thet are performing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded h-100">
+                <div class="card-body">
+                    <h4 class="card-title">Visitors by Device</h4>
+                    <div class="row">
+                        <div class="col-8">
+                            @if (_config != null)
+                            {
+                                <Chart Config="@_config" />
+
+                            }
+                            @*<img src="visitors_graph.png" alt="Visitors by Device" class="img-fluid">*@
+                        </div>
+                        <div class="col-4">
+                            <p class="card-text">Desktop: 12,345</p>
+                            <p class="card-text">Mobile: 9,876</p>
+                            <p class="card-text">Tablet: 5,432</p>
+                            <p class="card-text">Other: 1,234</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- End of row -->
+</div> <!-- End of container -->
+
+
+
+
+<div class="my-3">
+    <div class="row h-100">
+        <!-- Card 1 -->
+        <div class="col-md-9 h-100">
+            <div class="card shadow-lg rounded">
+                <div class="card-body h-100">
+                    @*<h4 class="card-title">Sales by Region</h4>*@
+                    <div class="row">
+                        <div class="col-12">
+                            @if (_config2 != null)
+                            {
+                                <Chart Config="_config2" @ref="_chart"></Chart>
+                            }
+                        </div>
+                        @*<div class="col-4">
+                        <p class="card-text">North America: $5,678</p>
+                        <p class="card-text">Europe: $4,567</p>
+                        <p class="card-text">Asia: $3,456</p>
+                        <p class="card-text">Africa: $2,345</p>
+                        <p class="card-text">South America: $1,234</p>
+                        <p class="card-text">Australia: $123</p>
+                        </div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="col-md-3">
+            <!-- Card 1 -->
+            <div class="col-md-12 mb-2" h-25>
+                <div class="card shadow-lg rounded">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <h5 class="card-title">Schools</h5>
+                            </div>
+                            <div class="col-5 text-center">
+                                <h1 class="card-text">@schools?.Count</h1>
+                            </div>
+                        </div>
+                        <p class="card-text">The number of schools in the system</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 1 -->
+            <div class="col-md-12 my-2 h-25">
+                <div class="card shadow-lg rounded">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <h5 class="card-title">Departments</h5>
+                            </div>
+                            <div class="col-5 text-center">
+                                <h1 class="card-text">@departments?.Count</h1>
+                            </div>
+                        </div>
+                        <p class="card-text">The number of departments in the system</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 1 -->
+            <div class="col-md-12 my-2  h-25">
+                <div class="card shadow-lg rounded">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <h5 class="card-title">Programs</h5>
+                            </div>
+                            <div class="col-5 text-center">
+                                <h1 class="card-text">@programs?.Count</h1>
+                            </div>
+                        </div>
+                        <p class="card-text">The total number of programs in the system</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 1 -->
+            <div class="col-md-12 mt-2" h-25>
+                <div class="card shadow-lg rounded">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <h5 class="card-title">Users</h5>
+                                <p class="card-text">Updated: 10 min ago</p>
+                            </div>
+                            <div class="col-5 text-center">
+                                <h1 class="card-text">@users?.Count</h1>
+                            </div>
+                        </div>
+                        <p class="card-text">The number of users in the system</p>
+                    </div>
+                </div>
+            </div>
+
+            @*     <div class="card shadow-lg rounded h-200">
+            <div class="card-body">
+            <h4 class="card-title">Visitors by Device</h4>
+            <div class="row">
+            <div class="col-8">
+            @if (_config != null)
+            {
+            <Chart Config="@_config" />
+
+            }
+            @*<img src="visitors_graph.png" alt="Visitors by Device" class="img-fluid">
+            </div>
+            <div class="col-4">
+            <p class="card-text">Desktop: 12,345</p>
+            <p class="card-text">Mobile: 9,876</p>
+            <p class="card-text">Tablet: 5,432</p>
+            <p class="card-text">Other: 1,234</p>
+            </div>
+            </div>
+            </div>
+            </div>
+            *@
+
+        </div>
+    </div> <!-- End of row -->
+</div> <!-- End of container -->
+
+
+
+
+@code {
+    List<AWProgram>? programs { get; set; } = new();
+    List<School>? schools { get; set; } = new();
+    List<Department>? departments { get; set; } = new();
+    List<string>? messages { get; set; } = new();
+    List<User>? users { get; set; } = new();
+
+    public Notice Notice1 = new()
+        {
+            IconeUrl = "/images/triangle.svg",
+            IsAProblem = true,
+            Name = "Issues",
+            Issues = new()
+            {
+                new Issue()
+                {
+                    Name = "Bachelors of Science in Computer Science has not undergone internal evaluated",
+                    Url = "google.com"
+                },
+                new Issue()
+                {
+                    Name = "Masters in Cyber Security has been approved by ADC but not submitted to HEA for Approval",
+                    Url = "google.com"
+                },
+                new Issue()
+                {
+                    Name = "Accreditation request for diploma in information systems has been rejected dues to the",
+                    Url = "google.com"
+                },
+            },
+        };
+    public Notice Notifications = new()
+        {
+            IconeUrl = "/images/bell.svg",
+            IsAProblem = false,
+            Name = "Notifications",
+            Issues = new()
+            {
+                new Issue()
+                {
+                    Name = "Bachelors of Science in Computer Science has not undergone internal evaluated",
+                    Url = "google.com",
+                    Date = DateTime.Now.AddDays(-20),
+                },
+                new Issue()
+                {
+                    Name = "Masters in Cyber Security has been approved by ADC but not submitted to HEA for Approval",
+                    Url = "google.com",
+                    Date = DateTime.Now.AddDays(-20),
+                },
+                new Issue()
+                {
+                    Name = "Accreditation request for diploma in information systems has been rejected dues to the",
+                    Url = "google.com",
+                    Date = DateTime.Now,
+                },
+            },
+        };
+
+
+    private PieConfig? _config;
+
+    ProgramSummery? programSummery = new();
+    protected override async void OnInitialized()
+    {
+        programs = await ProgramService.Get();
+        programSummery = new(programs);
+        departments = await DepartmentService.Get();
+        schools = await SchoolService.Get();
+        users = await UserService.Get();
+
+        messages = programSummery.GenerateSummaries();
+        messages.RemoveRange(3, messages.Count - 3);
+        //_programs = await ProgramService.Get();
+        //ProgramSummery = new ProgramSummery(_programs);
+        //StateHasChanged();
+
+        _config = new PieConfig
+            {
+                Options = new PieOptions
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = true,
+                        Text = "Programs Status Summary"
+                    }
+                }
+            };
+        foreach (string label in new[] { "Requiring Attention", "May Require Attention", "Does not Require Attention" })
+        {
+            _config.Data.Labels.Add(label);
+        }
+        PieDataset<int> dataset = new PieDataset<int>(new[] { programSummery.BadCount, programSummery.UmberCount, programSummery.GoodCount })
+            {
+                BackgroundColor = new[]
+                    {
+            ColorUtil.ColorHexString(255, 99, 132), // Slice 1 aka "Red"
+            ColorUtil.ColorHexString(255, 205, 86), // Slice 2 aka "Yellow"
+            ColorUtil.ColorHexString(75, 192, 192), // Slice 3 aka "Green"
+        }
+            };
+        _config.Data.Datasets.Add(dataset);
+        StateHasChanged();
+
+
+        _config2 = new BarConfig
+            {
+                Options = new BarOptions
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = true,
+                        Text = "Programs Status Summary per Department"
+                    },
+                    Tooltips = new Tooltips
+                    {
+                        Mode = InteractionMode.Index,
+                        Intersect = false
+                    },
+                    Scales = new BarScales
+                    {
+                        XAxes = new List<CartesianAxis>
+                    {
+                        new BarCategoryAxis
+                        {
+                            Stacked = true
+                        }
+                    },
+                        YAxes = new List<CartesianAxis>
+                    {
+                        new BarLinearCartesianAxis
+                        {
+                            Stacked = true
+                        }
+                    }
+                    }
+                }
+            };
+        //print to the condole stat
+        foreach (var item in programSummery.GenerateStatuses())
+        {
+            Console.WriteLine(item.Name);
+            Console.WriteLine(item.Status[0]);
+            Console.WriteLine(item.Status[1]);
+        }
+        int[] dataset1 = new int[programSummery.GenerateStatuses().Count];
+        int[] dataset2 = new int[programSummery.GenerateStatuses().Count];
+        for (int i = 0; i < programSummery.GenerateStatuses().Count; i++)
+        {
+            dataset1[i] = programSummery.GenerateStatuses()[i].Status[0];
+            dataset2[i] = programSummery.GenerateStatuses()[i].Status[1];
+        }
+        IDataset<int> Dataset1 = new BarDataset<int>(dataset1)
+            {
+                Label = "Good",
+                BackgroundColor = ColorUtil.FromDrawingColor(ChartColors.Green)
+            };
+        IDataset<int> Dataset2 = new BarDataset<int>(dataset2)
+            {
+                Label = "Bad",
+                BackgroundColor = ColorUtil.FromDrawingColor(ChartColors.Red)
+            };
+
+        @* _config2.Data.Labels.AddRange(Months.Take(InitalCount)); *@
+        foreach (var label in programSummery.GenerateStatuses())
+        {
+            _config2.Data.Labels.Add(label.Name);
+        }
+        _config2.Data.Datasets.Add(Dataset1);
+        _config2.Data.Datasets.Add(Dataset2);
+        StateHasChanged();
+
+
+    }
+
+}
+
+
+@code {
+    private const int InitalCount = 7;
+    private BarConfig? _config2;
+    private Chart? _chart;
+}
+
+@code {
+    private const int value = 6;
+    public PieConfig _doughnutConfig = new PieConfig
+        {
+            //make this piechart a doughnut
+            
+                Options = new PieOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Programs Status Summary"
+                },
+                Tooltips = new Tooltips
+                {
+                    Mode = InteractionMode.Index,
+                    Intersect = false,  
+                },
+            }
+
+        };
+    public void config()
+    {
+    }
+}

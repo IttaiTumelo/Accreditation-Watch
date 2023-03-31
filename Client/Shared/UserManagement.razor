@@ -1,0 +1,69 @@
+﻿@inject IUserService UserService
+<h3>User Management</h3>
+<div class="row">
+    <div class="col-3">
+        <h4>All Users</h4>
+
+        <QuickGrid Items="Users.AsQueryable()" Theme="default" Virtualize="true">
+            <PropertyColumn Property="p => p.Id" Sortable="true" />
+            <PropertyColumn Property="p => p.Name" Sortable="true" />
+            <PropertyColumn Property="p => p.Role" Sortable="true" />
+         
+            <TemplateColumn Title="Actions">
+                @*<button @onclick="@(() => ShowDetails(context))" class="btn btn-info">Details</button>*@
+                @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
+            </TemplateColumn>
+        </QuickGrid>
+    </div>
+    <div class="col-9">
+        <h3>Add User</h3>
+        <span class="text-danger">@ErrorMessage</span>
+        <EditForm Model="newUser" OnValidSubmit="AddUser">
+            @*<DataAnnotationsValidator />*@
+            <div class="form-group">
+                <label for="Name">Name</label>
+                <InputText class="form-control" id="Name" @bind-Value="newUser.Name" />
+            </div>
+            <div class="form-group">
+                <label for="Email">Email</label>
+            <InputText class="form-control" id="Email" @bind-Value="newUser.Email" />
+            </div>
+            <div class="form-group">
+                <label for="Email">Password</label>
+                <InputText class="form-control" id="Email" @bind-Value="newUser.Password" />
+            </div>
+            <div class="form-group">
+                <label for="Role">Role</label>
+            <InputSelect class="form-control" id="Role" @bind-Value="newUser.Role">
+                    <option value="Admin">Admin</option>
+                    <option value="User">User</option>
+                </InputSelect>
+            </div>
+            <button type="submit" class="btn btn-primary">Add User</button>
+        </EditForm>
+        
+    </div>
+</div>
+
+@code {
+    public UserDto newUser = new UserDto();
+    public List<User> Users { get; set; } = new();
+    string ErrorMessage = "";
+    protected override async Task OnInitializedAsync()
+    {
+        Users = await UserService.Get();
+        StateHasChanged();
+    }
+
+    public async Task AddUser()
+    {
+        if (newUser.Password.Length < 6)
+        {
+            ErrorMessage = "Password must be at least 6 characters";
+            return;
+        }
+        await UserService.Create(newUser);
+        Users = await UserService.Get();
+        StateHasChanged();
+    }
+}

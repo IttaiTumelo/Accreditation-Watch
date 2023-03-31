@@ -1,0 +1,147 @@
+﻿@inject NavigationManager NavManager;
+@inject IPendingImplimentationService PendingImplimentationService;
+@inject IAuthService _authService;
+
+@page "/log-in"
+@page "/"
+<style>
+    .hide- {
+        display: none;
+    }
+</style>
+<div class="row">
+    <div class="col-lg-6">
+        <section class="vh-100" style="background-color: #0000;">
+            <div class="container py-5 h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col col-xl-10">
+                        <div class="" style="border-radius: 1rem;">
+                            <div class="row g-0">
+                                <div class="col-md-12 col-lg-12 d-flex align-items-center">
+                                    <div class="card-body p-4 p-lg-5 text-black">
+                                        <span class="text-danger">@ErrorMessage</span>
+                                        <EditForm Model="user" OnSubmit="HundleSubmit">
+                                            <div class="d-flex align-items-center mb-3 pb-1">
+                                                <span class="h1 fw-bold mb-0">CBU ACCREDITATION WATCH</span>
+                                            </div>
+                                            <div class="form-outline mb-4">
+                                                @*<InputText @bind-Value="user.UserName" id="form2Example" type="email" class="form-control form-control-lg" />*@
+                                                <InputText id="form2Example" type="text" class="form-control form-control-lg" @bind-Value="user.Email" />
+                                                <label class="form-label" for="form2Example">Email address/ user ID</label>
+                                            </div>
+                                            <div class="form-outline mb-4">
+                                                <InputText type="password" id="form2Example17" class="form-control form-control-lg" @bind-Value="user.Password" />
+                                                <label class="form-label" for="form2Example27">Password</label>
+                                            </div>
+                                            <div class="pt-1 mb-4">
+                                                <button class="btn btn-dark btn-lg btn-block" type="submit" @IsDisabled>Login</button>
+                                                <img src="/images/loading.gif" class="@Visible img-fluid" width="40" />
+                                            </div>
+                                        </EditForm>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div>
+                    <div class="row">
+                        <div class="col-5">
+                            <h2>Current Issues</h2>
+                        </div>
+                        <div class="col">
+                            <EditForm Model="newPendingImplimentation" OnSubmit="NewIssue">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <InputText @bind-Value="newPendingImplimentation.Name" type="text" class="form-control" id="new-issue" />
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="submit" class="btn btn-primary">Add Issue</button>
+                                    </div>
+                                </div>
+                            </EditForm>
+                        </div>
+                    </div>
+                    
+                    <QuickGrid Items="PendingImplimentationService.Objects?.AsQueryable()" Pagination="@pagination" Theme="default" Virtualize="true">
+                        <PropertyColumn Property="p => p.Name" Sortable="true" />
+                        <PropertyColumn Property="p => p.Status" Sortable="true" />
+                        <TemplateColumn Title="Actions">
+                            <div class="row">
+                                <div class="col"><button @onclick="()=>Delete(context.Id)" class="badge btn-danger">Delete</button></div>
+                                <div class="col"><button @onclick="()=>Complete(context)" class="badge btn-success">Complete</button></div>
+                            </div>
+                        </TemplateColumn>
+                    </QuickGrid>
+                    <Paginator Value="@pagination" />
+                    <hr>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!------SIgn in page-------->
+@code {
+    PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
+    public PendingImplimentationDto newPendingImplimentation { get; set; } = new();
+    public string IsDisabled = "enabled";
+    public string Visible = "hide-";
+    public string ErrorMessage = "";
+    protected override async void OnInitialized()
+    {
+        await PendingImplimentationService.Get();
+        StateHasChanged();
+    }
+
+    public UserLoginDto user = new();
+    public void gtSignUp() => NavManager.NavigateTo("/sign-up");
+
+    public async Task HundleSubmit()
+    {
+        try
+        {
+            await _authService.LogIn(user);
+            NavManager.NavigateTo("dashboard");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+    public async Task GoToDashboard()
+    {
+        NavManager.NavigateTo("dashboard");
+        await Task.Delay(100);
+    }
+
+    public async Task Delete(int Id)
+    {
+        await PendingImplimentationService.Delete(Id);
+        StateHasChanged();
+    }
+    public async Task Complete(PendingImplimentation pendingImplimentation)
+    {
+        pendingImplimentation.Status = ProgressStatus.Completed;
+        await PendingImplimentationService.Update(pendingImplimentation);
+        StateHasChanged();
+    }
+    public async Task NewIssue()
+    {
+        await PendingImplimentationService.Create(newPendingImplimentation);
+        StateHasChanged();
+    }
+}

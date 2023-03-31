@@ -1,0 +1,82 @@
+﻿@page "/analytics"
+@inject IProgramService ProgramService
+<h37>Analytics</h37>
+
+<div class="row">
+    <div class="col-8">
+
+        <h3 class="d-flex">
+            <img src="/images/triangle.svg" width="20" class="m-2" />
+            Program Summeries
+        </h3>
+        <div>
+            <ol>
+                @if (messages is not null)
+                    @foreach (var item in messages)//must change to variable
+                    {
+                        <li>
+                            <div class="row">
+                                <div class="col">
+                                    <h5>@item </h5>
+                                </div>
+                            </div>
+                        </li>
+                    }
+            </ol>
+        </div>
+        <div class="col">
+            <span class="badge rounded-pill bg-dark p-2 float-end">View All</span>
+        </div>
+
+        @* <NoticeItems Notice="@Notice1" />
+        <NoticeItems Notice="@Notifications" />
+        <NoticeItems Notice="@Notifications" />
+        <NoticeItems Notice="@Notifications" /> *@
+    </div>
+    <div class="col-4">
+    </div>
+</div>
+
+
+
+@code {
+    List<AWProgram>? programs { get; set; } = new();
+    List<string>? messages { get; set; } = new();
+
+
+    ProgramSummery? programSummery = new();
+    protected override async void OnInitialized()
+    {
+        programs = await ProgramService.Get();
+        programSummery = new(programs);
+
+        messages = programSummery.GenerateSummaries();
+        messages.RemoveRange(3, messages.Count - 3);
+        //_programs = await ProgramService.Get();
+        //ProgramSummery = new ProgramSummery(_programs);
+        //StateHasChanged();
+
+        StateHasChanged();
+
+
+        //print to the condole stat
+        foreach (var item in programSummery.GenerateStatuses())
+        {
+            Console.WriteLine(item.Name);
+            Console.WriteLine(item.Status[0]);
+            Console.WriteLine(item.Status[1]);
+        }
+        int[] dataset1 = new int[programSummery.GenerateStatuses().Count];
+        int[] dataset2 = new int[programSummery.GenerateStatuses().Count];
+        for (int i = 0; i < programSummery.GenerateStatuses().Count; i++)
+        {
+            dataset1[i] = programSummery.GenerateStatuses()[i].Status[0];
+            dataset2[i] = programSummery.GenerateStatuses()[i].Status[1];
+        }
+        StateHasChanged();
+
+
+    }
+
+}
+

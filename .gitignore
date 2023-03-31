@@ -1,0 +1,63 @@
+# Build and output files
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.log
+*.sqlite
+
+# NuGet packages
+*.nupkg
+packages/
+*.user
+
+# Visual Studio files
+.vs/
+*.suo
+*.sln.docstates
+*.sln.ide
+
+# Resharper files
+_ReSharper*/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Xamarin.Android specific
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+*.keystore
+*.properties
+
+# Xamarin.iOS specific
+*.ipa
+*.p12
+*.pfx
+*.mdb
+*.plist
+*.mdb
+*.nib
+
+# Build Folders (you can keep binaries if you'd like, to save space ignore these folders)
+__pycache__/
+dist/
+build/
+*.egg-info/
+*.egg/

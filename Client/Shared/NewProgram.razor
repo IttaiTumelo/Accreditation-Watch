@@ -1,0 +1,114 @@
+@inject IProgramService programService
+@inject IDepartmentService departmentService
+@*@inject IAccrediteService accrediteService*@
+@inject ISchoolService schoolService
+@if( Departments is null || Schools is null)
+{
+    @*<Loading/>*@
+    <p>Loading...</p>
+}
+else
+{
+<div id="@Visibility" class="d-flex justify-content-center align-items-center">
+       
+        <div style="background-color : #fff; border-radius: 10px;" class="p-5">
+          <div class="row">
+               <div class="col-11"><h4>Add New Program</h4></div>
+               <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
+          </div>
+            <p class="text-danger">@ErrorMessage</p>
+            <p class="text-success">@SuccessMessage</p>
+          <EditForm Model="newProgram" OnSubmit="Hundle">
+                <div class="form-group">
+                    <label for="program-name">Name</label>
+                    <InputText @bind-Value="newProgram.Name" class="form-control" placeholder="Program Name" />
+                </div>
+                <div class="form-group">
+                    <label for="program-name">Dates</label>
+                    <div class="row">
+                        <div class="col"><InputDate @bind-Value="newProgram.ValidFrom" class="form-control" placeholder="Valid From" /></div>
+                        <div class="col"><InputDate @bind-Value="newProgram.ValidTo" class="form-control" placeholder="Program Name" /></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="program-name">Department</label>
+                    <InputSelect @bind-Value="newProgram.DepartmentId" class="form-control" placeholder="Program Name">
+                        @foreach (var department in Departments)
+                        {
+                            <option value="@department.Id">@department.Name</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="form-group">
+                    <label for="program-name">School</label>
+                    <InputSelect @bind-Value="SchoolId" class="form-control" placeholder="School">
+                        @foreach (var school in Schools)
+                        {
+                            <option value="@school.Id">@school.Name</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="form-group">
+                    <label for="program-name">Accreditation Status</label>
+                    <InputNumber @bind-Value="newProgram.AccrediteStatusId" class="form-control" placeholder="Program Name" />
+                </div>
+               <button class="btn btn-success col-12 my-2" type="submit">Stubmit</button>
+          </EditForm>
+        </div>
+</div>
+}
+@code {
+    public string ErrorMessage = "";
+    public string SuccessMessage = "";
+    public int DepartmentId { get; set; }
+    public int AccrediteId { get; set; }
+    public int SchoolId { get; set; }
+    public CreateProgramDto newProgram { get; set; } = new();
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    Task Close()
+    {
+        IsVisible = false;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    async Task Hundle()
+    {
+        //newProgram.Department = Departments.First(x => x.Id == DepartmentId);
+        //newProgram.Accredite = Accredites.First(x => x.Id == AccrediteId);
+        //newProgram.School = Accredites.First(x => x.Id == AccrediteId);
+        try
+        {
+            var request = programService.Create(newProgram);
+            SuccessMessage = "Created";
+            await Task.Delay(2000);
+            IsVisible = false;
+            StateHasChanged();
+        }catch(Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+
+
+    }
+
+    public List<Department> Departments { get; set; }
+    //public List<Accredite> Accredites { get; set; }
+    public List<School> Schools { get; set; }
+
+    protected override async void OnInitialized()
+    {
+        Departments = await departmentService.Get();
+
+        //Accredites = await accrediteService.Get();
+        Schools = await schoolService.Get();
+    }
+
+     
+  
+}

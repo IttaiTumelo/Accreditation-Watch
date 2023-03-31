@@ -1,0 +1,77 @@
+@inject IDepartmentService departmentService 
+@inject ISchoolService schoolService
+@if(Schools is null)
+{
+    @*<Loading/>*@
+    <p>Loading...</p>
+
+}
+else
+{
+    <div id="@Visibility" class="d-flex justify-content-center align-items-center">
+        <div style="background-color : #fff; border-radius: 10px;" class="p-5">
+            <div class="row">
+                <div class="col-11"><h4>Add New Department</h4></div>
+                <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
+            </div>
+
+            <EditForm Model="newDepartment" OnSubmit="Hundle">
+                <InputText @bind-Value="newDepartment.Name" class="form-control" placeholder="Program Name" />
+                <InputSelect @bind-Value="SchoolId" class="form-control" placeholder="Program Name">
+                    @foreach (var school in Schools)
+                    {
+                        <option value="@school.Id">@school.Name</option>
+
+                    }
+                </InputSelect>
+                <button class="btn btn-outline-info" type="submit"> Add</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+
+@code {
+    public CreateDepartmentDto newDepartment { get; set; } = new();
+    public int SchoolId { get; set; }
+    public List<School> Schools { get; set; }
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    Task Close()
+    {
+        IsVisible = false;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    Task Hundle()
+    {
+        //newDepartment.Programs = new();
+        //newDepartment.School = Schools.First(x => x.Id == SchoolId);
+        newDepartment.SchoolId = Schools.First(x => x.Id == SchoolId).Id;
+        var request = departmentService.Create(newDepartment);
+
+        IsVisible = false;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    protected override async void OnInitialized()
+    {
+        try
+        {
+            Schools = await schoolService.Get();
+            StateHasChanged();
+
+        }catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+    }
+
+
+     
+  
+}
