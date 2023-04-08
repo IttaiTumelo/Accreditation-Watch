@@ -10,8 +10,8 @@ namespace Accreditation_Watch.Client.Services
         private readonly HttpClient _httpClient;
         public BaseService(HttpClient httpClient) => _httpClient = httpClient;
 
-        public List<T> Objects { get; set; } = new();
-        public T Object { get; set; } = new();
+        public List<T> Objects { get; set; }=new();
+        public T Object { get; set; }=new();
 
         public virtual async Task<T> Create(T dto)
         {
@@ -42,7 +42,7 @@ namespace Accreditation_Watch.Client.Services
             var objects = request.Content.ReadFromJsonAsync<List<T>>().Result;
             if (objects is null) throw new Exception("No objects were found");
             Objects = objects;
-            return Objects;
+            return objects;
         }
 
           public Task<List<T>> Get(bool forceRefresh)
@@ -64,7 +64,7 @@ namespace Accreditation_Watch.Client.Services
             var response = await request.Content.ReadFromJsonAsync<T>();
             if (response is null) throw new Exception("No object was found");
             Object = response;
-            return Object;
+            return response;
         }
 
           

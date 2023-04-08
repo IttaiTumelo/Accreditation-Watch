@@ -13,27 +13,6 @@
                         <button type="submit">Stubmit</button>
                     </EditForm>
                 </div>
-                <div class="col-6">
-                    @if (Schools == null)
-                    {
-                        <p>Loading...</p>
-                    }
-                    else if (Schools.Count == 0)
-                    {
-                        <p>No programs found.</p>
-                    }
-                    else
-                    {
-                        @* <div class="grid"> *@
-                        <QuickGrid Items="Schools.AsQueryable()" Theme="default">
-                            <PropertyColumn Property="p => p.Id" Sortable="true" />
-                            <PropertyColumn Property="p => p.Name" Sortable="true" />
-                        </QuickGrid>
-                        @* </div> *@
-
-                        @*<Paginator Value="@pagination" />*@
-                    }
-                </div>
             </div>
           </div>
 

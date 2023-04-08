@@ -1,0 +1,39 @@
+@page "/departments"
+@inject IDepartmentService DepartmentService
+
+<h3>Departments</h3>
+@if (DepartmentService.Objects == null)
+     {
+          <Loading />
+     }
+     else if (DepartmentService.Objects.Count == 0)
+     {
+          <p>No programs found.</p>
+     }
+     else
+     {
+          @* <div class="grid"> *@
+            <div class="grid">
+<QuickGrid Items="DepartmentService.Objects.AsQueryable()" Theme="default" Virtualize="true" >
+    <PropertyColumn Property="p => p.Id" Sortable="true" />
+    <PropertyColumn Property="p => p.Name" Sortable="true" />
+    <PropertyColumn Property="p => p.Programs.Count" Sortable="true" Title="Number of Programs" />
+    <TemplateColumn Title="Actions">
+        <button class="btn btn-info">Edit</button>
+        <button class="btn btn-info">Delete</button>
+        @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
+    </TemplateColumn>
+</QuickGrid>
+                </div>
+
+          @* </div> *@
+
+     }
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DepartmentService.Get();
+    }
+}

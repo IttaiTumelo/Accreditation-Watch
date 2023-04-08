@@ -1,4 +1,6 @@
 @page "/settings"
+@page "/settings/{Section}"
+@inject NavigationManager NavMng
 <style>
     .vbody {
     min-height: 80vh;
@@ -96,18 +98,29 @@
 
         <div class="d-flex flex-column flex-shrink-0 bg-light" style="width: 4.5rem;">
             <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+
+                <li>
+                    <a @onclick="Database" class="nav-link py-3 border-bottom" title="Import Data" data-bs-toggle="tooltip" data-bs-placement="right">
+                        <img src="/images/server-solid.svg" alt="">
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a @onclick="Users" class="nav-link activeL py-3 border-bottom" aria-current="page" title="Manage Users" data-bs-toggle="tooltip" data-bs-placement="right">
                         <img src="/images/users-gear-solid.svg" alt="users">
                     </a>
                 </li>
                 <li>
-                    <a @onclick="Database" class="nav-link py-3 border-bottom" title="Manage Data" data-bs-toggle="tooltip" data-bs-placement="right">
-                        <img src="/images/server-solid.svg" alt="">
+                    <a @onclick="Schools" class="nav-link py-3 border-bottom" title="Manage Schools" data-bs-toggle="tooltip" data-bs-placement="right">
+                        <img src="/images/school.svg" alt="">
+                    </a>
+                </li>
+                <li>
+                    <a @onclick="Departments" class="nav-link py-3 border-bottom" title="Manage Departments" data-bs-toggle="tooltip" data-bs-placement="right">
+                        <img src="/images/department.svg" alt="">
                     </a>
                 </li>
             </ul>
-            <div class="dropdown border-top">
+            @* <div class="dropdown border-top">
                 <a href="#" class="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle" id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="https://github.com/mdo.png" alt="mdo" width="24" height="24" class="rounded-circle">
                 </a>
@@ -118,13 +131,10 @@
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#">Sign out</a></li>
                 </ul>
-            </div>
+            </div> *@
         </div>
             </div>
         </div>
-
-        @*<UserManagement/>
-            <FileUpload/>*@
 
     </div>
     <div class="col">
@@ -133,11 +143,25 @@
 </div>
 
 @code {
+    [Parameter]
+    public String Section {get; set; }
     public RenderFragment Render(Type type) => builder =>
     {
         builder.OpenComponent(0, type);
         builder.CloseComponent();
     };
+      protected override async void OnInitialized()
+          {
+            if(Section is not null){
+                if(Section.ToLower().Equals("departments") || Section.ToLower().Equals("department")) Departments();
+                else if (Section.ToLower().Equals("users")) Users();
+                else if (Section.ToLower().Equals("schools")) Schools();
+                else if (Section.ToLower().Equals("database")) Database();
+                else NavMng.NavigateTo($"{Section.ToLower()}");
+  
+            }
+          }
+      
     public Type SelectedSetting { get; set; } = typeof(UserManagement);
     Task Users() 
     {
@@ -147,6 +171,16 @@
     Task Database()
     {
         SelectedSetting = typeof(FileUpload);
+        return Task.CompletedTask;
+    }
+    Task Schools()
+    {
+        SelectedSetting = typeof(SchoolManagement);
+        return Task.CompletedTask;
+    }
+    Task Departments()
+    {
+        SelectedSetting = typeof(DepartmentManagement);
         return Task.CompletedTask;
     }
 }

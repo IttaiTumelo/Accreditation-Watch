@@ -3,6 +3,7 @@
 @inject IDepartmentService DepartmentService
 @inject ISchoolService SchoolService
 @inject IUserService UserService
+@inject NavigationManager NavMng
 @*@attribute [Authorize(Roles = "Admin")]*@
 
 
@@ -10,6 +11,10 @@
 
 <PageTitle>Dashboard</PageTitle>
 <h3>Dashboard</h3>
+
+
+
+
 <div class="my-3">
     <div class="row h-100">
         <!-- Card 1 -->
@@ -150,7 +155,7 @@
 <div class="my-3">
     <div class="row">
         <!-- Card 1 -->
-        <div class="col-md-9 h-100">
+        <div class="col-md-9 h-100 parent">
             <div class="card shadow-lg rounded">
                 <div class="card-body h-100">
                     @*<h4 class="card-title">Sales by Region</h4>*@
@@ -159,6 +164,11 @@
                             @if (_config2 != null)
                             {
                                 <Chart Config="_config2" @ref="_chart"></Chart>
+                            }else{
+                                <div style="height: 50%">
+                                    <Loading/>
+
+                                </div>
                             }
                         </div>
                         @*<div class="col-4">
@@ -176,7 +186,7 @@
         <!-- Card 2 -->
         <div class="col-md-3 h-100">
             <!-- Card 1 -->
-            <div class="col-md-12 mb-2" h-25>
+            <div class="col-md-12 mb-2" h-25 @onclick="Schools">
                 <div class="card shadow-lg rounded">
                     <div class="card-body">
                         <div class="row">
@@ -192,7 +202,7 @@
                 </div>
             </div>
             <!-- Card 1 -->
-            <div class="col-md-12 my-2 h-25">
+            <div class="col-md-12 my-2 h-25" @onclick="Departments">
                 <div class="card shadow-lg rounded">
                     <div class="card-body">
                         <div class="row">
@@ -209,7 +219,7 @@
             </div>
 
             <!-- Card 1 -->
-            <div class="col-md-12 my-2  h-25">
+            <div class="col-md-12 my-2  h-25 "  @onclick="Programs">
                 <div class="card shadow-lg rounded">
                     <div class="card-body">
                         <div class="row">
@@ -226,7 +236,7 @@
             </div>
 
             <!-- Card 1 -->
-            <div class="col-md-12 mt-2" h-25>
+            <div class="col-md-12 mt-2" h-25 @onclick="Users">
                 <div class="card shadow-lg rounded">
                     <div class="card-body">
                         <div class="row">
@@ -249,7 +259,21 @@
     </div> <!-- End of row -->
 </div> <!-- End of container -->
 
-
+@code {
+    async Task Schools(){
+        NavMng.NavigateTo("settings/schools");
+    }
+    async Task Users(){
+        NavMng.NavigateTo("settings/users");
+    }
+    async Task Programs(){
+        NavMng.NavigateTo("programs");
+    }  
+    async Task Departments(){
+        NavMng.NavigateTo("settings/departments");
+    }
+    
+}
 
 
 @code {

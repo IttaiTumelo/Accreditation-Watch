@@ -106,7 +106,7 @@ a, .btn-link {
 /* ///////////////////////////////////////////////////////////////////// */
 
 
-
+/* 
 .quickgrid {
     width: 100%;
     table-layout: fixed;
@@ -135,7 +135,7 @@ a, .btn-link {
         position: sticky;
         left: 0;
     }
-/*    .quickgrid table th:nth-child(5), .quickgrid table td:nth-child(6) {
+   .quickgrid table th:nth-child(5), .quickgrid table td:nth-child(6) {
         width: 200px;
     }*/
 
@@ -203,3 +203,39 @@ a, .btn-link {
 
 
 /* ///////////////////////////////////////////////////////////////////// */
+/* for overlay to only affect only the section */
+.parent {
+    position: relative;
+  }
+/* ///////////////////////////////////////////////////////////////////// */
+  /* Fix height and enable scrolling */
+.grid {
+    height: 25rem;
+    overflow-y: auto;
+}
+
+.grid ::deep table {
+    width: 100%;
+}
+
+/* Sticky header while scrolling */
+.grid ::deep thead {
+    position: sticky;
+    top: 0;
+    background-color: #d8d8d8;
+    outline: 1px solid gray;
+    z-index: 1;
+}
+
+/* For virtualized grids, it's essential that all rows have the same known height */
+.grid  ::deep tr {
+    height: 30px;
+    border-bottom: 0.5px solid silver;
+}
+
+.grid ::deep tbody td {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 0;
+    text-overflow: ellipsis;
+}

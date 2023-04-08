@@ -1,0 +1,43 @@
+@page "/school"
+@inject ISchoolService SchoolService
+
+<h3>School</h3>
+<div class="grid">
+        @if (SchoolService.Objects == null)
+                {
+                    <Loading />
+                }
+                else if (SchoolService.Objects.Count == 0)
+                {
+                    <p>No programs found.</p>
+                }
+                else
+                {
+                    @* <div class="grid"> *@
+                    <QuickGrid Items="SchoolService.Objects.AsQueryable()" Theme="default" Virtualize="true"  >
+                        <PropertyColumn Property="p => p.Id" Sortable="true" />
+                        <PropertyColumn Property="p => p.Name" Sortable="true" />
+
+                        <TemplateColumn Title="Actions">
+                            @*<button @onclick="@(() => ShowDetails(context))" class="btn btn-info">Details</button>*@
+                            @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
+                        </TemplateColumn>
+                    </QuickGrid>
+                    @* </div> *@
+               <Paginator Value="@pagination" />
+
+                }
+
+</div>
+
+
+@code {
+
+    QuickGrid<School>? grid;
+    PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+
+     protected override async void OnInitialized()
+     {
+          await SchoolService.Get();
+     }
+}

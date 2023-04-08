@@ -3,6 +3,10 @@
 @inject IDepartmentService DepartmentService
 @inject ISchoolService SchoolService
 @using Microsoft.AspNetCore.Components.QuickGrid
+@inject NavigationManager     NavigationManager;
+<style>
+
+</style>
 <div class="row">
      <div class="col-4">
           <h2>Programs</h2>
@@ -12,13 +16,13 @@
             <button @onclick="() => NewProgram()" class="btn  btn-info col mx-1">New Program</button>
             <button @onclick="() => NewDepartment()" class="btn  btn-info col mx-1">New Department</button>
             <button @onclick="() => NewSchool()" class="btn  btn-info col mx-1">Add School</button>
-            <button @onclick="ViewProgram" class="btn  btn-info col mx-1">View Departments</button>
+            <button @onclick="ViewDepartment" class="btn  btn-info col mx-1">View Departments</button>
             <button @onclick="ViewSchool" class="btn  btn-info col mx-1">School School</button>
          </div>
      </div>
 </div>
-<div class="row">
-     <div class="col">
+<div class="row parent">
+     <div class="col ">
           @if(ProgramService.Objects == null)
                {
                     <Loading/>
@@ -49,63 +53,7 @@
                <Paginator Value="@pagination" />
                }
      </div>
-    @if (visible)
-    {
-        <div class="col-3">
-            @if (school)
-            {
-
-                @if (SchoolService.Objects == null)
-                {
-                    <Loading />
-                }
-                else if (SchoolService.Objects.Count == 0)
-                {
-                    <p>No programs found.</p>
-                }
-                else
-                {
-                    @* <div class="grid"> *@
-                    <QuickGrid Items="SchoolService.Objects.AsQueryable()" Theme="default">
-                        <PropertyColumn Property="p => p.Id" Sortable="true" />
-                        <PropertyColumn Property="p => p.Name" Sortable="true" />
-
-                        <TemplateColumn Title="Actions">
-                            @*<button @onclick="@(() => ShowDetails(context))" class="btn btn-info">Details</button>*@
-                            @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
-                        </TemplateColumn>
-                    </QuickGrid>
-                    @* </div> *@
-
-                }
-                }
-        else
-                {
-                    @if (DepartmentService.Objects == null)
-                    {
-                        <Loading />
-                    }
-                    else if (DepartmentService.Objects.Count == 0)
-                    {
-                        <p>No programs found.</p>
-                    }
-                    else
-                    {
-                        @* <div class="grid"> *@
-                        <QuickGrid Items="DepartmentService.Objects.AsQueryable()" Theme="default">
-                            <PropertyColumn Property="p => p.Id" Sortable="true" />
-                            <PropertyColumn Property="p => p.Name" Sortable="true" />
-                            <TemplateColumn Title="Actions">
-                                @*<button @onclick="@(() => ShowDetails(context))" class="btn btn-info">Details</button>*@
-                                @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
-                            </TemplateColumn>
-                        </QuickGrid>
-                        @* </div> *@
-
-                    }
-                }
-                </div>
-    }
+    
 </div>
    @if(SelectedProgram is not null){
           <ProgramDetails Program="@SelectedProgram" IsVisible="@ProgramVisibility" />
@@ -181,20 +129,14 @@
         ProgramVisibility = NewProgramVisibility = NewSchoolVisibility = NewDepartmentVisibility = false;
         StateHasChanged();
     }
-    Task ViewProgram()
+    Task ViewDepartment()
     {
-        ResetAll();
-        visible = visible ? false : true;
-        school = false;
-        StateHasChanged();
+        NavigationManager.NavigateTo("settings/departments");
         return Task.CompletedTask;
     }
     Task ViewSchool()
     {
-        ResetAll();
-        school = true;
-        visible = visible ? false : true;
-        StateHasChanged();
+            NavigationManager.NavigateTo("settings/schools");
         return Task.CompletedTask;
     }
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
