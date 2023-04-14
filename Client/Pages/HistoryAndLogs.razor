@@ -4,8 +4,9 @@
 @attribute [Authorize(Roles = "Admin")]
 
 <div class="row">
-     <div class="col grid">
           <h3>History & Logs</h3>
+
+     <div class="col grid">
           
           @if(HistoryService.Objects == null)
           {
@@ -24,7 +25,7 @@
                     <PropertyColumn Property="p => p.UserId" Sortable="true" />
                     <PropertyColumn Property="p => p.Action" Sortable="true" />
                     <PropertyColumn Property="p => p.Severity" Sortable="true" />
-                    <PropertyColumn Property="p => p.InitialState" Sortable="true" Title="Duration" />
+                    @* <PropertyColumn Property="p => p.InitialState" Sortable="true" Title="Duration" /> *@
                     <PropertyColumn Property="p => p.ActionResult" Sortable="true" Title="Is Expired" />
                </QuickGrid>
 

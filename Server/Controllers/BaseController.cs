@@ -6,13 +6,11 @@
     {
         protected readonly DataContext _context;
         private readonly T _entity;
-
         public BaseController(DataContext context)
         {
             _context = context;
             _entity = new BaseEntity() as T;
         }
-
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<T>>> Get()
         {
