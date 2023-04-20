@@ -1,0 +1,124 @@
+﻿@inject IProgramService ProgramService
+@inject ISchoolService SchoolService
+@inject IDepartmentService DepartmentService
+@*<h3>@Title View</h3>*@
+<div class="row">
+    <div class="col">
+        <button @onclick="SwitchView">@Title View</button>
+    </div>
+</div>
+
+@if (_config2 != null)
+{
+    <Chart Config="_config2" @ref="_chart"></Chart>
+}
+else
+{
+    <div style="height: 50%">
+        <Loading />
+
+    </div>
+}
+@code {
+    Task SwitchView()
+    {
+        if (Title == "School")
+        {
+            Title = "Department";
+        }
+        else
+        {
+            Title = "School";
+        }
+        ChangeView();
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+    [Parameter]
+    public string Title { get; set; } = "Title can be Department or School View";
+    private Chart? _chart;
+    private BarConfig? _config2;
+    ProgramSummery? programSummery = new();
+    protected override async void OnInitialized()
+    {
+        await SchoolService.Get();
+        await ProgramService.Get();
+        
+        programSummery = new(await ProgramService.Get());
+        
+        ChangeView();
+    }
+
+    void ChangeView()
+    {
+        _config2 = new BarConfig
+            {
+                Options = new BarOptions
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = false,
+                        Text = "This title should be hiddden "
+                    },
+                    Tooltips = new Tooltips
+                    {
+                        Mode = InteractionMode.Index,
+                        Intersect = false
+                    },
+                    Scales = new BarScales
+                    {
+                        XAxes = new List<CartesianAxis>
+                    {
+                        new BarCategoryAxis
+                        {
+                            Stacked = true
+                        }
+                    },
+                        YAxes = new List<CartesianAxis>
+                    {
+                        new BarLinearCartesianAxis
+                        {
+                            Stacked = true
+                        }
+                    }
+                    }
+                }
+            };
+        //print to the condole stat
+        foreach (var item in programSummery.GenerateStatuses(Title.ToLower().Trim().Equals("department")))
+        {
+            Console.WriteLine(item.Name);
+            Console.WriteLine(item.Status[0]);
+            Console.WriteLine(item.Status[1]);
+        }
+        int[] dataset1 = new int[programSummery.GenerateStatuses(Title.ToLower().Trim().Equals("department")).Count];
+        int[] dataset2 = new int[programSummery.GenerateStatuses(Title.ToLower().Trim().Equals("department")).Count];
+        for (int i = 0; i < programSummery.GenerateStatuses(Title.ToLower().Trim().Equals("department")).Count; i++)
+        {
+            dataset1[i] = programSummery.GenerateStatuses(Title.ToLower().Trim().Equals("department"))[i].Status[0];
+            dataset2[i] = programSummery.GenerateStatuses(Title.ToLower().Trim().Equals("department"))[i].Status[1];
+        }
+        IDataset<int> Dataset1 = new BarDataset<int>(dataset1)
+            {
+                Label = "Good",
+                BackgroundColor = ColorUtil.FromDrawingColor(ChartColors.Green)
+            };
+        IDataset<int> Dataset2 = new BarDataset<int>(dataset2)
+            {
+                Label = "Bad",
+                BackgroundColor = ColorUtil.FromDrawingColor(ChartColors.Red)
+            };
+
+        @* _config2.Data.Labels.AddRange(Months.Take(InitalCount)); *@
+        foreach (var label in programSummery.GenerateStatuses(Title.ToLower().Trim().Equals("department")))
+        {
+            //_config2.Data.Labels.Add(SchoolService.Objects.FirstOrDefault(x => int.Parse(label.Name) == x.Id).Name.Trim("School of ".ToCharArray()));
+            _config2.Data.Labels.Add(label.Name);
+        }
+        _config2.Data.Datasets.Add(Dataset1);
+        _config2.Data.Datasets.Add(Dataset2);
+        StateHasChanged();
+    }
+
+}

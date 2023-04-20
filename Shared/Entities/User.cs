@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Accreditation_Watch.Shared.Entities
+﻿namespace Accreditation_Watch.Shared.Entities
 {
     public class User : BaseEntity
     {
@@ -16,11 +9,28 @@ namespace Accreditation_Watch.Shared.Entities
         public byte[]? PasswordSalt { get; set; } = null;
         public bool IsTokenExipred()
         {
-            //if (DateTime.Now > Exipres)
-            //{
-            //    return true;
-            //}
+            //Todo implement this
             return false;
         }
+        public override List<string> RelatedEntities()
+        {
+            return new() { "Role" };
+        }
+
+    }
+    public class UserDto : User
+    {
+        public readonly int? Id = null;
+        public string? Token { get; set; } = null;
+        public byte[]? PasswordHash { get; set; } = null;
+        public byte[]? PasswordSalt { get; set; } = null;
+        public Role? Role { get; set; } = null;
+        public string Password { get; set; }
+
+    }
+    public class UserLoginDto
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

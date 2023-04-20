@@ -12,4 +12,8 @@
         public string AccrediteContact { get; set; }
  
     }
+    public class CreateAccrediteDto : Accredite
+    {
+        public int? Id = null;
+    }
 }

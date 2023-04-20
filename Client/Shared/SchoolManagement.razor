@@ -1,43 +1,102 @@
 @page "/school"
 @inject ISchoolService SchoolService
-
-<h3>School</h3>
-<div class="grid">
-        @if (SchoolService.Objects == null)
+@inject IProgramService ProgramServices
+@inject IDepartmentService DepartmentService
+<div class="row">
+    <div class="col-9">
+        <h3>School</h3>
+    </div>
+    <div class="col-3">
+        <button @onclick="() => NewSchool()" class="btn  btn-info col mx-1">Add School</button>
+    </div>
+</div>
+    @if (SchoolService.Objects == null)
+    {
+        <Loading />
+    }
+    else if (SchoolService.Objects.Count == 0)
+    {
+        <p>No programs found.</p>
+    }
+    else
+    {
+        <QuickGrid Items="FilteredSchools" Theme="default" Virtualize="true" Pagination="@pagination">
+            <PropertyColumn Property="p => p.Id" Sortable="true" />
+            <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
+                <ColumnOptions>
+                    <div class="search-box">
+                        <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="School Name..." />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <TemplateColumn Title="Programs">
+                <div class="text-center">
+                    <p>@GetNumberOfSchools(context)</p>
+                </div>
+            </TemplateColumn>
+            <TemplateColumn Title="Departments">
+                <div class="text-center">
+                    <p>@GetNumberOfDepartments(context)</p>
+                </div>
+            </TemplateColumn>
+            <TemplateColumn Title="Actions">
+                @if (@GetNumberOfSchools(context) == 0)
                 {
-                    <Loading />
-                }
-                else if (SchoolService.Objects.Count == 0)
-                {
-                    <p>No programs found.</p>
+                    <button @onclick="@(() => DeleteSchool(context.Id))" class="btn btn-danger">Delete</button>
                 }
                 else
                 {
-                    @* <div class="grid"> *@
-                    <QuickGrid Items="SchoolService.Objects.AsQueryable()" Theme="default" Virtualize="true"  >
-                        <PropertyColumn Property="p => p.Id" Sortable="true" />
-                        <PropertyColumn Property="p => p.Name" Sortable="true" />
-
-                        <TemplateColumn Title="Actions">
-                            @*<button @onclick="@(() => ShowDetails(context))" class="btn btn-info">Details</button>*@
-                            @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
-                        </TemplateColumn>
-                    </QuickGrid>
-                    @* </div> *@
-               <Paginator Value="@pagination" />
-
+                    <button disabled class="btn btn-outline-light">Edit</button>
                 }
-
-</div>
-
+            </TemplateColumn>
+        </QuickGrid>
+        <Paginator Value="@pagination" />
+    }
+<NewSchool IsVisible="@NewSchoolVisibility" />
 
 @code {
-
+    IQueryable<School>? itemsQueryable;
+    IQueryable<School> FilteredSchools
+    {
+        get
+        {
+            var result = itemsQueryable?.Where(c => c.Id <= 2000);
+            if (!string.IsNullOrEmpty(nameFilter))
+            {
+                result = result.Where(c => c.Name.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+            return result;
+        }
+    }
+    public string nameFilter;
+    public bool NewSchoolVisibility { get; set; } = false;
     QuickGrid<School>? grid;
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
-
-     protected override async void OnInitialized()
-     {
-          await SchoolService.Get();
-     }
+    protected override async void OnInitialized()
+    {
+        await SchoolService.Get();
+        await ProgramServices.Get();
+        await DepartmentService.Get();
+        itemsQueryable = SchoolService.Objects.AsQueryable();
+        StateHasChanged();
+    }
+    Task NewSchool()
+    {
+        ResetAll();
+        NewSchoolVisibility = NewSchoolVisibility ? false : true;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+    async Task DeleteSchool(int id)
+    {
+        await SchoolService.Delete(id);
+        StateHasChanged();
+    }
+    void ResetAll()
+    {
+        NewSchoolVisibility = false;
+        StateHasChanged();
+    }
+    int GetNumberOfSchools(School context) => ProgramServices.Objects.Where(x => x.Department.SchoolId == context.Id).ToList().Count;
+    int GetNumberOfDepartments(School context) => DepartmentService.Objects.Where(x => x.SchoolId == context.Id).ToList().Count;
 }

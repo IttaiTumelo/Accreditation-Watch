@@ -161,15 +161,8 @@
                     @*<h4 class="card-title">Sales by Region</h4>*@
                     <div class="row">
                         <div class="col-12">
-                            @if (_config2 != null)
-                            {
-                                <Chart Config="_config2" @ref="_chart"></Chart>
-                            }else{
-                                <div style="height: 50%">
-                                    <Loading/>
-
-                                </div>
-                            }
+                           
+                            <StackedBarChart Title="@TypeOfView"/>
                         </div>
                         @*<div class="col-4">
                         <p class="card-text">North America: $5,678</p>
@@ -252,14 +245,13 @@
                     </div>
                 </div>
             </div>
-
-
-
         </div>
     </div> <!-- End of row -->
 </div> <!-- End of container -->
 
 @code {
+    public string TypeOfView = "School";
+
     async Task Schools(){
         NavMng.NavigateTo("settings/schools");
     }
@@ -339,6 +331,7 @@
     private PieConfig? _config;
 
     ProgramSummery? programSummery = new();
+
     protected override async void OnInitialized()
     {
         programs = await ProgramService.Get();
@@ -381,86 +374,12 @@
             };
         _config.Data.Datasets.Add(dataset);
         StateHasChanged();
-
-
-        _config2 = new BarConfig
-            {
-                Options = new BarOptions
-                {
-                    Responsive = true,
-                    Title = new OptionsTitle
-                    {
-                        Display = true,
-                        Text = "Programs Status Summary per Department"
-                    },
-                    Tooltips = new Tooltips
-                    {
-                        Mode = InteractionMode.Index,
-                        Intersect = false
-                    },
-                    Scales = new BarScales
-                    {
-                        XAxes = new List<CartesianAxis>
-                    {
-                        new BarCategoryAxis
-                        {
-                            Stacked = true
-                        }
-                    },
-                        YAxes = new List<CartesianAxis>
-                    {
-                        new BarLinearCartesianAxis
-                        {
-                            Stacked = true
-                        }
-                    }
-                    }
-                }
-            };
-        //print to the condole stat
-        foreach (var item in programSummery.GenerateStatuses())
-        {
-            Console.WriteLine(item.Name);
-            Console.WriteLine(item.Status[0]);
-            Console.WriteLine(item.Status[1]);
-        }
-        int[] dataset1 = new int[programSummery.GenerateStatuses().Count];
-        int[] dataset2 = new int[programSummery.GenerateStatuses().Count];
-        for (int i = 0; i < programSummery.GenerateStatuses().Count; i++)
-        {
-            dataset1[i] = programSummery.GenerateStatuses()[i].Status[0];
-            dataset2[i] = programSummery.GenerateStatuses()[i].Status[1];
-        }
-        IDataset<int> Dataset1 = new BarDataset<int>(dataset1)
-            {
-                Label = "Good",
-                BackgroundColor = ColorUtil.FromDrawingColor(ChartColors.Green)
-            };
-        IDataset<int> Dataset2 = new BarDataset<int>(dataset2)
-            {
-                Label = "Bad",
-                BackgroundColor = ColorUtil.FromDrawingColor(ChartColors.Red)
-            };
-
-        @* _config2.Data.Labels.AddRange(Months.Take(InitalCount)); *@
-        foreach (var label in programSummery.GenerateStatuses())
-        {
-            _config2.Data.Labels.Add(label.Name);
-        }
-        _config2.Data.Datasets.Add(Dataset1);
-        _config2.Data.Datasets.Add(Dataset2);
-        StateHasChanged();
-
-
     }
-
 }
 
 
 @code {
     private const int InitalCount = 7;
-    private BarConfig? _config2;
-    private Chart? _chart;
 }
 
 @code {
@@ -468,7 +387,7 @@
     public PieConfig _doughnutConfig = new PieConfig
         {
             //make this piechart a doughnut
-            
+
                 Options = new PieOptions
             {
                 Responsive = true,
@@ -487,5 +406,6 @@
         };
     public void config()
     {
+        
     }
 }

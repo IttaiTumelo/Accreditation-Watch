@@ -2,7 +2,7 @@
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BaseController<T, TDto> : ControllerBase where T : BaseEntity, new()  where TDto : BaseEntity
+    public class BaseController<T, TDto> : ControllerBase where T : BaseEntity, new() where TDto : BaseEntity
     {
         protected readonly DataContext _context;
         private readonly T _entity;
@@ -18,10 +18,11 @@
                 .FirstOrDefault(h => h.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 ?.Substring("Bearer ".Length);
             T entity2 = new T();
-            if(entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
+            if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
             User user = AWFunctions.GetDeatailsFromToken(accessToken);
-            
-            History history = new History(){
+
+            History history = new History()
+            {
                 Name = "Get All request",
                 Description = $"User {user.Email} requested all {typeof(T).Name}(s)",
                 UserId = user.Id,
@@ -34,7 +35,7 @@
             var query = _context.Set<T>().AsQueryable();
             //remove entities that have their status set to deleted
             query = query.Where(x => !x.IsDeleted);
-            
+
             if (query is not null)
             {
                 if (query.ToList().Count >= 1)
@@ -58,13 +59,12 @@
                     }
                 }
                 //else return NotFound($"No {typeof(T).Name}(s) found");
-                
-                        
-                else{
+                else
+                {
                     history.ActionResult = "Success";
-                 _context.Histories.Add(history);
-                        _context.SaveChanges();
-                         return Ok(new List<T>());
+                    _context.Histories.Add(history);
+                    _context.SaveChanges();
+                    return Ok(new List<T>());
                 }
             }
             else
@@ -87,10 +87,11 @@
                 .FirstOrDefault(h => h.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 ?.Substring("Bearer ".Length);
             T entity2 = new T();
-            if(entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
+            if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
             User user = AWFunctions.GetDeatailsFromToken(accessToken);
-            
-            History history = new History(){
+
+            History history = new History()
+            {
                 Name = "Get with filters request",
                 Description = $"User {user.Email} requested get get the details of {typeof(T).Name}(s) with the following filters {filters.ToString()}",
                 UserId = user.Id,
@@ -133,11 +134,12 @@
                 .FirstOrDefault(h => h.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 ?.Substring("Bearer ".Length);
             T entity2 = new T();
-            if(entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
+            if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
             User user = AWFunctions.GetDeatailsFromToken(accessToken);
             var query = _context.Set<T>().AsQueryable();
 
-            History history = new History(){
+            History history = new History()
+            {
                 Name = "Create request",
                 Description = $"User {user.Email} requested to add a new {typeof(T).Name} with the following details {entity.ToString()}",
                 UserId = user.Id,
@@ -164,10 +166,11 @@
                 .FirstOrDefault(h => h.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 ?.Substring("Bearer ".Length);
             T entity2 = new T();
-            if(entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
+            if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
             User user = AWFunctions.GetDeatailsFromToken(accessToken);
             var query = _context.Set<T>().AsQueryable();
-            History history = new History(){
+            History history = new History()
+            {
                 Name = "Update request",
                 Description = $"User {user.Email} requested to update a {typeof(T).Name} with the following details {entity.ToString()}",
                 UserId = user.Id,
@@ -179,11 +182,12 @@
             };
             _context.Entry(entity).State = EntityState.Modified;
             MailController mailController = new MailController();
-            await mailController.SendMail(new() { Email = new() { "ittaitumelo@outlook.com"}, Id = entity.Id, Message = $" Table {typeof(T).Name}s has been modified to {entity.ToString()}", Subject="data change", Name="" });
+            await mailController.SendMail(new() { Email = new() { "ittaitumelo@outlook.com" }, Id = entity.Id, Message = $" Table {typeof(T).Name}s has been modified to {entity.ToString()}", Subject = "data change", Name = "" });
             await _context.SaveChangesAsync();
             history.ActionResult = $"Success: and email was sent to {user.Email}";
             _context.Histories.Add(history);
-            _context.Histories.Add(new History(){
+            _context.Histories.Add(new History()
+            {
                 Name = $"Email Sent to {user.Email}",
                 Description = $"User {user.Email} was sent an email with the following details {entity.ToString()}",
                 UserId = user.Id,
@@ -204,11 +208,12 @@
                 .FirstOrDefault(h => h.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 ?.Substring("Bearer ".Length);
             T entity2 = new T();
-            if(entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
+            if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
             User user = AWFunctions.GetDeatailsFromToken(accessToken);
             var query = _context.Set<T>().AsQueryable();
 
-            History history = new History(){
+            History history = new History()
+            {
                 Name = "Delete Request",
                 Description = $"User {user.Email} requested to delete a {typeof(T).Name} with the following details {query.FirstOrDefault(x => x.Id == id).ToString()}",
                 UserId = user.Id,
@@ -240,10 +245,11 @@
                 .FirstOrDefault(h => h.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 ?.Substring("Bearer ".Length);
             T entity2 = new T();
-            if(entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
+            if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
             User user = AWFunctions.GetDeatailsFromToken(accessToken);
             var query = _context.Set<T>().AsQueryable();
-            History history = new History(){
+            History history = new History()
+            {
                 Name = "View Deleted Request",
                 Description = $"User {user.Email} requested to view deleted {typeof(T).Name}s",
                 UserId = user.Id,
@@ -277,10 +283,11 @@
                 .FirstOrDefault(h => h.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 ?.Substring("Bearer ".Length);
             T entity2 = new T();
-            if(entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
+            if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
             User user = AWFunctions.GetDeatailsFromToken(accessToken);
             var query = _context.Set<T>().AsQueryable();
-            History history = new History(){
+            History history = new History()
+            {
                 Name = "Undelete Request",
                 Description = $"User {user.Email} requested to undelete a {typeof(T).Name} with the following details {query.FirstOrDefault(x => x.Id == id).ToString()}",
                 UserId = user.Id,

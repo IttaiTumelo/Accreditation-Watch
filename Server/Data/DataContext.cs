@@ -50,12 +50,7 @@ namespace Accreditation_Watch.Server.Data
                 new School { Id = 9, Name = "School of Public Health" },
                 new School { Id = 10, Name = "School of Social Work" }
                 );
-            modelBuilder.Entity<Status>().HasData(
-                new Status { Id = 1, Name = "Pending" },
-                new Status { Id = 2, Name = "Approved" },
-                new Status { Id = 3, Name = "Rejected" },
-                new Status { Id = 4, Name = "Expired" }
-                );
+
             // modelBuilder.Entity<Department>().HasData(
             //     new Department { Id = 1, Name = "Computer Science", SchoolId = 1 },
             //     new Department { Id = 2, Name = "Mathematics", SchoolId = 1 },
@@ -114,9 +109,10 @@ namespace Accreditation_Watch.Server.Data
                  ); 
             
             modelBuilder.Entity<Role>().HasData(
-                new Role { Id = 1, Name = "Admin" },
-                new Role { Id = 2, Name = "User" },
-                new Role { Id = 3, Name = "Developer" }
+                new Role { Id = 1, Name = "Basic" },
+                new Role { Id = 2, Name = "Secondary" },
+                new Role { Id = 3, Name = "Directors" },
+                new Role { Id = 4, Name = "Developer" }
                  );
 
             modelBuilder.Entity<TaskType>().HasData(
@@ -137,12 +133,12 @@ namespace Accreditation_Watch.Server.Data
         public DbSet<ResultType> ResultTypes { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<School> Schools { get; set; }
-        public DbSet<Status> Statuses { get; set; }
-        public DbSet<Shared.Entities.AWTask> Tasks { get; set; }
+        public DbSet<AWTask> AWTask { get; set; }
         public DbSet<TaskType> TaskTypes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<History> Histories { get; set; }
         public DbSet<PendingImplimentation> PendingImplimentations { get; set; }
+        public DbSet<Problem> Problems { get; set; }
 
     }
 }

@@ -14,4 +14,8 @@ namespace Accreditation_Watch.Shared.Entities
             return new() { "Departments" };
         }
     }
+    public class CreateSchoolDto : School
+    {
+        public int? Id { get; set; }
+    }
 }

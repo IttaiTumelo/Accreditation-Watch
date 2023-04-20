@@ -1,39 +1,76 @@
 @page "/departments"
 @inject IDepartmentService DepartmentService
+@inject IProgramService ProgramService
 
-<h3>Departments</h3>
+<div class="row">
+    <div class="col-4">
+        <h3>Departments</h3>
+    </div>
+    <div class="col-8">
+        <div class="row">
+            <button @onclick="() => NewDepartment()" class="btn  btn-info col mx-1">New Department</button>
+        </div>
+    </div>
+</div>
 @if (DepartmentService.Objects == null)
-     {
-          <Loading />
-     }
-     else if (DepartmentService.Objects.Count == 0)
-     {
-          <p>No programs found.</p>
-     }
-     else
-     {
-          @* <div class="grid"> *@
-            <div class="grid">
-<QuickGrid Items="DepartmentService.Objects.AsQueryable()" Theme="default" Virtualize="true" >
-    <PropertyColumn Property="p => p.Id" Sortable="true" />
-    <PropertyColumn Property="p => p.Name" Sortable="true" />
-    <PropertyColumn Property="p => p.Programs.Count" Sortable="true" Title="Number of Programs" />
-    <TemplateColumn Title="Actions">
-        <button class="btn btn-info">Edit</button>
-        <button class="btn btn-info">Delete</button>
-        @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
-    </TemplateColumn>
-</QuickGrid>
-                </div>
-
-          @* </div> *@
-
-     }
+{
+    <Loading />
+}
+else if (DepartmentService.Objects.Count == 0)
+{
+    <p>No programs found.</p>
+}
+else
+{
+    <QuickGrid Items="itemsQueryable" Pagination="@pagination" Theme="default" Virtualize="true">
+        <PropertyColumn Property="p => p.Id" Sortable="true" />
+        <PropertyColumn Property="p => p.Name" Sortable="true" />
+        <PropertyColumn Property="p => p.Programs.Count" Sortable="true" Title="Programs" />
+        <TemplateColumn Title="Actions">
+            <button disabled class="btn btn-info">Edit</button>
+            @if (ProgramService.Objects.Where(x => x.DepartmentId == context.Id).ToList().Count ==0)
+            {
+                <button @onclick="()=> Delete(context)" class="btn btn-danger">Delete</button>
+            }
+            @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
+        </TemplateColumn>
+    </QuickGrid>
+    <Paginator Value="@pagination" />
+}
+<NewDepartment IsVisible="@NewDepartmentVisibility" />
 
 @code {
-
+    public string nameFilter;
+    public bool NewDepartmentVisibility { get; set; } = false;
+    PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
     protected override async Task OnInitializedAsync()
     {
         await DepartmentService.Get();
+        itemsQueryable = DepartmentService.Objects.AsQueryable();
+    }
+    IQueryable<Department>? itemsQueryable;
+    IQueryable<Department> FilteredSchools
+    {
+        get
+        {
+            var result = itemsQueryable?.Where(c => c.Id <= 2000);
+            if (!string.IsNullOrEmpty(nameFilter))
+            {
+                result = result.Where(c => c.Name.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+            return result;
+        }
+    }
+    async Task Delete(Department department)
+    {
+        await DepartmentService.Delete(department.Id);
+        itemsQueryable = DepartmentService.Objects.AsQueryable();
+        StateHasChanged();
+    }
+    Task NewDepartment()
+    {
+        NewDepartmentVisibility = NewDepartmentVisibility ? false : true;
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 }

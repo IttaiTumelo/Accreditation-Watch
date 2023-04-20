@@ -1,7 +1,5 @@
-global using Accreditation_Watch.Shared.Entities.DTOs;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
-global using Accreditation_Watch.Shared.Entities.DTOs;
 global using Accreditation_Watch.Shared.Entities;
 global using Accreditation_Watch.Server.Data;
 global using Swashbuckle.AspNetCore.SwaggerGen;
@@ -13,12 +11,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
 builder.Services.AddDbContextPool<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -72,7 +67,6 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 
 app.MapRazorPages();
 app.MapControllers();

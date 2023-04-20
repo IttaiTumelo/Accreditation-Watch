@@ -1,6 +1,4 @@
-﻿global using Accreditation_Watch.Shared.Entities.DTOs;
-
-namespace Accreditation_Watch.Shared.Entities
+﻿namespace Accreditation_Watch.Shared.Entities
 {
     public class BaseEntity
     {
@@ -12,12 +10,13 @@ namespace Accreditation_Watch.Shared.Entities
         {
             return new() { };
         }
-
         public virtual void InitializeFromDto(BaseEntityDto dto)
         {
         }
-
         public virtual bool RequiresAuthentication()=>true;
-        
+    }
+    public class BaseEntityDto
+    {
+        public string Name { get; set; }
     }
 }

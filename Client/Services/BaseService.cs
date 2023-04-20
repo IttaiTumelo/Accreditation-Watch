@@ -75,6 +75,11 @@ namespace Accreditation_Watch.Client.Services
             if (!request.IsSuccessStatusCode) throw new Exception(request.ReasonPhrase);
             var response = await request.Content.ReadFromJsonAsync<T>();
             if (response is null) throw new Exception("No object was updated");
+            //Update the local data
+            var obj = Objects.FirstOrDefault(o => o.Id == response.Id);
+            if (obj != null) Objects.Remove(obj);
+            Objects.Add(response);
+            //return response
             return response;
         }
     }

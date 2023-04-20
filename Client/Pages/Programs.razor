@@ -3,7 +3,7 @@
 @inject IDepartmentService DepartmentService
 @inject ISchoolService SchoolService
 @using Microsoft.AspNetCore.Components.QuickGrid
-@inject NavigationManager     NavigationManager;
+@inject NavigationManager  NavigationManager;
 <style>
 
 </style>
@@ -14,12 +14,30 @@
      <div class="col-8">
          <div class="row">
             <button @onclick="() => NewProgram()" class="btn  btn-info col mx-1">New Program</button>
-            <button @onclick="() => NewDepartment()" class="btn  btn-info col mx-1">New Department</button>
-            <button @onclick="() => NewSchool()" class="btn  btn-info col mx-1">Add School</button>
             <button @onclick="ViewDepartment" class="btn  btn-info col mx-1">View Departments</button>
             <button @onclick="ViewSchool" class="btn  btn-info col mx-1">School School</button>
          </div>
      </div>
+</div>
+
+
+<div class="row">
+    <div class="col"></div>
+    <div class="col"></div>
+    <div class="col"></div>
+    <div class="col"></div>
+    <div class="col">
+        
+        <select type="text" @bind="@departmentId" class="form-control" placeholder="All">
+            <option  value="0">All</option>
+            @foreach (var department in DepartmentService.Objects)
+            {
+            <option @onclick="()=>{departmentId=department.Id; StateHasChanged();}" value="@department.Id">@department.Name</option>
+            }
+        </select>
+    </div>
+
+    
 </div>
 <div class="row parent">
      <div class="col ">
@@ -34,9 +52,15 @@
                else
                {
                     @* <div class="grid"> *@
-                    <QuickGrid Items="ProgramService.Objects.AsQueryable()" Pagination="@pagination" Theme="default" >
-                <PropertyColumn Property="p => p.Department.Name" Sortable="true" Title="Department" />
-                <PropertyColumn Property="p => p.Name" Sortable="true" Title="Program Name" />
+            <QuickGrid Items="FilteredPrograms" Pagination="@pagination" Theme="default">
+                <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
+                    <ColumnOptions>
+                        <div class="search-box">
+                            <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Country name..." />
+                        </div>
+                    </ColumnOptions>
+                </PropertyColumn>
+                @*<PropertyColumn Property="p => p.Department.Name" Sortable="true" Title="Department" />*@
                          @*<PropertyColumn Property="p => p.Status.Name" Sortable="true" />*@
                          <PropertyColumn Property="p => p.ValidFrom" Sortable="true" />
                          <PropertyColumn Property="p => p.ValidTo" Sortable="true" />
@@ -59,8 +83,6 @@
           <ProgramDetails Program="@SelectedProgram" IsVisible="@ProgramVisibility" />
      }
 <NewProgram  IsVisible="@NewProgramVisibility" />
-<NewDepartment IsVisible="@NewDepartmentVisibility" />
-<NewSchool IsVisible="@NewSchoolVisibility" />
 
 
 @* @if(_config != null){
@@ -81,12 +103,37 @@
 } *@
 
 @code {
+
+    public int departmentId;
+    IQueryable<AWProgram>? itemsQueryable;
+
+    IQueryable<AWProgram> FilteredPrograms
+    {
+        get
+        {
+            var result = itemsQueryable?.Where(c => c.Id <= 2000);
+
+            if (!string.IsNullOrEmpty(nameFilter))
+            {
+                result = result.Where(c => c.Name.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
+
+            }
+            if (departmentId != 0) result = result.Where(c => c.DepartmentId == departmentId);
+
+            //if (minMedals > 0)
+            //{
+            //    result = result.Where(c => c.Medals.Total >= minMedals);
+            //}
+
+            return result;
+        }
+    }
+
     public bool visible = false;
     public bool school = true;
     public bool ProgramVisibility { get; set; } = false;
     public bool NewProgramVisibility { get; set; } = false;
-    public bool NewSchoolVisibility { get; set; } = false;
-    public bool NewDepartmentVisibility { get; set; } = false;
+    public string nameFilter;
     Task ShowDetails(AWProgram program)
     {
         ResetAll();
@@ -103,20 +150,8 @@
         StateHasChanged();
         return Task.CompletedTask; 
     }
-    Task NewSchool()
-    {
-        ResetAll();
-        NewSchoolVisibility = NewSchoolVisibility ? false : true;
-        StateHasChanged();
-        return Task.CompletedTask;
-    }
-    Task NewDepartment()
-    {
-        ResetAll();
-        NewDepartmentVisibility = NewDepartmentVisibility ? false : true;
-        StateHasChanged();
-        return Task.CompletedTask;
-    }
+
+
     Task Update(AWProgram program)
     { 
         ResetAll();
@@ -126,7 +161,7 @@
     }
     void ResetAll()
     {
-        ProgramVisibility = NewProgramVisibility = NewSchoolVisibility = NewDepartmentVisibility = false;
+        ProgramVisibility = NewProgramVisibility = false;
         StateHasChanged();
     }
     Task ViewDepartment()
@@ -150,6 +185,7 @@ protected override async void OnInitialized()
           await ProgramService.Get();
         await SchoolService.Get();
         await DepartmentService.Get();
+        itemsQueryable = ProgramService.Objects.AsQueryable();
           StateHasChanged();
     _config = new PieConfig
     {

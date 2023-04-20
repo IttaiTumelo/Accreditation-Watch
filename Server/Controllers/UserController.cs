@@ -1,11 +1,4 @@
-﻿using Accreditation_Watch.Shared.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.X509;
-using System.Numerics;
-using System.Security.Policy;
-
-namespace Accreditation_Watch.Server.Controllers
+﻿namespace Accreditation_Watch.Server.Controllers
 {
     public class UserController : BaseController<User, UserDto>
     {

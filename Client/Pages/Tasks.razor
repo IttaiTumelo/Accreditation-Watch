@@ -1,6 +1,63 @@
 ﻿@page "/tasks"
+@inject IAWTaskService AWTaskService   
+@inject IProblemService ProblemService
 <h3>Tasks</h3>
 
+<QuickGrid Items="FilteredPrograms" Pagination="@pagination" Theme="default">
+    <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Task Name..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="p => p.Assignee.Name" Sortable="true" Title="Assigned by" />
+    <PropertyColumn Property="p => p.AssignedTo.Name" Sortable="true" Title="Assigned to" />
+    <PropertyColumn Property="p => p.Due" Sortable="true" />
+    <PropertyColumn Property="p => p.Type" Sortable="true" />
+    <PropertyColumn Property="p => p.Document.Path" Sortable="true" />
+    <PropertyColumn Property="p => p.Problem.Description" Sortable="true" />
+    <PropertyColumn Property="p => p.Problem.IsResolved" Sortable="true" Title="Duration" />
+    @*<TemplateColumn Title="Actions">
+        <button @onclick="@(() => ShowDetails(context))" class="btn btn-info">Details</button>
+    </TemplateColumn>*@
+</QuickGrid>
+@* </div> *@
+
+<Paginator Value="@pagination" />
+
 @code {
+    public IQueryable<AWTask>? itemsQueryable;
+    public string nameFilter = "";
+    PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+
+
+    IQueryable<AWTask> FilteredPrograms
+    {
+        get
+        {
+            if (itemsQueryable == null)
+            {
+                itemsQueryable = AWTaskService.Objects.AsQueryable();
+            }
+
+            var filtered = itemsQueryable;
+
+            if (!string.IsNullOrWhiteSpace(nameFilter))
+            {
+                filtered = filtered.Where(p => p.Name.Contains(nameFilter));
+            }
+
+            return filtered;
+        }
+    }
+
+
+    protected override async void OnInitialized()
+    {
+        await AWTaskService.Get();
+        //await ProblemService.Get();
+        StateHasChanged();
+    }
 
 }

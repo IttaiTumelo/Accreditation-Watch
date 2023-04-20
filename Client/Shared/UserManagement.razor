@@ -1,4 +1,5 @@
 ﻿@inject IUserService UserService
+@inject IRoleService RoleService
 @attribute [Authorize(Roles = "Admin")]
 <h3>User Management</h3>
 <div class="row">
@@ -15,13 +16,21 @@
         <QuickGrid Items="Users.AsQueryable()" Theme="default" Virtualize="true">
             <PropertyColumn Property="p => p.Id" Sortable="true" />
             <PropertyColumn Property="p => p.Name" Sortable="true" />
-            <PropertyColumn Property="p => p.Role" Sortable="true" />
-            <PropertyColumn Property="p => p.Role" Sortable="true" />
-            <PropertyColumn Property="p => p.Role" Sortable="true" />
-         
-            <TemplateColumn Title="Actions">
-                @*<button @onclick="@(() => ShowDetails(context))" class="btn btn-info">Details</button>*@
-                @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
+            @*<PropertyColumn Property="p => p.Role.Name" Sortable="true" />*@
+            <TemplateColumn Title="Role">
+                <!-- Split dropend button -->
+                
+                <select type="text" @bind="@context.Role.Id" class="form-control" placeholder="Basic">
+                    @foreach (var role in RoleService.Objects)
+                    {
+                        <option @onclick="()=>{SetRole(context, role);}" value="@role.Id">@role.Name</option>
+                    }
+                </select>
+
+            </TemplateColumn>
+            <TemplateColumn Title="Role">
+                <!-- Split dropend button -->
+                
             </TemplateColumn>
         </QuickGrid>
     </div>
@@ -67,6 +76,8 @@
 
 
 @code {
+    public string state { get; set; } = "disabled";
+    public int roleId { get; set; }
     public bool IsVisible { get; set; } = false;
     public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
     public string SuccessMessage { get; set; } = "";
@@ -79,6 +90,7 @@
     public List<User> Users { get; set; } = new();
     protected override async Task OnInitializedAsync()
     {
+        await RoleService.Get();
         Users = await UserService.Get();
         StateHasChanged();
     }
@@ -94,4 +106,11 @@
         Users = await UserService.Get();
         StateHasChanged();
     }
+    async Task SetRole(User user,Role role)
+    {
+        user.Role = role;
+        await UserService.Update(user);
+        StateHasChanged();
+    }
+
 }

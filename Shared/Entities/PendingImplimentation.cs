@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Accreditation_Watch.Shared.Entities
+﻿namespace Accreditation_Watch.Shared.Entities
 {
     public class PendingImplimentation : BaseEntity
     {
         public ProgressStatus Status { get; set; } = ProgressStatus.Pending;
+    }
+    public class PendingImplimentationDto : PendingImplimentation
+    {
+        public int? Id = null;
     }
 
     public enum ProgressStatus
@@ -19,6 +17,5 @@ namespace Accreditation_Watch.Shared.Entities
         Completed,
         Researching,
         Approved
-        
     }
 }
