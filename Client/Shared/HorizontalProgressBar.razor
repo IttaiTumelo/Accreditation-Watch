@@ -1,0 +1,55 @@
+<div id="@Visibility" class="d-flex justify-content-center align-items-center">
+        <div style="background-color : #fff; border-radius: 10px; width: 1000px" class="p-5">
+          <div class="row">
+               <h3 class="col">Add User</h3>
+               @* <div class="col-1"><button @onclick="Close()" class=" btn-close btn-danger"></button></div> *@
+          </div>
+          <p class="text-success">@SuccessMessage</p>
+        <span class="text-danger">@ErrorMessage</span>
+        <div id="@UpdatingResults" class="d-flex justify-content-center align-items-center">
+            <div class="loading-section @StyleOne() p-5 " style="width:50%; background-color : #fff; border-radius: 10px;">
+                <p>Processes Document ...</p>
+                <div class="progress-container">
+                    <div class="progress-bar" style="@_progressBarStyle"></div>
+                </div>
+                <p class="col">@jobDiscription</p>
+            </div>
+        </div>
+        </div>
+</div>
+
+@code {
+     [Parameter]
+     public EventCallback OnClick { get; set; }
+     [Parameter]
+     public string Visibility { get; set; }
+     [Parameter]
+     public string SuccessMessage{ get; set; }
+     [Parameter]
+     public string ErrorMessage{ get; set; }
+     [Parameter]
+     public string UpdatingResults{ get; set; }
+     [Parameter]
+     public string jobDiscription{ get; set; }
+     [Parameter]
+     public string _progressBarStyle{ get; set; }
+     public string StyleOne()
+     {
+         if (Visibility == "d-none")
+         {
+             return "d-none";
+         }
+         else
+         {
+             return "d-flex";
+         }
+     }
+     public async Task Close()
+     {
+         await OnClick.InvokeAsync();
+     }
+     public bool IsVisible { get; set; } = false;
+     @* public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+     public string SuccessMessage { get; set; } = ""; *@
+     
+}

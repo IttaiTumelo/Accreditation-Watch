@@ -24,5 +24,15 @@
             await _context.SaveChangesAsync();
             return Ok(user);
         }
+        [HttpPut("updateUserRole/")]
+        public async Task<ActionResult<User>> UpdateRole(User user)
+        {
+            var userToUpdate = _context.Users.FirstOrDefault(x => x.Id == user.Id);
+            if (userToUpdate is null) return BadRequest("User not found");
+            userToUpdate.RoleId = user.RoleId;
+            userToUpdate.Role = _context.Roles.FirstOrDefault(x => x.Id == user.RoleId);
+            await _context.SaveChangesAsync();
+            return Ok(userToUpdate);
+        }
     }
 }

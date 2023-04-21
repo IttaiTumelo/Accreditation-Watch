@@ -91,7 +91,7 @@ namespace Accreditation_Watch.Client.Services
         {
 
             await InitialiseAuthState();
-            var groupClaim = _user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GroupSid);
+            var groupClaim = _user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid);
 
             if (groupClaim != null)
             {
@@ -100,7 +100,7 @@ namespace Accreditation_Watch.Client.Services
                 // convert grouptId to int and return in 
                 return int.Parse(groupId);
             }
-            else throw new Exception("Invalid user id");
+            else throw new Exception("AS: Invalid user id");
             ;
         }
 

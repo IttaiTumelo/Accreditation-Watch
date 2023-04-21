@@ -1,11 +1,4 @@
 ﻿using Accreditation_Watch.Shared.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Accreditation_Watch.Shared.Objects
 {
@@ -37,10 +30,10 @@ namespace Accreditation_Watch.Shared.Objects
             else return false;
         }
 
-        public List<string> GenerateSummaries()
+        public List<Problem> GenerateSummaries()
         {
             // A list to store the summaries
-            List<string> summaries = new List<string>();
+            List<Problem> summaries = new();
 
             // A threshold to determine if a program is about to expire
             int daysThreshold = 30;
@@ -49,32 +42,36 @@ namespace Accreditation_Watch.Shared.Objects
             foreach (var program in _programs)
             {
                 // A string to store the summary for the current program
-                string summary = "";
+                Problem problem = new();
+                problem.Program = program;
+                problem.Description = "";
+                problem.Name = program.Name;
+                problem.AWProgramId = program.Id;
 
                 // Check if the program is accredited
                 if (!program.IsAccredited)
                 {
                     // If not, add a warning message to the summary
-                    summary += $"The program {program.Name} is not accredited.\n";
+                    problem.Description += $"The program {program.Name} is not accredited.\n";
                 }
 
                 // Check if the program is valid
                 if (program.ValidTo < DateTime.Today)
                 {
                     // If not, add an error message to the summary
-                    summary += $"The program {program.Name} has expired on {program.ValidTo.ToShortDateString()}.\n";
+                    problem.Description += $"The program {program.Name} has expired on {program.ValidTo.ToShortDateString()}.\n";
                 }
                 else if (program.ValidTo - DateTime.Today <= TimeSpan.FromDays(daysThreshold))
                 {
                     // If it is about to expire, add a warning message to the summary
-                    summary += $"The program {program.Name} is about to expire on {program.ValidTo.ToShortDateString()}.\n";
+                    problem.Description += $"The program {program.Name} is about to expire on {program.ValidTo.ToShortDateString()}.\n";
                 }
 
                 // Check if the summary is not empty
-                if (summary != "")
+                if (problem.Description != "")
                 {
                     // If it is not, add it to the list of summaries
-                    summaries.Add(summary);
+                    summaries.Add(problem);
                 }
             }
 
@@ -121,5 +118,6 @@ namespace Accreditation_Watch.Shared.Objects
         public int[] Status { get; set; }
         public string Name { get; set; }
     }
+
 
 }

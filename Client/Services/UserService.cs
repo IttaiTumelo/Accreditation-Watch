@@ -28,5 +28,25 @@ namespace Accreditation_Watch.Client.Services
                 throw new Exception(request.ReasonPhrase);
             }
         }
-    }
+
+          public Task<User> UpdateRole(User dto)
+          {
+                var request = _httpClient.PutAsJsonAsync<User>($"api/{typeof(User).Name}/updateUserRole", dto);
+                if (request.Result.IsSuccessStatusCode)
+                {
+                    var response = request.Result.Content.ReadFromJsonAsync<User>().Result;
+                    if (response != null)
+                    {
+                        Objects.Remove(Objects.First(o => o.Id == response.Id));
+                        Objects.Add(response);
+                        return Task.FromResult(response);
+                    }
+                    else return Task.FromResult<User>(null);
+                }
+                else
+                {
+                    throw new Exception(request.Result.ReasonPhrase);
+                }
+          }
+     }
 }

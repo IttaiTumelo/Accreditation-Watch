@@ -1,0 +1,126 @@
+@inject IUserService UserService
+@inject IProblemService ProblemService
+@inject IAWTaskService AWTaskService
+@inject IProgramService ProgramService
+@inject IAuthService AuthService
+    <div id="@Visibility" class="d-flex justify-content-center align-items-center">
+        <div style="background-color : #fff; border-radius: 10px;" class="p-5">
+            <div class="row">
+                <div class="col-11"><h4>Create Task</h4></div>
+                <div class="col-1"><button @onclick="()=>Close()" class=" btn-close"></button></div>
+            </div>
+                <div class="row">
+                    <div class="col">
+                        <h5>Basic Task Information</h5>
+                        
+                        <div class="form-group">
+                            <label for="program-name">Select Issue or create Issue</label>
+                            <InputSelect @bind-Value="newTask.ProblemId" class="form-select my-3" aria-label="Default select example" >
+                                <option @onclick="LoadEverything" disabled value="0">Select Already Existing Issues</option>
+                                @if (ProblemService.Objects is not null)
+                                {
+                                    @foreach (var item in ProblemService.Objects)
+                                    {
+                                        <option  value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </InputSelect>
+                            <textarea @bind="newTask.Description" class="form-control" placeholder="Enter the description of the task here" />
+                        </div>
+                        <div class="form-group">
+                            <label for="program-name">Task Name</label>
+                            <input type="text" class="form-control" id="program-name" @bind="newTask.Name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="program-name">Program</label>
+                            <input @bind="newTask.Problem.Program.Name" type="text" class="form-control" id="program-name" placeholder="Program Name"  /> @*need to be bound to something*@
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h5>Assignment Details</h5>
+                        <div class="form-group">
+                            <label for="program-name">Assigned to</label>
+                            <InputSelect @bind-Value="newTask.AssignedTo.Id" class="form-select" aria-label="Default select example" >
+                                @if (UserService.Objects is not null)
+                                {
+                                    @foreach (var item in UserService.Objects)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </InputSelect>
+                         </div>
+                        <div class="form-group">
+                            <label for="program-name">Deadline</label>
+                              <input type="date" class="form-control" id="program-name" @bind="newTask.Due" />
+                        </div>
+
+                        <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                              <label class="form-check-label" for="flexCheckDefault">
+                                   Check this box if you want to notify the user
+                              </label>
+                         </div>
+                         <button class="col-12 btn btn-outline-primary" @onclick="LoadEverything">Auto Complete</button>
+                       
+                    </div>
+                    <button class="btn btn-info col-12 m-2 px-3" @onclick="Create">Create Task</button>
+
+                </div>
+        </div>
+    </div>
+
+@code {
+     bool UsingProblemName { get; set; } = false;
+     AWTaskDto newTask = new AWTaskDto();
+     [Parameter]
+     public EventCallback OnClose { get; set; }
+    [Parameter]
+    public AWProgram Program { get; set; } = new();
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    Task Close()
+    {
+          IsVisible = false;
+          StateHasChanged();
+          return OnClose.InvokeAsync();
+    }
+
+    protected override async void OnInitialized()
+    {
+          await ProgramService.Get();
+          await UserService.Get();
+          await ProblemService.Get();
+          await AWTaskService.Get();
+          StateHasChanged();
+    }
+    void LoadEverything(){
+          if(newTask.ProblemId != 0)
+          {
+               newTask.Problem = ProblemService.Objects.FirstOrDefault(c => c.Id == newTask.ProblemId);
+               newTask.Description = newTask.Problem.Description;
+               newTask.Name = newTask.Problem.Name;
+               newTask.Problem.Program.Name = newTask.Problem.Name;
+               
+          }
+          StateHasChanged();
+    }
+     async Task Create()
+     {
+          await AuthService.InitialiseAuthState();
+          var userId = await AuthService.GetId();
+          newTask.AssignedTo=UserService.Objects.First(x=>x.Id== newTask.AssignedTo.Id);
+          newTask.AssigneeId=userId;
+          newTask.AssignedToId=newTask.AssignedTo.Id;
+          newTask.AssignedTo=null;
+          newTask.Assignee = null;
+          newTask.Problem = null;
+            AWTaskService.Create(newTask);
+          newTask.AssignedTo=new();
+          newTask.Assignee = new();
+          newTask.Problem = new();
+            Close();
+     }
+
+}

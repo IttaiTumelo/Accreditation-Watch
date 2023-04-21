@@ -1,9 +1,16 @@
 ﻿@page "/tasks"
 @inject IAWTaskService AWTaskService   
 @inject IProblemService ProblemService
-<h3>Tasks</h3>
+<div class="row">
+    <div class="col-11">
+        <h3>Tasks</h3>
+    </div>
+    <div class="col-1">
+        <button @onclick="HowAddTask" class="btn btn-light">Add Task</button>
+    </div>
+</div>
 
-<QuickGrid Items="FilteredPrograms" Pagination="@pagination" Theme="default">
+<QuickGrid Items="FilteredTasks" Pagination="@pagination" Theme="default">
     <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
         <ColumnOptions>
             <div class="search-box">
@@ -14,33 +21,65 @@
     <PropertyColumn Property="p => p.Assignee.Name" Sortable="true" Title="Assigned by" />
     <PropertyColumn Property="p => p.AssignedTo.Name" Sortable="true" Title="Assigned to" />
     <PropertyColumn Property="p => p.Due" Sortable="true" />
-    <PropertyColumn Property="p => p.Type" Sortable="true" />
-    <PropertyColumn Property="p => p.Document.Path" Sortable="true" />
+    @* <PropertyColumn Property="p => p.Type" Sortable="true" /> *@
+    <PropertyColumn Property="p => p.IsCompleted" Sortable="true" />
     <PropertyColumn Property="p => p.Problem.Description" Sortable="true" />
     <PropertyColumn Property="p => p.Problem.IsResolved" Sortable="true" Title="Duration" />
-    @*<TemplateColumn Title="Actions">
-        <button @onclick="@(() => ShowDetails(context))" class="btn btn-info">Details</button>
-    </TemplateColumn>*@
+    <TemplateColumn Title="Actions">
+        @if(!context.IsCompleted)
+        {
+            <button @onclick="@(() => Complete(context))" class="btn btn-info">Complete</button>
+        }
+        
+            <button disabled @onclick="@(() => ShowDetails(context))" class="btn btn-info">Details</button>
+            <button disabled @onclick="@(() => Edit(context))" class="btn btn-info">Edit</button>
+        
+    </TemplateColumn>
 </QuickGrid>
 @* </div> *@
 
 <Paginator Value="@pagination" />
+<AddTask IsVisible="@AddTaskVisibility" OnClose="HideAddTask" />
 
 @code {
+    async Task Complete(AWTask task)
+    {
+        task.IsCompleted = true;
+        await AWTaskService.Update(task);
+        await AWTaskService.Get(true);
+        StateHasChanged();
+    }
+    async Task ShowDetails(AWTask task)
+    {
+        throw new NotImplementedException();
+    }
+    async Task Edit(AWTask task)
+    {
+        throw new NotImplementedException();
+    }
+    public bool AddTaskVisibility { get; set; } = false;
+    public void HowAddTask()
+    {
+        AddTaskVisibility = true;
+    }
+    async Task HideAddTask()
+    {
+        AddTaskVisibility = false;
+        await AWTaskService.Get(true);
+        OnInitialized();
+    }
     public IQueryable<AWTask>? itemsQueryable;
     public string nameFilter = "";
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
 
 
-    IQueryable<AWTask> FilteredPrograms
+    IQueryable<AWTask> FilteredTasks
     {
+        
         get
         {
-            if (itemsQueryable == null)
-            {
-                itemsQueryable = AWTaskService.Objects.AsQueryable();
-            }
-
+           
+            itemsQueryable = AWTaskService.Objects.AsQueryable();
             var filtered = itemsQueryable;
 
             if (!string.IsNullOrWhiteSpace(nameFilter))

@@ -1,23 +1,24 @@
-﻿namespace Accreditation_Watch.Shared.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Accreditation_Watch.Shared.Entities
 {
     public  class Problem : BaseEntity
     {
         public string Description { get; set; } = string.Empty;
         public bool IsResolved { get; set; } = false;
-        public AWProgram? Program { get; set; }
+        public int AWProgramId { get; set; }
+        [NotMapped]
+        public AWProgram? Program { get; set; } = new();
         public bool Equals(ProblemDto other)
         {
-            return base.Equals(other) &&
-                Description.Equals(other.Description) &&
-                IsResolved == other.IsResolved &&
-                Program == other.Program;
+            return Description.Equals(other.Description);
         }
     }
 
     public class ProblemDto : Problem
     {
         public int? Id { get; } = 0;
-        public AWProgram? Program = null;
+        public readonly AWProgram? Program = null;
     }
     
 }

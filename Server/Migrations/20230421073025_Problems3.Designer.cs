@@ -4,6 +4,7 @@ using Accreditation_Watch.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Accreditation_Watch.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230421073025_Problems3")]
+    partial class Problems3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,9 +145,6 @@ namespace Accreditation_Watch.Server.Migrations
 
                     b.Property<DateTime>("Due")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -539,9 +539,6 @@ namespace Accreditation_Watch.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AWProgramId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -556,7 +553,12 @@ namespace Accreditation_Watch.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ProgramId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProgramId");
 
                     b.ToTable("Problems");
                 });
@@ -904,6 +906,15 @@ namespace Accreditation_Watch.Server.Migrations
                         .HasForeignKey("SchoolId");
 
                     b.Navigation("School");
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Problem", b =>
+                {
+                    b.HasOne("Accreditation_Watch.Shared.Entities.AWProgram", "Program")
+                        .WithMany()
+                        .HasForeignKey("ProgramId");
+
+                    b.Navigation("Program");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.User", b =>

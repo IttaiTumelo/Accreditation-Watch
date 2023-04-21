@@ -4,7 +4,7 @@
 <h3>Analytics</h3>
 
 <div class="row">
-    <div class="col-10">
+    <div class="">
         <h3 class="d-flex">
             <img src="/images/triangle.svg" width="20" class="m-2" />
             Program Summeries
@@ -17,7 +17,7 @@
                         <li>
                             <div class="row">
                                 <div class="col">
-                                    <h5>@messages[i] </h5>
+                                    <h5>@messages[i].Description </h5>
                                 </div>
                             </div>
                         </li>
@@ -34,16 +34,15 @@
             </ol>
         </div>
         <div class="col">
-            <span @onclick="SetUnlimited" class="badge rounded-pill bg-dark p-2 float-end">View All</span>
+            <span @onclick="SetUnlimited" class="badge rounded-pill bg-dark p-2 float-end">@viewprogram</span>
         </div>
-    </div>
-    <div class="col-2">
     </div>
 </div>
 
 
 @if (ProblemService.Objects.Count > 0)
 {
+    <h3>Issues</h3>
     <QuickGrid Items="FilteredProblems" Pagination="@pagination" Theme="default">
         <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
             <ColumnOptions>
@@ -56,25 +55,34 @@
         @*<PropertyColumn Property="p => p.Status.Name" Sortable="true" />*@
         <PropertyColumn Property="p => p.IsResolved" Sortable="true" />
         <PropertyColumn Property="p => p.Description" Sortable="true" />
+        <TemplateColumn Title="Program">
+                <p>@ProgramService.Objects.FirstOrDefault(x=>x.Id==context.AWProgramId).Name</p>
+        </TemplateColumn>
         <TemplateColumn Title="Actions">
             @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
         </TemplateColumn>
     </QuickGrid>
     <Paginator Value="@pagination" />  
 }
+else
+{
+    <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button>
+}
 
 
 
 @code {
+    public string viewprogram { get; set;} = "View All";
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
     List<AWProgram>? programs { get; set; } = new();
-    List<string>? messages { get; set; } = new();
+    List<Problem>? messages { get; set; } = new();
     public string nameFilter;
 
     public int limit = 3;
     public void SetUnlimited()
     {
         limit = limit == 3 ? messages.Count: 3;
+        if(limit == 3) viewprogram = " View All"; else viewprogram = "View Less";
         StateHasChanged();
     }
 
@@ -132,6 +140,24 @@
             dataset2[i] = programSummery.GenerateStatuses(false)[i].Status[1];
         }
         StateHasChanged();
+    }
+    Task MakeIssues()
+    {
+        foreach(var issue in messages)
+        {
+            ProblemDto problem = new()
+            {
+                Name = issue.Name,
+                AWProgramId = issue.Program.Id,
+                Description = issue.Description,
+                IsResolved = false
+            };
+            if(!ProblemService.Objects.Any(p => p.Description == problem.Description))
+            {
+                ProblemService.Create(issue);
+            }
+        }
+        return Task.CompletedTask;
     }
 }
 

@@ -16,20 +16,21 @@
         <QuickGrid Items="Users.AsQueryable()" Theme="default" Virtualize="true">
             <PropertyColumn Property="p => p.Id" Sortable="true" />
             <PropertyColumn Property="p => p.Name" Sortable="true" />
+            <PropertyColumn Property="p => p.Email" Sortable="true" />
             @*<PropertyColumn Property="p => p.Role.Name" Sortable="true" />*@
             <TemplateColumn Title="Role">
                 <!-- Split dropend button -->
                 
-                <select type="text" @bind="@context.Role.Id" class="form-control" placeholder="Basic">
+                <select type="text" @bind="@context.RoleId" class="form-control" placeholder="Basic">
                     @foreach (var role in RoleService.Objects)
                     {
-                        <option @onclick="()=>{SetRole(context, role);}" value="@role.Id">@role.Name</option>
+                        <option value="@role.Id">@role.Name</option>
                     }
                 </select>
 
             </TemplateColumn>
-            <TemplateColumn Title="Role">
-                <!-- Split dropend button -->
+            <TemplateColumn Title="Action">
+                <button  @onclick="()=>{SetRole(context);}" class="btn btn-primary">Save</button>
                 
             </TemplateColumn>
         </QuickGrid>
@@ -106,10 +107,9 @@
         Users = await UserService.Get();
         StateHasChanged();
     }
-    async Task SetRole(User user,Role role)
+    async Task SetRole(User user)
     {
-        user.Role = role;
-        await UserService.Update(user);
+        await UserService.UpdateRole(user);
         StateHasChanged();
     }
 

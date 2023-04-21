@@ -9,6 +9,7 @@
     public interface IUserService : IBaseService<User>
     {
         Task<User> Create(UserDto dto);
+        Task<User> UpdateRole(User dto);
     }
     public interface ISchoolService : IBaseService<School> { }
     public interface IRoleService : IBaseService<Role> { }

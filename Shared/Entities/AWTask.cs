@@ -1,25 +1,33 @@
-﻿namespace Accreditation_Watch.Shared.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Accreditation_Watch.Shared.Entities
 {
     public class AWTask : BaseEntity
     {
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; set; }
+        public int? AssigneeId { get; set; }
         public User? Assignee { get; set; }
-        public DateTime Due { get; set; }
+        public DateTime Due { get; set; } = DateTime.Now + TimeSpan.FromDays(7);
         public Progress Progress { get; set; }
         public TaskType? Type { get; set; }
         public AWDocument? Document  { get; set; }
         public ResultType? ResultType { get; set; }
-        public Problem? Problem { get; set; }
-        public User? AssignedTo { get; set; }
+        public int? ProblemId { get; set; }
+        public Problem? Problem { get; set; } = new();
+        public int? AssignedToId { get; set; } = new();
+        public User? AssignedTo { get; set; } = new();
+        public bool IsCompleted { get; set; } = false;
+        public override List<string> RelatedEntities()
+        {
+            return new() { "Assignee", "Type", "Document", "ResultType", "Problem", "AssignedTo" };
+        }
     }
     public class AWTaskDto : AWTask
     {
         public int? Id { get; } = 0;
-        public User? Assignee = null;
         public TaskType? Type = null;
         public AWDocument? Document = null;
         public ResultType? ResultType = null;
-        public AWProgram? Program = null;
     }
     public class TaskType : BaseEntity
     {

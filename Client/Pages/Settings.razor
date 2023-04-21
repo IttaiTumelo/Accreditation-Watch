@@ -119,6 +119,11 @@
                         <img src="/images/department.svg" alt="">
                     </a>
                 </li>
+                <li>
+                    <a @onclick="History" class="nav-link py-3 border-bottom" title="View History and Logs" data-bs-toggle="tooltip" data-bs-placement="right">
+                        <img src="/images/department.svg" alt="">
+                    </a>
+                </li>
             </ul>
             @* <div class="dropdown border-top">
                 <a href="#" class="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle" id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
@@ -181,6 +186,11 @@
     Task Departments()
     {
         SelectedSetting = typeof(DepartmentManagement);
+        return Task.CompletedTask;
+    }
+    Task History()
+    {
+        SelectedSetting = typeof(HistoryAndLogs);
         return Task.CompletedTask;
     }
 }
