@@ -4,6 +4,7 @@ using Accreditation_Watch.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Accreditation_Watch.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230425003133_progress3")]
+    partial class progress3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -300,57 +303,57 @@ namespace Accreditation_Watch.Server.Migrations
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 16,
                             IsDeleted = false,
                             Name = "Requires restructuring"
                         },
                         new
                         {
-                            Id = 9,
-                            IsDeleted = false,
-                            Name = "Sent back to school for restructuring"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            IsDeleted = false,
-                            Name = "back from school"
-                        },
-                        new
-                        {
-                            Id = 11,
+                            Id = 8,
                             IsDeleted = false,
                             Name = "Requires review"
                         },
                         new
                         {
-                            Id = 12,
-                            IsDeleted = false,
-                            Name = "About to expire"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            IsDeleted = false,
-                            Name = "Exipired"
-                        },
-                        new
-                        {
-                            Id = 14,
+                            Id = 9,
                             IsDeleted = false,
                             Name = "Internally reviewed"
                         },
                         new
                         {
-                            Id = 15,
+                            Id = 10,
                             IsDeleted = false,
                             Name = "Externally reviewed"
                         },
                         new
                         {
-                            Id = 16,
+                            Id = 11,
+                            IsDeleted = false,
+                            Name = "About to expire"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            IsDeleted = false,
+                            Name = "Exipired"
+                        },
+                        new
+                        {
+                            Id = 13,
                             IsDeleted = false,
                             Name = "Reaccredited"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            IsDeleted = false,
+                            Name = "Sent back to school for restructuring"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            IsDeleted = false,
+                            Name = "back from school"
                         });
                 });
 
@@ -472,6 +475,7 @@ namespace Accreditation_Watch.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ActionResult")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Date")
@@ -505,52 +509,6 @@ namespace Accreditation_Watch.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Histories");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Note", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AWProgramId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("AWTaskId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProgramId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("State")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AWProgramId");
-
-                    b.HasIndex("AWTaskId");
-
-                    b.ToTable("Notes");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.PendingImplimentation", b =>
@@ -643,6 +601,52 @@ namespace Accreditation_Watch.Server.Migrations
                             Id = 3,
                             IsDeleted = false,
                             Name = "Not_Applicable"
+                        });
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false,
+                            Name = "Basic"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDeleted = false,
+                            Name = "Secondary"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsDeleted = false,
+                            Name = "Directors"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsDeleted = false,
+                            Name = "Developer"
                         });
                 });
 
@@ -799,7 +803,7 @@ namespace Accreditation_Watch.Server.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("Role")
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<string>("Token")
@@ -807,6 +811,8 @@ namespace Accreditation_Watch.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
@@ -903,25 +909,15 @@ namespace Accreditation_Watch.Server.Migrations
                     b.Navigation("School");
                 });
 
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Note", b =>
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.User", b =>
                 {
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AWProgram", null)
-                        .WithMany("Notes")
-                        .HasForeignKey("AWProgramId");
+                    b.HasOne("Accreditation_Watch.Shared.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AWTask", null)
-                        .WithMany("Notes")
-                        .HasForeignKey("AWTaskId");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWProgram", b =>
-                {
-                    b.Navigation("Notes");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWTask", b =>
-                {
-                    b.Navigation("Notes");
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Department", b =>

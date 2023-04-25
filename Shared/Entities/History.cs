@@ -8,7 +8,7 @@ namespace Accreditation_Watch.Shared.Entities
           public Severity Severity {get; set;}
           public string InitialState {get; set;}
           public string FinalState {get; set;}
-          public string ActionResult {get; set;}
+          public string? ActionResult {get; set;}
 
      }
 

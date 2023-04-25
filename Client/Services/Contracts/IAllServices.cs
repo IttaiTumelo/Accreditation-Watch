@@ -12,7 +12,7 @@
         Task<User> UpdateRole(User dto);
     }
     public interface ISchoolService : IBaseService<School> { }
-    public interface IRoleService : IBaseService<Role> { }
     public interface IAWTaskService : IBaseService<AWTask> { }
     public interface IProblemService : IBaseService<Problem> { }
+    public interface INoteService : IBaseService<Note> { }
 }

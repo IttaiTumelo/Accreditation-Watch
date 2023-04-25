@@ -6,9 +6,5 @@ using System.Threading.Tasks;
 
 namespace Accreditation_Watch.Shared.Entities
 {
-    public enum Progress
-    {
-        InProgress,
-        Completed
-    }
+    
 }

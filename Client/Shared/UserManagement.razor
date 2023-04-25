@@ -1,5 +1,4 @@
 ﻿@inject IUserService UserService
-@inject IRoleService RoleService
 @attribute [Authorize(Roles = "Admin")]
 <h3>User Management</h3>
 <div class="row">
@@ -21,16 +20,16 @@
             <TemplateColumn Title="Role">
                 <!-- Split dropend button -->
                 
-                <select type="text" @bind="@context.RoleId" class="form-control" placeholder="Basic">
-                    @foreach (var role in RoleService.Objects)
+                <select type="text" @bind="@context.Role" class="form-control" placeholder="Basic">
+                    @foreach (var role in Enum.GetValues(typeof(Role)))
                     {
-                        <option value="@role.Id">@role.Name</option>
+                        <option value="@role">@role</option>
                     }
                 </select>
 
             </TemplateColumn>
             <TemplateColumn Title="Action">
-                <button  @onclick="()=>{SetRole(context);}" class="btn btn-primary">Save</button>
+                <button  @onclick="()=>SetRole(context)" class="btn btn-primary">Save</button>
                 
             </TemplateColumn>
         </QuickGrid>
@@ -91,7 +90,6 @@
     public List<User> Users { get; set; } = new();
     protected override async Task OnInitializedAsync()
     {
-        await RoleService.Get();
         Users = await UserService.Get();
         StateHasChanged();
     }

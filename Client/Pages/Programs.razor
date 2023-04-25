@@ -40,7 +40,7 @@
     
 </div>
 <div class="row parent">
-     <div class="col ">
+     <div class="col-8 ">
           @if(ProgramService.Objects == null)
                {
                     <Loading/>
@@ -53,7 +53,7 @@
                {
                     @* <div class="grid"> *@
             <QuickGrid Items="FilteredPrograms" Pagination="@pagination" Theme="default">
-                <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
+                <PropertyColumn Property="@(c => c.ShortName)" Title="Program" Sortable="true" Class="country-name">
                     <ColumnOptions>
                         <div class="search-box">
                             <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Country name..." />
@@ -62,13 +62,14 @@
                 </PropertyColumn>
                 @*<PropertyColumn Property="p => p.Department.Name" Sortable="true" Title="Department" />*@
                          @*<PropertyColumn Property="p => p.Status.Name" Sortable="true" />*@
-                         <PropertyColumn Property="p => p.ValidFrom" Sortable="true" />
-                         <PropertyColumn Property="p => p.ValidTo" Sortable="true" />
-                         <PropertyColumn Property="p => p.IsAccredited" Sortable="true" />
-                         <PropertyColumn Property="p => p.GetDuration()" Sortable="true" Title="Duration" />
-                         <PropertyColumn Property="p => p.IsExpired()" Sortable="true" Title="Is Expired" />
+                         @* <PropertyColumn Property="p => p.ValidTo" Sortable="true" /> *@
+                         <PropertyColumn Property="p => p.Department.ShortName" Title="Department" Sortable="true" />
+                         @* <PropertyColumn Property="p => p.IsAccredited" Sortable="true" /> *@
+                         @* <PropertyColumn Property="p => p.GetDuration()" Sortable="true" Title="Duration" /> *@
+                         <PropertyColumn Property="p => p.IsExpired()" Sortable="true" Title="Expired" />
                          <TemplateColumn Title="Actions">
-                              <button @onclick="@(() => ShowDetails(context))" class="btn btn-info">Details</button>
+                              <button @onclick="@(() => ShowDetails(context))" class="badge btn-primary">Details</button>
+                            <button @onclick="()=>ShowDetails(context)" class="badge btn-primary">Comments/Notes</button>
                               @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
                          </TemplateColumn>
                     </QuickGrid>
@@ -77,11 +78,15 @@
                <Paginator Value="@pagination" />
                }
      </div>
+
+      <div class="col-4 pt-1">
+        <ProcessProgressDetails  Program="@SelectedProgram"/>
+    </div>
     
 </div>
-   @if(SelectedProgram is not null){
+   @* @if(SelectedProgram is not null){
           <ProgramDetails Program="@SelectedProgram" IsVisible="@ProgramVisibility" />
-     }
+     } *@
 <NewProgram  IsVisible="@NewProgramVisibility" />
 
 
@@ -174,7 +179,7 @@
             NavigationManager.NavigateTo("settings/schools");
         return Task.CompletedTask;
     }
-    PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+    PaginationState pagination = new PaginationState { ItemsPerPage = 18 };
 
      AWProgram SelectedProgram { get; set; }
 

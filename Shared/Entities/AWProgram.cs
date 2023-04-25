@@ -12,6 +12,7 @@ namespace Accreditation_Watch.Shared.Entities
         public DateTime ValidTo { get; set; } = DateTime.Now;
         public bool IsAccredited { get => AccrediteStatusId==12; }
         public Accredite? Accredite { get; set; }
+        public List<Note>? Notes { get; set; } = new();
         public override List<string> RelatedEntities()
         {
             return new() { "Status", "Department" };

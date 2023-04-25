@@ -1,8 +1,4 @@
-﻿global using Microsoft.AspNetCore.Components.Authorization;
-global using Blazored.LocalStorage;
-global using System.Text.Json;
-using System.Net.Http.Headers;
-using System.Security.Claims;
+﻿
 
 namespace Accreditation_Watch.Client
 {

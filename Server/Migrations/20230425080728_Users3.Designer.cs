@@ -4,6 +4,7 @@ using Accreditation_Watch.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Accreditation_Watch.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230425080728_Users3")]
+    partial class Users3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -518,9 +521,6 @@ namespace Accreditation_Watch.Server.Migrations
                     b.Property<int?>("AWProgramId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AWTaskId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -547,8 +547,6 @@ namespace Accreditation_Watch.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AWProgramId");
-
-                    b.HasIndex("AWTaskId");
 
                     b.ToTable("Notes");
                 });
@@ -802,6 +800,9 @@ namespace Accreditation_Watch.Server.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -908,18 +909,9 @@ namespace Accreditation_Watch.Server.Migrations
                     b.HasOne("Accreditation_Watch.Shared.Entities.AWProgram", null)
                         .WithMany("Notes")
                         .HasForeignKey("AWProgramId");
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AWTask", null)
-                        .WithMany("Notes")
-                        .HasForeignKey("AWTaskId");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWProgram", b =>
-                {
-                    b.Navigation("Notes");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWTask", b =>
                 {
                     b.Navigation("Notes");
                 });

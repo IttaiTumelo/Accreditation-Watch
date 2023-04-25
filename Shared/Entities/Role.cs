@@ -1,6 +1,10 @@
 ﻿namespace Accreditation_Watch.Shared.Entities
 {
-    public class Role : BaseEntity
+    public enum Role
     {
+        Secretary, 
+        Coordinator,
+        Director,
+        Developer
     }
 }

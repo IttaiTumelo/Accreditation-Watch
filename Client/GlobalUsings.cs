@@ -1,2 +1,12 @@
 ﻿global using Accreditation_Watch.Shared.Entities;
+global using Accreditation_Watch.Shared.General;
 global using Accreditation_Watch.Shared.Objects;
+global using Accreditation_Watch.Client;
+global using Accreditation_Watch.Client.Services;
+global using Microsoft.AspNetCore.Components.Web;
+global using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+global using Microsoft.AspNetCore.Components.Authorization;
+global using Blazored.LocalStorage;
+global using System.Text.Json;
+global using System.Net.Http.Headers;
+global using System.Security.Claims;

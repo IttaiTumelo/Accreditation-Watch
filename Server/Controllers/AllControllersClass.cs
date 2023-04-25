@@ -24,17 +24,13 @@
     {
         public HistoryController(DataContext dataContext) : base(dataContext) { }
     }
-    public class PendingImplimentationController : BaseController<PendingImplimentation, PendingImplimentationDto>
-    {
-        public PendingImplimentationController(DataContext dataContext) : base(dataContext) { }
-    }
+    // public class PendingImplimentationController : BaseController<PendingImplimentation, PendingImplimentationDto>
+    // {
+    //     public PendingImplimentationController(DataContext dataContext) : base(dataContext) { }
+    // }
     public class SchoolController : BaseController<School, CreateSchoolDto>
     {
         public SchoolController(DataContext dataContext) : base(dataContext) { }
-    }
-    public class RoleController : BaseController<Role, Role>
-    {
-        public RoleController(DataContext dataContext) : base(dataContext) { }
     }
     //deprecated replaced by AWTasks
     public class TaskController : BaseController<AWTask, AWTaskDto>
@@ -48,5 +44,9 @@
     public class AWTaskController : BaseController<AWTask, AWTaskDto>
     {
         public AWTaskController(DataContext dataContext) : base(dataContext) { }
+    }
+    public class NoteController : BaseController<Note, NoteDto>
+    {
+        public NoteController(DataContext dataContext) : base(dataContext) { }
     }
 }

@@ -1,9 +1,3 @@
-using Accreditation_Watch.Client;
-using Accreditation_Watch.Client.Services;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-
-
 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -19,9 +13,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccrediteStatusService, AccrediteStatusService>();
 builder.Services.AddScoped<IHistoryService, HistoryService>();
-builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAWTaskService, AWTaskService>();
 builder.Services.AddScoped<IProblemService, ProblemService>();
+builder.Services.AddScoped<INoteService, NoteService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 //in charge of authorization

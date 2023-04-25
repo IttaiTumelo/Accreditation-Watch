@@ -13,22 +13,28 @@ namespace Accreditation_Watch.Server.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AccrediteStatus>().HasData(
-                 new AccrediteStatus { Id = 1, Name = "CAD_REJECTED" },
-                 new AccrediteStatus { Id = 2, Name = "SENATE_REJECTED" },
-                 new AccrediteStatus { Id = 3, Name = "REVISION_REQUIRED" },
-                 new AccrediteStatus { Id = 4, Name = "UNDER_REVIEW" },
-                 new AccrediteStatus { Id = 5, Name = "CAD_APPROVED" },
-                 new AccrediteStatus { Id = 6, Name = "PENDING" },
-                 new AccrediteStatus { Id = 7, Name = "HEA_APPROVED" },
-                 new AccrediteStatus { Id = 8, Name = "HEA_REJECTED" },
-                 new AccrediteStatus { Id = 9, Name = "CAD_APPROVED_WITH_CONDITIONS" },
-                 new AccrediteStatus { Id = 10, Name = "CAD_APPROVED_WITH_CONDITIONS_AND_REVISIONS" },
-                 new AccrediteStatus { Id = 11, Name = "SUBMITTED" },
-                 new AccrediteStatus { Id = 12, Name = "ACCREDITED" },
-                 new AccrediteStatus { Id = 13, Name = "DENIED" },
-                 new AccrediteStatus { Id = 14, Name = "NOT_APPLICABLE" },
-                 new AccrediteStatus { Id = 15, Name = "UNDER_INTERNAL_EVALUATION" },
-                 new AccrediteStatus { Id = 16, Name = "EVALUATED" }
+                 new AccrediteStatus { Id = 1, Name = "ADC Approved" },
+                 new AccrediteStatus { Id = 2, Name = "Submitted to HEA" },
+                 new AccrediteStatus { Id = 3, Name = "At ZAQA" },
+                 new AccrediteStatus { Id = 4, Name = "Pending payment" },
+                 new AccrediteStatus { Id = 5, Name = "Pending Made" },
+                 new AccrediteStatus { Id = 6, Name = "Accredited" },
+
+
+                 new AccrediteStatus { Id = 7, Name = "Rejected" },
+                 new AccrediteStatus { Id = 8, Name = "Requires restructuring" },
+                 new AccrediteStatus { Id = 9, Name = "Sent back to school for restructuring" },
+                 new AccrediteStatus { Id = 10, Name = "back from school" },
+
+                 new AccrediteStatus { Id = 11, Name = "Requires review" },
+                 
+                 new AccrediteStatus { Id = 12, Name = "About to expire" },
+                 new AccrediteStatus { Id = 13, Name = "Exipired" },
+
+                 new AccrediteStatus { Id = 14, Name = "Internally reviewed" },
+                 new AccrediteStatus { Id = 15, Name = "Externally reviewed" },
+                 new AccrediteStatus { Id = 16, Name = "Reaccredited" }
+
             );
 
             modelBuilder.Entity<AccrediteType>().HasData(
@@ -108,12 +114,7 @@ namespace Accreditation_Watch.Server.Data
                 new ResultType { Id = 3, Name = "Not_Applicable" }
                  ); 
             
-            modelBuilder.Entity<Role>().HasData(
-                new Role { Id = 1, Name = "Basic" },
-                new Role { Id = 2, Name = "Secondary" },
-                new Role { Id = 3, Name = "Directors" },
-                new Role { Id = 4, Name = "Developer" }
-                 );
+
 
             modelBuilder.Entity<TaskType>().HasData(
                 new TaskType { Id = 1, Name = "Accreditation" },
@@ -121,6 +122,8 @@ namespace Accreditation_Watch.Server.Data
                 new TaskType { Id = 3, Name = "External_Audit" },
                 new TaskType { Id = 4, Name = "Reaccreditation" }
                  );
+            //the user should include the role entity when called, and it is a 1 to 1 relationship
+            
             
         }
         public DbSet<Accredite> Accredites { get; set; }
@@ -131,7 +134,6 @@ namespace Accreditation_Watch.Server.Data
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<AWProgram> Programs { get; set; }
         public DbSet<ResultType> ResultTypes { get; set; }
-        public DbSet<Role> Roles { get; set; }
         public DbSet<School> Schools { get; set; }
         public DbSet<AWTask> AWTask { get; set; }
         public DbSet<TaskType> TaskTypes { get; set; }
@@ -139,6 +141,7 @@ namespace Accreditation_Watch.Server.Data
         public DbSet<History> Histories { get; set; }
         public DbSet<PendingImplimentation> PendingImplimentations { get; set; }
         public DbSet<Problem> Problems { get; set; }
+        public DbSet<Note> Notes { get; set; }
 
     }
 }

@@ -172,6 +172,12 @@ namespace Accreditation_Watch.Shared.General
             }
             return Convert.FromBase64String(base64);
         }
+        public static bool IsBetween(int value, int min, int max, bool inclusive = false)
+        {
+            return inclusive
+                ? value >= min && value <= max
+                : value > min && value < max;
+        }
 
 
 

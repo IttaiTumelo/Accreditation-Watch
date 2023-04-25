@@ -1,0 +1,172 @@
+@inject IDepartmentService DepartmentService
+@inject ISchoolService SchoolService
+@inject IAccrediteStatusService AccrediteStatusService
+@inject IProgramService ProgramService
+@inject INoteService NoteService
+@inject IAuthService AuthService
+@inject IAWTaskService TaskService
+@inject IProblemService ProblemService
+
+<div class="row">
+                <div class="col-11"><h4>@Task?.Name</h4></div>
+                <div class="col-1"><button @onclick="()=>Close()" class=" btn-close"></button></div>
+            </div>
+
+
+            @if(Task is not null)
+            {
+                <div class="row grid-max-height">
+                    <div class="col-12">
+                        <h5>Basic Information</h5>
+                        <div class="form-group">
+                            <label for="program-name">Name</label>
+                            <input type="text" class="form-control" id="program-name" @bind="Task.Name" disabled />
+                        </div>
+                        <div class="form-group">
+                            <label for="program-name">Level</label>
+                            <input type="text" class="form-control" id="program-name" placeholder="Bachelors" disabled /> @*need to be bound to something*@
+                        </div>
+
+                        <div class="form-group">
+                            <label for="program-name">School</label>
+                            <input type="text" class="form-control" id="program-name" disabled /> @*must change this to the actual school name*@
+                        </div>
+                    </div>
+                    <div class="col-12">
+                         <h5>Accreditation Process</h5>
+                         <div>
+                              @if (true)
+                                {
+                                   
+                                    @foreach (var progress in Enum.GetValues(typeof(Progress)))
+                                    {
+                                        @if(progress.Equals(Task.Progress))
+                                        {
+                                            <div class="step step-active">
+                                                <div>
+                                                    <div class="circle">@((int)progress)</div>
+                                                </div>
+                                                <div>
+                                                    <div class="title">@progress</div>
+                                                    @* <div class="caption">Optional</div> *@
+                                                </div>
+                                            </div>
+                                        }
+                                        else if((int)progress < (int)Task.Progress)
+                                        {
+                                            <div class="step step-completed">
+                                                <div>
+                                                    <div class="circle">@((int)progress)</div>
+                                                </div>
+                                                <div>
+                                                    <div class="title">@progress</div>
+                                                    @* <div class="caption">Optional</div> *@
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="step">
+                                                <div>
+                                                    <div class="circle">@((int)progress)</div>
+                                                </div>
+                                                <div>
+                                                    <div class="title">@progress</div>
+                                                    @* <div class="caption">Optional</div> *@
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    
+                                }
+                                <Card/>
+                         </div>
+                         
+                         <div>
+                              <h6>Update Status</h6>
+                              <InputSelect @bind-Value="Task.Progress" class="form-select" aria-label="Default select example" >
+                                <option value="@Task.Progress">@Task.Progress</option>
+                                   @foreach (var progress in Enum.GetValues(typeof(Progress)))
+                                   {
+                                        if(!progress.Equals(Task.Progress) && (int)progress > (int)Task.Progress)
+                                        {
+                                             <option value="@progress">@progress</option>
+                                        }
+                                   }
+                            </InputSelect>
+                            <p>@ErrorMessage</p>
+                            <p>@SuccessMessage</p>
+                            <InputTextArea @bind-Value="Note.Content" class="form-control" placeholder="Comment" />
+                               <button class="btn btn-info col-12 m-2 px-3" @onclick="()=>UpdateStatus()">Update</button>
+                              <button @onclick="Complete" class="btn btn-info">Complete</button>
+                         </div>
+                    </div>
+
+                    
+                    <div class="col-12">
+                        //Show time left to expire
+                    </div>
+                    <button class="btn btn-info col-12 m-2 px-3" @onclick="()=>UpdateStatus()">Update</button>
+                    <button class="btn btn-danger col-12 mx-2 px-3" @onclick="()=>UpdateStatus()">Delete Program</button>
+
+                </div>
+
+            }
+
+
+@code {
+     async Task Complete()
+     {
+          Task.IsCompleted = true;
+          await TaskService.Update(Task);
+          StateHasChanged();
+     }
+
+     NoteDto Note { get; set; }  = new();
+     public string ErrorMessage { get; set; } = "";
+     public string SuccessMessage { get; set; } = "";
+    [Parameter]
+    public AWTask Task { get; set; } = new();
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    public List<School> Schools { get; set; } = new List<School>();
+    public List<AccrediteStatus> AccrediteStatuses { get; set; } = new List<AccrediteStatus>();
+    async Task Close()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+     async Task UpdateStatus()
+    {
+          if(!(Note.Content.Length >0))
+          ErrorMessage = "Please enter a comment";
+          else
+          {
+               Note.Name = Task.Progress.ToString();
+               @* Note.ProgramId = Program.Id; *@
+               Note.UserId = await AuthService.GetId();
+               ErrorMessage = "";
+
+               @* await NoteService.Create(Note); *@
+               Task.Problem.Program = ProblemService.Objects.First(x=>x.Id == Task.Problem.AWProgramId).Program;
+               Task.Notes.Add(Note);
+               await TaskService.Update(Task);
+               SuccessMessage = "Status Updated";
+               StateHasChanged();
+          }
+    }
+    protected override async void OnInitialized()
+    {
+        //Departments = await DepartmentService.Get();
+        await ProblemService.Get();
+        await NoteService.Get();
+        await AuthService.InitialiseAuthState();
+        Schools = await SchoolService.Get();
+        AccrediteStatuses = await AccrediteStatusService.Get();
+   
+        StateHasChanged();
+
+    }
+
+}

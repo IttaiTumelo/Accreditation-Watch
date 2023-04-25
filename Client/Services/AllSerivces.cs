@@ -42,12 +42,7 @@
         {
         }
     }
-    public class RoleService : BaseService<Role>, IRoleService
-    {
-        public RoleService(HttpClient httpClient) : base(httpClient)
-        {
-        }
-    }
+
     public class AWTaskService : BaseService<AWTask>, IAWTaskService
     {
         public AWTaskService(HttpClient httpClient) : base(httpClient)
@@ -57,6 +52,12 @@
     public class ProblemService : BaseService<Problem>, IProblemService
     {
         public ProblemService(HttpClient httpClient) : base(httpClient)
+        {
+        }
+    }
+    public class NoteService : BaseService<Note>, INoteService
+    {
+        public NoteService(HttpClient httpClient) : base(httpClient)
         {
         }
     }

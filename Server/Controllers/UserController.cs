@@ -17,7 +17,7 @@
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 Email = newUser.Email,
-                Role = _context!.Roles.FirstOrDefault(x=>(x.Id==1)),
+                Role = Role.Secretary,
                 Token = AWFunctions.CreateToken(newUser),
             };
             _context.Users.Add(user);
@@ -29,8 +29,7 @@
         {
             var userToUpdate = _context.Users.FirstOrDefault(x => x.Id == user.Id);
             if (userToUpdate is null) return BadRequest("User not found");
-            userToUpdate.RoleId = user.RoleId;
-            userToUpdate.Role = _context.Roles.FirstOrDefault(x => x.Id == user.RoleId);
+            userToUpdate.Role = user.Role;
             await _context.SaveChangesAsync();
             return Ok(userToUpdate);
         }

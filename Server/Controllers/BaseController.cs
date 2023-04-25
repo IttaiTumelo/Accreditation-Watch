@@ -42,6 +42,7 @@
                 {
                     try
                     {
+                        
                         foreach (var type in query.ToList().FirstOrDefault().RelatedEntities())
                         {
                             query = query.Include(type);
@@ -105,8 +106,10 @@
             var query = _context.Set<T>().AsQueryable();
             if (query is not null)
             {
+                
                 foreach (var type in query.ToList().FirstOrDefault().RelatedEntities())
                 {
+                
                     query = query.Include(type);
                 }
                 var result = query.ToList();
@@ -180,7 +183,8 @@
                 InitialState = $"There was a {typeof(T).Name} with the following details {entity.ToString()}, and table {typeof(T).Name}s had {query.ToList().Count} {typeof(T).Name}(s)",
                 FinalState = $"entry with the following details {entity.ToString()} was updated to table {typeof(T).Name}s, and table {typeof(T).Name}s now has {query.ToList().Count} {typeof(T).Name}(s)",
             };
-            _context.Entry(entity).State = EntityState.Modified;
+            _context.Entry(entity).State = EntityState.Detached;
+            // _context.Entry(entity).State = EntityState.Modified;
             MailController mailController = new MailController();
             await mailController.SendMail(new() { Email = new() { "ittaitumelo@outlook.com" }, Id = entity.Id, Message = $" Table {typeof(T).Name}s has been modified to {entity.ToString()}", Subject = "data change", Name = "" });
             await _context.SaveChangesAsync();
