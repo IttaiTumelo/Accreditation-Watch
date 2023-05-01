@@ -15,7 +15,7 @@ namespace Accreditation_Watch.Shared.Entities
         public List<Note>? Notes { get; set; } = new();
         public override List<string> RelatedEntities()
         {
-            return new() { "Status", "Department" };
+            return new() { "Status", "Department", "Notes" };
         }
         public int GetDuration() => ValidTo.Year - ValidFrom.Year; 
         public string GetStatus() { 

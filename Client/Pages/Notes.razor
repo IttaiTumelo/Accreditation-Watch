@@ -1,0 +1,71 @@
+@page "/notes"
+@page "/notes/{id:int}"
+@inject INoteService NoteService
+@inject IProgramService ProgramService
+
+<div class="row">
+     <div class="col-9">
+          <div class="row">
+               <h3>Active Notes</h3>
+               @if(NoteService.Active.Count == 0)
+               {
+                    <p>No Active Notes</p>
+               }else
+               @foreach (var item in NoteService.Active)
+               {
+                    <div class="col-4">
+                         <Card Note="item" ShowMoreDetails="ShowMoreDetails" />
+                    </div>
+               }
+          </div>
+          <h3>Dismissed Notes</h3>
+          <div class="row">
+               @if (NoteService.Dismissed.Count == 0)
+               {
+                    <p>No Dismissed Notes</p>
+               }
+               else
+               @foreach (var item in NoteService.Dismissed)
+               {
+                    <div class="col-4">
+                         <Card Note="item" ShowMoreDetails="ShowMoreDetails" />
+                    </div>
+               }
+          </div>
+     </div>
+     <div class="col-3">
+          <NoteDetailsSidebar Note="@Note" Program="@Program"/>
+     </div>
+</div>
+
+
+
+@code {
+     [Parameter]
+     public int Id { get; set; }
+     Note Note { get; set; }
+
+     AWProgram Program { get; set; }
+
+     public void ShowMoreDetails(int id)
+     {
+          Id = id;
+          OnInitialized();
+          Console.WriteLine($"Show More {id}");
+          StateHasChanged();
+     }
+     protected override async void OnInitialized()
+     {
+          
+          if (Id > 0)
+          {
+               Note = await NoteService.GetByID(Id);
+          }
+          if(Note != null)
+          Program =  await ProgramService.GetByID(Note.ProgramId);
+
+          StateHasChanged();
+     }
+
+
+}

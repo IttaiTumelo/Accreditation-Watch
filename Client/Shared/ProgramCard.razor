@@ -64,7 +64,7 @@
           position: absolute;
           background: rgb(85 108 214 / 5%);
           width: 170px;
-          height: 400px;
+          height: 500px;
           z-index: -1;
           transform: rotate(42deg);
           right: -56px;
@@ -188,34 +188,25 @@
           <div class="solution_cards_box">
                     <div class="solution_card d-flex p-4">
                          <div class="col-12">
-                              <div class="row h-25">
-                                   <div class="col-8">
+                              <div class="row">
+                                   <div class="col-5">
                                         <div class="solu_title">
-                                             <h5>@MainTitle</h5>
+                                             <h5>@Program.ShortName</h5>
                                         </div>
                                    </div>
-                                   <div class="col-4">
-                                        <span>@TimeStamp</span>
+                                   <div class="col-7">
+                                        <span>Months Left : @Program.MonthsRemaining()</span>
                                    </div>
                               </div>
-                              <div class="solu_description h-50">
-                                   <h6>@SupportingTitle</h6>
-                                   <p>@Description</p>
+                              <div class="solu_description">
+                                   <p class="p-0 m-0"> Department : @Program.DepartmentId</p>
+                                   <p class="p-0 m-0"> School : @Program?.Department?.School?.Name</p>
+                                   <p class="p-0 m-0"> Number of Notes : @Program?.Notes?.Count</p>
+                                   <p class="p-0 m-0"> Accreditation Status : @Program?.Status?.Name</p>
+                                   <p class="p-0 m-0"> Duration : @Program.GetDuration()</p>
+                                   <p class="p-0 m-0"> Valid from : @Program.ValidFrom</p>
+                                   <p class="p-0 m-0"> Valid to : @Program.ValidTo</p>
                               </div>
-                                   <div class="row">
-                                        @if(ShowMoreDetails.HasDelegate)
-                                        {
-                                             <div class="col-6 p-3">
-                                                       <button class="p-0 col-12 btn btn-light" @onclick="()=>ShowMoreDetails.InvokeAsync(Note.Id)">Show More</button>
-                                             </div>
-                                        }
-                                        @if(Note.State != NoteState.Expired)
-                                        {
-                                             <div class="col-6 p-3">
-                                                       <button class=" p-0 col-12 btn btn-light" @onclick="()=>DismissNote(Note)">Dismiss</button>
-                                             </div>
-                                        }
-                                   </div>
                                    @if(loading)
                                    {
                                         <Loading />
@@ -230,32 +221,15 @@
 
 
 @code {
+     [Parameter]
+     public AWProgram Program { get; set; }
      public bool loading = false;
-     [Parameter]
-     public Note Note { get; set; }
-     [Parameter]
-     public string MainTitle { get; set; } = "Card Title";
-     [Parameter]
-     public NoteState SupportingTitle { get; set; }
-     [Parameter]
-     public string Description { get; set; } = "Card Description";
-     [Parameter]
-     public string ButtonText { get; set; } = string.Empty;
-     [Parameter]
-     public string ButtonLink { get; set; } = string.Empty;
-     [Parameter]
+    
      public string TimeStamp { get; set; } = string.Empty;
 
-     async Task DismissNote(Note note){
-          loading = true;
-        note.State = NoteState.Expired;
-        await NoteService.Update(note);
-        Console.WriteLine("Note Dismissed");
-          loading = false;
-          await OnNoteDismissed.InvokeAsync();
-    }
+
      [Parameter]
-     public EventCallback<int> ShowMoreDetails { get; set;}
+     public EventCallback ShowMoreDetails { get; set;}
 
      protected override async void OnInitialized()
      {

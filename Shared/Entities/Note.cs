@@ -11,6 +11,10 @@ namespace Accreditation_Watch.Shared.Entities
            {
                 return new() {  };
            }
+           public override string ToString()
+           {
+               return $"{Name} \n {Content} \n by {UserId} \n for {ProgramId} \n {State} \n {Date} ";
+           }
            
      }
      public class NoteDto : Note

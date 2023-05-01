@@ -60,5 +60,8 @@
         public NoteService(HttpClient httpClient) : base(httpClient)
         {
         }
-    }
+
+          public List<Note> Dismissed { get => Objects.Where(x => x.State == NoteState.Expired).ToList(); }
+          public List<Note> Active {  get=> Objects.Where(x => x.State == NoteState.Valid).ToList();}
+     }
 }

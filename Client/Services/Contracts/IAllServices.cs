@@ -14,5 +14,8 @@
     public interface ISchoolService : IBaseService<School> { }
     public interface IAWTaskService : IBaseService<AWTask> { }
     public interface IProblemService : IBaseService<Problem> { }
-    public interface INoteService : IBaseService<Note> { }
+    public interface INoteService : IBaseService<Note> { 
+        List<Note> Dismissed { get; }
+        List<Note> Active { get; }
+    }
 }

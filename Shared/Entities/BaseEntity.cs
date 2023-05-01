@@ -23,9 +23,11 @@ namespace Accreditation_Watch.Shared.Entities
         {
         }
         public virtual bool RequiresAuthentication()=>true;
+        public virtual string ToString()=>Name;
     }
     public class BaseEntityDto
     {
         public string Name { get; set; }
     }
+
 }

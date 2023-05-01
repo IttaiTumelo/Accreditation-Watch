@@ -170,6 +170,8 @@
                 ?.Substring("Bearer ".Length);
             T entity2 = new T();
             if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
             User user = AWFunctions.GetDeatailsFromToken(accessToken);
             var query = _context.Set<T>().AsQueryable();
             History history = new History()
@@ -183,11 +185,10 @@
                 InitialState = $"There was a {typeof(T).Name} with the following details {entity.ToString()}, and table {typeof(T).Name}s had {query.ToList().Count} {typeof(T).Name}(s)",
                 FinalState = $"entry with the following details {entity.ToString()} was updated to table {typeof(T).Name}s, and table {typeof(T).Name}s now has {query.ToList().Count} {typeof(T).Name}(s)",
             };
-            _context.Entry(entity).State = EntityState.Detached;
-            // _context.Entry(entity).State = EntityState.Modified;
+            var originalEntity = await _context.Set<T>().FindAsync(entity.Id);
+            // _context.Entry(entity).State = EntityState.Detached;
             MailController mailController = new MailController();
-            await mailController.SendMail(new() { Email = new() { "ittaitumelo@outlook.com" }, Id = entity.Id, Message = $" Table {typeof(T).Name}s has been modified to {entity.ToString()}", Subject = "data change", Name = "" });
-            await _context.SaveChangesAsync();
+            await mailController.SendMail(new() { Email = new() { "ittaitumelo@outlook.com" }, Id = entity.Id, Message = $" Table {typeof(T).Name}s has been modified from ||| {originalEntity.ToString()} ||| to |||{entity.ToString()}|||", Subject = "data change", Name = "" });
             history.ActionResult = $"Success: and email was sent to {user.Email}";
             _context.Histories.Add(history);
             _context.Histories.Add(new History()
@@ -202,7 +203,8 @@
                 FinalState = $"entry with the following details {entity.ToString()} was updated to table {typeof(T).Name}s, and table {typeof(T).Name}s now has {query.ToList().Count} {typeof(T).Name}(s)"
             });
             _context.SaveChanges();
-            return Ok(entity);
+            var updatedEntity = await _context.Set<T>().FindAsync(entity.Id);
+            return Ok(updatedEntity);
         }
 
         [HttpDelete("{id}")]
