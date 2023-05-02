@@ -56,7 +56,7 @@
         <PropertyColumn Property="p => p.IsResolved" Sortable="true" />
         <PropertyColumn Property="p => p.Description" Sortable="true" />
         <TemplateColumn Title="Program">
-                <p>@ProgramService.Objects.FirstOrDefault(x=>x.Id==context.AWProgramId).Name</p>
+                <p>@ProgramService.Objects?.FirstOrDefault(x=>x.Id==context.AWProgramId)?.Name</p>
         </TemplateColumn>
         <TemplateColumn Title="Actions">
             @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@

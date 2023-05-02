@@ -2,6 +2,7 @@
 @inject IProgramService ProgramService
 @inject IDepartmentService DepartmentService
 @inject ISchoolService SchoolService
+@inject INoteService NoteService
 @using Microsoft.AspNetCore.Components.QuickGrid
 @inject NavigationManager  NavigationManager;
 <style>
@@ -25,7 +26,13 @@
     <div class="col"></div>
     <div class="col"></div>
     <div class="col"></div>
-    <div class="col"></div>
+    <div class="col">
+        <div class="row">
+            <label for="customRange2" class="col form-label">Rows</label>
+            <input type="range" class="col form-range" min="10" max="30" id="customRange2" @bind="@rows" @oninput="Update" >       
+
+        </div>
+    </div>
     <div class="col">
         
         <select type="text" @bind="@departmentId" class="form-control" placeholder="All">
@@ -35,6 +42,7 @@
             <option @onclick="()=>{departmentId=department.Id; StateHasChanged();}" value="@department.Id">@department.Name</option>
             }
         </select>
+
     </div>
 
     
@@ -69,8 +77,10 @@
                          <PropertyColumn Property="p => p.IsExpired()" Sortable="true" Title="Expired" />
                          <TemplateColumn Title="Actions">
                               <button @onclick="@(() => ShowDetails(context))" class="badge btn-primary">Details</button>
-                            <button @onclick="()=>ShowDetails(context)" class="badge btn-primary">Comments/Notes</button>
-                              @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
+                              @if(NoteService.Objects.Where(c=>c.ProgramId == context.Id).Count() > 0)
+                              {
+                                   <button @onclick="()=>ShowCards(context)" class="badge btn-primary">Comments/Notes</button>
+                              }
                          </TemplateColumn>
                     </QuickGrid>
                     @* </div> *@
@@ -80,7 +90,13 @@
      </div>
 
       <div class="col-4 pt-1">
-        <ProcessProgressDetails  Program="@SelectedProgram"/>
+        @if(details)
+        {
+            <ProcessProgressDetails  Program="@SelectedProgram"/>
+        }
+        else{
+            <CardListSideBar Program ="@SelectedProgram"/>
+        }
     </div>
     
 </div>
@@ -108,7 +124,12 @@
 } *@
 
 @code {
-
+    void Update(){
+        pagination = new PaginationState { ItemsPerPage = rows };
+        StateHasChanged();
+    }
+    static int rows {get; set;} = 10;
+    public bool details = true;
     public int departmentId;
     IQueryable<AWProgram>? itemsQueryable;
 
@@ -142,6 +163,16 @@
     Task ShowDetails(AWProgram program)
     {
         ResetAll();
+        details = true;
+        SelectedProgram = program;
+        ProgramVisibility = true;
+        StateHasChanged();
+        return Task.CompletedTask; 
+    }
+    Task ShowCards(AWProgram program)
+    {
+        ResetAll();
+        details = false;
         SelectedProgram = program;
         ProgramVisibility = true;
         StateHasChanged();
@@ -179,7 +210,7 @@
             NavigationManager.NavigateTo("settings/schools");
         return Task.CompletedTask;
     }
-    PaginationState pagination = new PaginationState { ItemsPerPage = 18 };
+    PaginationState pagination = new PaginationState { ItemsPerPage = rows };
 
      AWProgram SelectedProgram { get; set; }
 
@@ -190,6 +221,7 @@ protected override async void OnInitialized()
           await ProgramService.Get();
         await SchoolService.Get();
         await DepartmentService.Get();
+        await NoteService.Get();
         itemsQueryable = ProgramService.Objects.AsQueryable();
           StateHasChanged();
     _config = new PieConfig

@@ -209,12 +209,20 @@
                                                        <button class="p-0 col-12 btn btn-light" @onclick="()=>ShowMoreDetails.InvokeAsync(Note.Id)">Show More</button>
                                              </div>
                                         }
-                                        @if(Note.State != NoteState.Expired)
+                                        @if(Note is not null)
                                         {
-                                             <div class="col-6 p-3">
-                                                       <button class=" p-0 col-12 btn btn-light" @onclick="()=>DismissNote(Note)">Dismiss</button>
+                                             @if(Note.State != NoteState.Expired)
+                                             {
+                                                  <div class="col-6 p-3">
+                                                            <button class=" p-0 col-12 btn btn-light" @onclick="()=>DismissNote(Note)">Dismiss</button>
+                                                  </div>
+                                             }
+                                        } else {
+                                             <div>
+                                                  <p>The note is null</p>
                                              </div>
                                         }
+                                        
                                    </div>
                                    @if(loading)
                                    {
