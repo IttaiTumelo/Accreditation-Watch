@@ -179,6 +179,13 @@ namespace Accreditation_Watch.Shared.General
                 : value > min && value < max;
         }
 
+        public static bool CheckDate(DateTime Date1, int upperLimit, int lowerLimit)
+        {
+            TimeSpan span = Date1 - DateTime.Now;
+            if (span.Days > lowerLimit && span.Days < upperLimit) return true;
+            else return false;
+        }
+
 
 
 

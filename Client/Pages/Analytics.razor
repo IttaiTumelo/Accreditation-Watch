@@ -2,6 +2,28 @@
 @inject IProgramService ProgramService
 @inject IProblemService ProblemService
 <h3>Analytics</h3>
+
+<div id="@Visibility" class="d-flex justify-content-center align-items-center">
+        <div style="background-color : #fff; border-radius: 10px; width: 1000px" class="p-5">
+          <div class="row">
+                      <h3 class="col">Add User</h3>
+                      <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
+          </div>
+            <p class="text-success">@SuccessMessage</p>
+        <span class="text-danger">@ErrorMessage</span>
+        <div id="@UpdatingResults" class="d-flex justify-content-center align-items-center">
+            <div class="loading-section @StyleOne() p-5 " style="width:50%; background-color : #fff; border-radius: 10px;">
+                <p>Processes Document ...</p>
+                <div class="progress-container">
+                    <div class="progress-bar" style="@_progressBarStyle"></div>
+                </div>
+                <p class="col">@jobDiscription</p>
+            </div>
+        </div>
+        </div>
+</div>
+
+
 <div class="row">
     <div class="col-8">
         <div class="row">
@@ -54,16 +76,22 @@
                 </PropertyColumn>
                 @*<PropertyColumn Property="p => p.Department.Name" Sortable="true" Title="Department" />*@
                 @*<PropertyColumn Property="p => p.Status.Name" Sortable="true" />*@
-                <PropertyColumn Property="p => p.IsResolved" Sortable="true" />
-                <PropertyColumn Property="p => p.Description" Sortable="true" />
-                <TemplateColumn Title="Program">
-                        <p>@ProgramService.Objects?.FirstOrDefault(x=>x.Id==context.AWProgramId)?.Name</p>
-                </TemplateColumn>
-                <TemplateColumn Title="Actions">
-                    @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
+                @* <PropertyColumn Property="p => p.IsResolved" Sortable="true" /> *@
+                <PropertyColumn Property="p => p.ShortDescription" Sortable="true" />
+                
+                <TemplateColumn Title="Actions/State">
+                    <button @onclick ="@(() => SelectedProblem = context)" class="btn btn-primary p-1 m-1">Details</button>
+                    @if(!context.Noted){
+                        <button @onclick="@(() => CreateTask(context))" class="btn btn-primary p-1 m-1">Make Task</button>
+                    }
+                    else 
+                    {
+                        <p>Noted</p>
+                    }
                 </TemplateColumn>
             </QuickGrid>
             <Paginator Value="@pagination" />  
+            <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button>
         }
         else
         {
@@ -71,16 +99,37 @@
         }
     </div>
     <div class="col-4">
-        <IssueDetails/>
+        <IssueDetails Problem="@SelectedProblem"/>
     </div>
 </div>
 
 @code {
+    public bool IsVisible { get; set; } = false;
+    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    public string SuccessMessage { get; set; } = "";
+    public string ErrorMessage { get; set; } = "";
+    public string UpdatingResults { get; set; }
+    public string _progressBarStyle = "width: 0%; transition: width 1s ease-in-out;";
+    public bool loading = false;
+    public string StyleOne() => loading ? _loadingStyle : _notLoadingStyle;
+    public string _loadingStyle = "display: flex; align-items: center; justify-content: center;";    public string _notLoadingStyle = "display: none;";
+  public void Close()
+    {
+        IsVisible = false;
+    }
+    Problem? SelectedProblem { get; set; }
+    async Task CreateTask(Problem problem)
+    {
+        throw new NotImplementedException();
+    }
+    int Progress { get; set; } = 1;
+    int Total { get; set; } = 100;
     public string viewprogram { get; set;} = "View All";
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
     List<AWProgram>? programs { get; set; } = new();
     List<Problem>? messages { get; set; } = new();
     public string nameFilter;
+    public string jobDiscription { get; set; }
 
     public int limit = 3;
     public void SetUnlimited()
@@ -115,6 +164,7 @@
     ProgramSummery? programSummery = new();
     protected override async void OnInitialized()
     {
+        MakeIssues();
         programs = await ProgramService.Get();
         await ProblemService.Get();
         programSummery = new(programs);
@@ -125,7 +175,7 @@
         //_programs = await ProgramService.Get();
         //ProgramSummery = new ProgramSummery(_programs);
         //StateHasChanged();
-
+        
         StateHasChanged();
 
 
@@ -162,6 +212,11 @@
             }
         }
         return Task.CompletedTask;
+    }
+        public void UpdateLoading()
+    {
+        _progressBarStyle = $"width: {(Progress * 100) / Total}%; transition: width 0.3s ease-in-out;";
+        StateHasChanged();
     }
 }
 

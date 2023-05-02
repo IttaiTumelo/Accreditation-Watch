@@ -8,19 +8,19 @@
 @inject IProblemService ProblemService
 
 <div class="row">
-                <div class="col-11"><h4>@Task?.Name</h4></div>
+                <div class="col-11"><h4>@Problem?.Name</h4></div>
                 <div class="col-1"><button @onclick="()=>Close()" class=" btn-close"></button></div>
             </div>
 
 
-            @if(Task is not null)
+            @if(Problem is not null)
             {
                 <div class="row grid-max-height">
                     <div class="col-12">
                         <h5>Basic Information</h5>
                         <div class="form-group">
                             <label for="program-name">Name</label>
-                            <input type="text" class="form-control" id="program-name" @bind="Task.Name" disabled />
+                            <input type="text" class="form-control" id="program-name" @bind="Problem.Name" disabled />
                         </div>
                         <div class="form-group">
                             <label for="program-name">Level</label>
@@ -35,59 +35,65 @@
                     <div class="col-12">
                          <h5>Accreditation Process</h5>
                          <div>
-                              @if (true)
-                                {
-                                   
-                                    @foreach (var progress in Enum.GetValues(typeof(Progress)))
+                            
+                                    @foreach (var serverity in Enum.GetValues(typeof(Serverity)))
                                     {
-                                        @if(progress.Equals(Task.Progress))
+                                        @if(serverity.Equals(Problem.Serverity))
                                         {
                                             <div class="step step-active">
                                                 <div>
-                                                    <div class="circle">@((int)progress)</div>
+                                                    <div class="circle">@((int)serverity)</div>
                                                 </div>
                                                 <div>
-                                                    <div class="title">@progress</div>
-                                                    @* <div class="caption">Optional</div> *@
+                                                    <div class="title">@serverity</div>
                                                 </div>
                                             </div>
                                         }
-                                        else if((int)progress < (int)Task.Progress)
+                                        else if((int)serverity < (int)Problem.Serverity)
                                         {
                                             <div class="step step-completed">
                                                 <div>
-                                                    <div class="circle">@((int)progress)</div>
+                                                    <div class="circle">@((int)serverity)</div>
                                                 </div>
                                                 <div>
-                                                    <div class="title">@progress</div>
-                                                    @* <div class="caption">Optional</div> *@
+                                                    <div class="title">@serverity</div>
                                                 </div>
                                             </div>
                                         }
-                                        else if((int)progress > (int)Task.Progress) //else
+                                        else if((int)serverity > (int)Problem.Serverity) //else
                                         {
                                             <div class="step">
                                                 <div>
-                                                    <div class="circle">@((int)progress)</div>
+                                                    <div class="circle">@((int)serverity)</div>
                                                 </div>
                                                 <div>
-                                                    <div class="title">@progress</div>
-                                                    @* <div class="caption">Optional</div> *@
+                                                    <div class="title">@serverity</div>
                                                 </div>
                                             </div>
                                         }
+                                        else 
+                                        {
+                                             <div class="step">
+                                                  <div>
+                                                       <div class="circle">@((int)serverity)</div>
+                                                  </div>
+                                                  <div>
+                                                       <div class="title">@serverity</div>
+                                                  </div>
+                                             </div>
+                                        }
                                     }
                                     
-                                }
+                                
                          </div>
                          
                          <div>
                               <h6>Update Status</h6>
-                              <InputSelect @bind-Value="Task.Progress" class="form-select" aria-label="Default select example" >
-                                <option value="@Task.Progress">@Task.Progress</option>
+                              <InputSelect @bind-Value="Problem.Serverity" class="form-select" aria-label="Default select example" >
+                                <option value="@Problem.Serverity">@Problem.Serverity</option>
                                    @foreach (var progress in Enum.GetValues(typeof(Progress)))
                                    {
-                                        if(!progress.Equals(Task.Progress) && (int)progress > (int)Task.Progress)
+                                        if(!progress.Equals(Problem.Serverity) && (int)progress > (int)Problem.Serverity)
                                         {
                                              <option value="@progress">@progress</option>
                                         }
@@ -118,8 +124,8 @@
 @code {
      async Task Complete()
      {
-          Task.IsCompleted = true;
-          await TaskService.Update(Task);
+          @* Task.IsCompleted = true; *@
+          @* await TaskService.Update(Task); *@
           StateHasChanged();
      }
 
@@ -127,7 +133,7 @@
      public string ErrorMessage { get; set; } = "";
      public string SuccessMessage { get; set; } = "";
     [Parameter]
-    public AWTask Task { get; set; } = new();
+    public Problem Problem { get; set; } = new();
     [Parameter]
     public bool IsVisible { get; set; } = false;
     public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
@@ -144,17 +150,16 @@
           ErrorMessage = "Please enter a comment";
           else
           {
-               Note.Name = Task.Progress.ToString();
-               @* Note.ProgramId = Program.Id; *@
-               Note.UserId = await AuthService.GetId();
-               ErrorMessage = "";
+               @* Note.Name = Task.Progress.ToString(); *@
+               @* Note.UserId = await AuthService.GetId();
+               ErrorMessage = ""; *@
 
                @* await NoteService.Create(Note); *@
-               Task.Problem.Program = ProblemService.Objects.First(x=>x.Id == Task.Problem.AWProgramId).Program;
+               @* Task.Problem.Program = ProblemService.Objects.First(x=>x.Id == Task.Problem.AWProgramId).Program;
                Task.Notes.Add(Note);
                await TaskService.Update(Task);
                SuccessMessage = "Status Updated";
-               StateHasChanged();
+               StateHasChanged(); *@
           }
     }
     protected override async void OnInitialized()

@@ -1,4 +1,5 @@
 ﻿using Accreditation_Watch.Shared.Entities;
+using Accreditation_Watch.Shared.General;
 
 namespace Accreditation_Watch.Shared.Objects
 {
@@ -13,9 +14,9 @@ namespace Accreditation_Watch.Shared.Objects
             _programs = programs;
             foreach (var program in _programs)
             {
-                if (CheckDate(program.ValidTo, 720, 360)) _goodCount++;
-                else if (CheckDate(program.ValidTo, 360, 180)) _umberCount++;
-                else if (CheckDate(program.ValidTo, 180, -180)) _badCount++;
+                if (AWFunctions.CheckDate(program.ValidTo, 720, 360)) _goodCount++;
+                else if (AWFunctions.CheckDate(program.ValidTo, 360, 180)) _umberCount++;
+                else if (AWFunctions.CheckDate(program.ValidTo, 180, -180)) _badCount++;
             }
         }
         public ProgramSummery() { }
@@ -23,12 +24,7 @@ namespace Accreditation_Watch.Shared.Objects
         public int GoodCount { get { return _goodCount; } }
         public int UmberCount { get { return _umberCount; } }
         public int BadCount { get { return _badCount; } }
-        public bool CheckDate(DateTime Date1, int upperLimit, int lowerLimit)
-        {
-            TimeSpan span = Date1 - DateTime.Now;
-            if (span.Days > lowerLimit && span.Days < upperLimit) return true;
-            else return false;
-        }
+        
 
         public List<Problem> GenerateSummaries()
         {
@@ -48,11 +44,16 @@ namespace Accreditation_Watch.Shared.Objects
                 problem.Name = program.Name;
                 problem.AWProgramId = program.Id;
 
+
+                if (AWFunctions.CheckDate(program.ValidTo, 720, 360)) problem.Serverity = Serverity.Low;
+                else if (AWFunctions.CheckDate(program.ValidTo, 360, 180)) problem.Serverity = Serverity.Low;
+                else if (AWFunctions.CheckDate(program.ValidTo, 180, -180)) problem.Serverity = Serverity.High;
                 // Check if the program is accredited
                 if (!program.IsAccredited)
                 {
                     // If not, add a warning message to the summary
                     problem.Description += $"The program {program.Name} is not accredited.\n";
+                    problem.Serverity = Serverity.Critical;
                 }
 
                 // Check if the program is valid
@@ -60,11 +61,13 @@ namespace Accreditation_Watch.Shared.Objects
                 {
                     // If not, add an error message to the summary
                     problem.Description += $"The program {program.Name} has expired on {program.ValidTo.ToShortDateString()}.\n";
+                    problem.Serverity = Serverity.Critical;
                 }
                 else if (program.ValidTo - DateTime.Today <= TimeSpan.FromDays(daysThreshold))
                 {
                     // If it is about to expire, add a warning message to the summary
                     problem.Description += $"The program {program.Name} is about to expire on {program.ValidTo.ToShortDateString()}.\n";
+                    problem.Serverity = problem.Serverity < Serverity.High ? Serverity.High : problem.Serverity;
                 }
 
                 // Check if the summary is not empty
