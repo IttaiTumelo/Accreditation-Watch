@@ -2,74 +2,78 @@
 @inject IProgramService ProgramService
 @inject IProblemService ProblemService
 <h3>Analytics</h3>
-
 <div class="row">
-    <div class="">
-        <h3 class="d-flex">
-            <img src="/images/triangle.svg" width="20" class="m-2" />
-            Program Summeries
-        </h3>
-        <div class="grid">
-            <ol>
-                @if (messages is not null)
-                    @for (int i = 0; i < limit && i < messages.Count; i++)//must change to variable
-                        {
-                        <li>
-                            <div class="row">
-                                <div class="col">
-                                    <h5>@messages[i].Description </h5>
+    <div class="col-8">
+        <div class="row">
+            <div class="">
+                <h3 class="d-flex">
+                    <img src="/images/triangle.svg" width="20" class="m-2" />
+                    Program Summeries
+                </h3>
+                <div class="grid">
+                    <ol>
+                        @if (messages is not null)
+                            @for (int i = 0; i < limit && i < messages.Count; i++)//must change to variable
+                                {
+                                <li>
+                                    <div class="row">
+                                        <div class="col">
+                                            <h5>@messages[i].Description </h5>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        else {
+                            <li>
+                                <div class="row">
+                                    <div class="col">
+                                        <h5>No Programs</h5>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                    }
-                else {
-                    <li>
-                        <div class="row">
-                            <div class="col">
-                                <h5>No Programs</h5>
-                            </div>
+                            </li>
+                        }
+                    </ol>
+                </div>
+                <div class="col">
+                    <span @onclick="SetUnlimited" class="badge rounded-pill bg-dark p-2 float-end">@viewprogram</span>
+                </div>
+            </div>
+        </div>
+
+
+        @if (ProblemService.Objects.Count > 0)
+        {
+            <h3>Issues</h3>
+            <QuickGrid Items="FilteredProblems" Pagination="@pagination" Theme="default">
+                <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
+                    <ColumnOptions>
+                        <div class="search-box">
+                            <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Country name..." />
                         </div>
-                    </li>
-                }
-            </ol>
-        </div>
-        <div class="col">
-            <span @onclick="SetUnlimited" class="badge rounded-pill bg-dark p-2 float-end">@viewprogram</span>
-        </div>
+                    </ColumnOptions>
+                </PropertyColumn>
+                @*<PropertyColumn Property="p => p.Department.Name" Sortable="true" Title="Department" />*@
+                @*<PropertyColumn Property="p => p.Status.Name" Sortable="true" />*@
+                <PropertyColumn Property="p => p.IsResolved" Sortable="true" />
+                <PropertyColumn Property="p => p.Description" Sortable="true" />
+                <TemplateColumn Title="Program">
+                        <p>@ProgramService.Objects?.FirstOrDefault(x=>x.Id==context.AWProgramId)?.Name</p>
+                </TemplateColumn>
+                <TemplateColumn Title="Actions">
+                    @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
+                </TemplateColumn>
+            </QuickGrid>
+            <Paginator Value="@pagination" />  
+        }
+        else
+        {
+            <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button>
+        }
+    </div>
+    <div class="col-4">
+        <IssueDetails/>
     </div>
 </div>
-
-
-@if (ProblemService.Objects.Count > 0)
-{
-    <h3>Issues</h3>
-    <QuickGrid Items="FilteredProblems" Pagination="@pagination" Theme="default">
-        <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Country name..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        @*<PropertyColumn Property="p => p.Department.Name" Sortable="true" Title="Department" />*@
-        @*<PropertyColumn Property="p => p.Status.Name" Sortable="true" />*@
-        <PropertyColumn Property="p => p.IsResolved" Sortable="true" />
-        <PropertyColumn Property="p => p.Description" Sortable="true" />
-        <TemplateColumn Title="Program">
-                <p>@ProgramService.Objects?.FirstOrDefault(x=>x.Id==context.AWProgramId)?.Name</p>
-        </TemplateColumn>
-        <TemplateColumn Title="Actions">
-            @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
-        </TemplateColumn>
-    </QuickGrid>
-    <Paginator Value="@pagination" />  
-}
-else
-{
-    <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button>
-}
-
-
 
 @code {
     public string viewprogram { get; set;} = "View All";

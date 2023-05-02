@@ -6,6 +6,7 @@ namespace Accreditation_Watch.Shared.Entities
     {
         public string Description { get; set; } = string.Empty;
         public bool IsResolved { get; set; } = false;
+        public Serverity Serverity { get; set; } = Serverity.Low;
         public int AWProgramId { get; set; }
         [NotMapped]
         public AWProgram? Program { get; set; } = new();
@@ -19,6 +20,10 @@ namespace Accreditation_Watch.Shared.Entities
     {
         public int? Id { get; } = 0;
         public readonly AWProgram? Program = null;
+    }
+
+    public enum Serverity{
+        Low = 1, Medium, High, Critical
     }
     
 }
