@@ -18,4 +18,5 @@
         List<Note> Dismissed { get; }
         List<Note> Active { get; }
     }
+    public interface INoteMessageService : IBaseService<NoteMessage> { }
 }

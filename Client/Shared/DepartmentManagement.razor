@@ -22,27 +22,37 @@ else if (DepartmentService.Objects.Count == 0)
 }
 else
 {
-    <QuickGrid Items="itemsQueryable" Pagination="@pagination" Theme="default" Virtualize="true">
-        <PropertyColumn Property="p => p.Id" Sortable="true" />
-        <PropertyColumn Property="p => p.Name" Sortable="true" />
-        <PropertyColumn Property="p => p.Programs.Count" Sortable="true" Title="Programs" />
-        <TemplateColumn Title="Actions">
-            <button disabled class="btn btn-info">Edit</button>
-            @if (ProgramService.Objects.Where(x => x.DepartmentId == context.Id).ToList().Count ==0)
-            {
-                <button @onclick="()=> Delete(context)" class="btn btn-danger">Delete</button>
-            }
-            @* <button @onclick="@(() => Update(context))" class="btn btn-outline-light">Update</button> *@
-        </TemplateColumn>
-    </QuickGrid>
-    <Paginator Value="@pagination" />
+    <div class="row">
+            <div class="col-9">
+                <QuickGrid Items="itemsQueryable"  Theme="default" Virtualize="true" Pagination="pagination">
+                    <PropertyColumn Property="p => p.Id" Sortable="true" />
+                    <PropertyColumn Property="p => p.ShortName" Sortable="true" />
+                    <PropertyColumn Property="p => p.Programs.Count" Sortable="true" Title="Programs" />
+                    <TemplateColumn Title="Actions">
+                        <button class="badge badge-info" @onclick="()=>Details(context)" >Details</button>
+                    </TemplateColumn>
+                </QuickGrid>
+                <Paginator Value="@pagination" />
+            </div>
+
+            <div class="col-3">
+                @if(ViewDepartmentVisibility)
+                {
+                    <DepartmentDetailsSIdeBar DepartmentId="SelectedDepartmentId" />
+                }
+            </div>
+        </div>
+
+
 }
 <NewDepartment IsVisible="@NewDepartmentVisibility" />
 
 @code {
+    public bool ViewDepartmentVisibility { get; set; } = false;
+    public int SelectedDepartmentId { get; set; }
     public string nameFilter;
     public bool NewDepartmentVisibility { get; set; } = false;
-    PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
+    PaginationState pagination = new PaginationState { ItemsPerPage = 30 };
     protected override async Task OnInitializedAsync()
     {
         await DepartmentService.Get();
@@ -72,5 +82,11 @@ else
         NewDepartmentVisibility = NewDepartmentVisibility ? false : true;
         StateHasChanged();
         return Task.CompletedTask;
+    }
+    async Task Details(Department department)
+    {
+        ViewDepartmentVisibility = ViewDepartmentVisibility ? true : true;
+        SelectedDepartmentId = department.Id;
+        StateHasChanged();
     }
 }

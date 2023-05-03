@@ -49,4 +49,8 @@
     {
         public NoteController(DataContext dataContext) : base(dataContext) { }
     }
+    public class NoteMessageController : BaseController<NoteMessage, NoteMessageDto>
+    {
+        public NoteMessageController(DataContext dataContext) : base(dataContext) { }
+    }
 }

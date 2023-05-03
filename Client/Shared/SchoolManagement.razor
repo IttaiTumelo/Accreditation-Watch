@@ -20,42 +20,54 @@
     }
     else
     {
-        <QuickGrid Items="FilteredSchools" Theme="default" Virtualize="true" Pagination="@pagination">
-            <PropertyColumn Property="p => p.Id" Sortable="true" />
-            <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
-                <ColumnOptions>
-                    <div class="search-box">
-                        <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="School Name..." />
-                    </div>
-                </ColumnOptions>
-            </PropertyColumn>
-            <TemplateColumn Title="Programs">
-                <div class="text-center">
-                    <p>@GetNumberOfSchools(context)</p>
-                </div>
-            </TemplateColumn>
-            <TemplateColumn Title="Departments">
-                <div class="text-center">
-                    <p>@GetNumberOfDepartments(context)</p>
-                </div>
-            </TemplateColumn>
-            <TemplateColumn Title="Actions">
-                @if (@GetNumberOfSchools(context) == 0)
+        <div class="row">
+            <div class="col-9">
+                <QuickGrid Items="FilteredSchools" Theme="default" Virtualize="true" Pagination="@pagination">
+                    <PropertyColumn Property="p => p.Id" Sortable="true" />
+                    <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
+                        <ColumnOptions>
+                            <div class="search-box">
+                                <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="School Name..." />
+                            </div>
+                        </ColumnOptions>
+                    </PropertyColumn>
+                    <TemplateColumn Title="Programs">
+                        <div class="text-center">
+                            <p>@GetNumberOfSchools(context)</p>
+                        </div>
+                    </TemplateColumn>
+                    <TemplateColumn Title="Departments">
+                        <div class="text-center">
+                            <p>@GetNumberOfDepartments(context)</p>
+                        </div>
+                    </TemplateColumn>
+                    <TemplateColumn Title="Actions">
+                    
+                            <button class="btn btn-outline-light" @onclick="()=>ShowDetails(context)">Edit</button>
+                    </TemplateColumn>
+                </QuickGrid>
+                <Paginator Value="@pagination" />
+            </div>
+            <div class="col-3">
+                @if (ViewSchoolVisibility)
                 {
-                    <button @onclick="@(() => DeleteSchool(context.Id))" class="btn btn-danger">Delete</button>
+                    <SchoolDetailsSIdebar SchoolId="@SelectedSchoolId" />
                 }
-                else
-                {
-                    <button disabled class="btn btn-outline-light">Edit</button>
-                }
-            </TemplateColumn>
-        </QuickGrid>
-        <Paginator Value="@pagination" />
+            </div>
+        </div>
     }
 <NewSchool IsVisible="@NewSchoolVisibility" />
 
 @code {
+    public bool ViewSchoolVisibility { get; set; } = false;
+    public int SelectedSchoolId { get; set; }
     IQueryable<School>? itemsQueryable;
+    public void ShowDetails(School school)
+    {
+        SelectedSchoolId = school.Id;
+        ViewSchoolVisibility = ViewSchoolVisibility ? true : true;
+        StateHasChanged();
+    }
     IQueryable<School> FilteredSchools
     {
         get

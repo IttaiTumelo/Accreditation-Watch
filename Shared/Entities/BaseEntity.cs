@@ -8,7 +8,7 @@ namespace Accreditation_Watch.Shared.Entities
         public string Name { get; set; }
         public bool IsDeleted { get; set; }
         [NotMapped]
-        public string ShortName 
+        public string? ShortName 
         { 
             get => Name?.Length > 20 ? Name.Substring(0, 20) + "..." : Name; 
         }

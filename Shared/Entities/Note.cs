@@ -18,7 +18,7 @@ namespace Accreditation_Watch.Shared.Entities
 
         public override List<string> RelatedEntities()
         {
-            return new() { "Task", "Problem", "Program", "Creator" };
+            return new() { "Task", "Problem", "Program", "Creator", "Messages" };
         }
 
            public override string ToString()
@@ -30,10 +30,22 @@ namespace Accreditation_Watch.Shared.Entities
      public class NoteMessage : BaseEntity {
           public string Content { get; set; } = string.Empty;
           public int UserId { get; set; }
-          public User User { get; set; }
+          public User? User { get; set; }
           public DateTime Time { get; set; } = DateTime.Now;
           public int NoteId { get; set; }
-          public Note Note { get; set; }
+          public Note? Note { get; set; }
+
+          public override List<string> RelatedEntities()
+          {
+               return new() { "User", "Note" };
+          }
+     }
+
+     public class NoteMessageDto : NoteMessage
+     {
+          public int? Id = null;
+          public readonly User? User = null;
+          public readonly Note? Note = null;
      }
 
      public class NoteDto : Note

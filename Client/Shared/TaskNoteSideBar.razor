@@ -1,6 +1,7 @@
 @inject INoteService NoteService    
 @inject IUserService UserService
 @inject IAuthService AuthService
+@inject INoteMessageService NoteMessageService
     <h4>Create Note</h4>
     <EditForm Model="newNote">
             <div class="form-group">
@@ -29,8 +30,17 @@
                <label for="Modified">What this not is about</label>
                <InputTextArea id="Modified" class="form-control" @bind-Value="newNote.Content" />
             </div>
-            <button type="submit" class="btn btn-primary" @onclick="async () => await NoteService.Create(newNote)">Create</button>
+            <button type="submit" class="btn btn-primary col-12" @onclick="async () => await NoteService.Create(newNote)">Create</button>
     </EditForm>
+
+                    <h4 type="button" class="position-relative">
+                        Notes Related tied to this task
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            @NoteService.Objects.Where(x => x.TaskId == Task.Id).ToList().Count
+                            <span class="visually-hidden">unread messages</span>
+                        </span>
+                    </h4>
+
       @if (Task is not null)
           {
                <div class="row grid-max-height">
@@ -62,7 +72,9 @@
                newNote.Date = DateTime.Now;
                await AuthService.InitialiseAuthState();
                newNote.CreatorId = await AuthService.GetId();
+               await NoteMessageService.Get();
                newNote.Name = Task.Name;
+               StateHasChanged();
           }
      }
 }

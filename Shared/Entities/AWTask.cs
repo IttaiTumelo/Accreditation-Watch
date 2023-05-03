@@ -24,7 +24,7 @@ namespace Accreditation_Watch.Shared.Entities
         public List<Note> Notes { get; set; } = new();
         public override List<string> RelatedEntities()
         {
-            return new() { "Assignee", "Type", "Document", "ResultType", "Problem", "AssignedTo" };
+            return new() { "Assignee", "Type", "Document", "ResultType", "Problem", "AssignedTo", "Notes" };
         }
 
     }

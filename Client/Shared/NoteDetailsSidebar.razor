@@ -1,5 +1,7 @@
 @inject INoteService NoteService
 @inject IProgramService ProgramService
+@inject IUserService UserService
+@inject IAuthService AuthService
 <h4>Note Details</h4>
           @if (Program is not null && Note is not null)
           {
@@ -23,6 +25,45 @@
                     
                     <h6 class="col-3">State</h6>
                     <p class="col-9">@Note.State</p>
+                    <div class="col-12">
+                         @if(Note.Messages is not null && Note.Messages.Count > 0)
+                         {
+                    <h6>Chat</h6>
+                               @foreach (var message in Note.Messages)
+                                        {
+                                             if(message.UserId == MyID){
+                                                  @* Message float to the left  *@
+                                                  <div class="row">
+                                                       <div class="col-12">
+                                                            <div class="float-end alert alert-primary  p-1 m-1 col-7"
+                                                                 role="alert">
+                                                                 <small class="text-muted p-0 m-0">
+                                                                                @message.Content - @AWFunctions.HowLongAgo(message.Time) 
+                                                                           </small>
+                                                            </div>
+                                                       </div>
+                                                  </div>
+                                             } else {
+                                                  @* Message float to the right  *@
+                                                  <div class="row">
+                                                       <div class="col-12">
+                                                            <div class="float-start alert alert-secondary p-1 m-1 col-7"
+                                                                 role="alert">
+                                                                      <small class="p-0 m-0">@UserService.Objects.FirstOrDefault(x=>x.Id==message.UserId).Name</small>
+                                                                           <small class="text-muted p-0 m-0">
+                                                                                @message.Content - @AWFunctions.HowLongAgo(message.Time)
+                                                                           </small>
+                                                            </div>
+                                                       </div>
+                                                  </div>
+                                             }
+                                        }
+                         }
+                                       
+                                        @* Write message box and send *@
+                         
+                                   </div>
+
 
                     <h6 class="col-3">Ralated Notes</h6>
                     @foreach (var item in NoteService.Objects.Where(x => x.ProgramId == Program.Id))
@@ -44,8 +85,10 @@
      public Note Note { get; set; }
      [Parameter]
      public AWProgram Program { get; set; }
-
-     protected override void OnInitialized()
+     public int MyID { get; set; }
+     protected override async void OnInitialized()
      {
+          await AuthService.InitialiseAuthState();
+          MyID = await AuthService.GetId();
      }
 }

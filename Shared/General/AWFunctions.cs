@@ -186,6 +186,23 @@ namespace Accreditation_Watch.Shared.General
             else return false;
         }
 
+     public static string HowLongAgo(DateTime date)
+    {
+        var span = DateTime.Now - date;
+        if (span.Days > 0)
+        {
+            return $"{span.Days}d ago";
+        }
+        if (span.Hours > 0)
+        {
+            return $"{span.Hours}h ago";
+        }
+        if (span.Minutes > 0)
+        {
+            return $"{span.Minutes}m ago";
+        }
+        return $"{span.Seconds}s ago";
+    }
 
 
 

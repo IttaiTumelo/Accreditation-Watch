@@ -1,0 +1,53 @@
+@inject IDepartmentService DepartmentService
+@inject IProgramService ProgramService
+@inject ISchoolService SchoolService
+@inject NavigationManager NavigationManager
+
+<h4>Department Details</h4>
+          @if (School is not null)
+          {
+               <div class="row grid-max-height">
+                    
+                    <h6 class="col-3">Name</h6>
+                    <p class="col-9">@School.Name</p>
+                   
+
+                    <h6 class="col-3">School</h6>
+                    <p class="col-9">@School.Name</p>
+
+                    <h6 class="col-6">Departments</h6>
+                    @foreach (var item in DepartmentService.Objects.Where(x => x.SchoolId == SchoolId).ToList())
+                    {
+                         <DepartmentCard Department="item" />
+                    }
+               </div>
+               @if (DepartmentService.Objects.Where(x => x.SchoolId== School.Id).ToList().Count ==0)
+                {
+                    <button @onclick="Delete" class="btn btn-danger">Delete</button>
+                }
+          }
+
+
+
+@code 
+{
+     [Parameter]
+     public int SchoolId { get; set; }
+
+     public School School { get; set; }
+
+     protected override async void OnParametersSet ()
+     {
+          await DepartmentService.Get();
+          await ProgramService.Get();
+          await SchoolService.Get();
+          School = await SchoolService.GetByID(SchoolId);
+          StateHasChanged();
+     }
+     public async Task Delete()
+     {
+          await SchoolService.Delete(SchoolId);
+          StateHasChanged();
+          @* NavigationManager.NavigateTo("/departments"); *@
+     }
+}

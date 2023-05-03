@@ -34,8 +34,10 @@ namespace Accreditation_Watch.Client.Services
             return response;
         }
 
-        public virtual async Task<List<T>> Get()
+        public virtual async Task<List<T>> Get(bool forceRefresh)
         {
+            if (forceRefresh) Objects.Clear();
+
             if(Objects.Count > 0) return Objects; // TODO: Add a check for if the objects are up to date (last updated
             var request = await _httpClient.GetAsync($"api/{typeof(T).Name}");
             if (!request.IsSuccessStatusCode) throw new Exception(request.ReasonPhrase);
@@ -44,12 +46,6 @@ namespace Accreditation_Watch.Client.Services
             Objects = objects;
             return objects;
         }
-
-          public Task<List<T>> Get(bool forceRefresh)
-          {
-                if (forceRefresh) Objects = new();
-                return Get();
-          }
 
           public virtual async Task<T> GetByID(int id)
         {
