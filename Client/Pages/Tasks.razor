@@ -1,6 +1,7 @@
 ﻿@page "/tasks"
 @inject IAWTaskService AWTaskService   
 @inject IProblemService ProblemService
+
 <div class="row">
     <div class="col-11">
         <h3>Tasks</h3>
@@ -11,6 +12,11 @@
 </div>
 <div class="row">
     <div class="col-8">
+        @if(AWTaskService.Objects is null)
+        {
+            <Loading />
+        }
+        
         <QuickGrid Items="FilteredTasks" Pagination="@pagination" Theme="default">
             <PropertyColumn Property="@(c => c.ShortName)" Sortable="true" Class="country-name">
                 <ColumnOptions>
@@ -20,7 +26,7 @@
                 </ColumnOptions>
             </PropertyColumn>
             @* <PropertyColumn Property="p => p.Assignee.Name" Sortable="true" Title="Assigned by" /> *@
-            <PropertyColumn Property="p => p.AssignedTo.Name" Sortable="true" Title="Assigned to" />
+            @* <PropertyColumn Property="p => p.AssignedTo.Name" Sortable="true" Title="Assigned to" /> *@
             <PropertyColumn Property="p => p.Due" Sortable="true" />
             @* <PropertyColumn Property="p => p.Type" Sortable="true" /> *@
             <PropertyColumn Property="p => p.ProgressString" Sortable="true" Title="Progress" />
@@ -28,7 +34,7 @@
             @* <PropertyColumn Property="p => p.Problem.IsResolved" Sortable="true" Title="Duration" /> *@
             <TemplateColumn Title="Actions">
                     <button @onclick="()=>SelectTask(context)" class="btn btn-info">Details</button>
-                    <button @onclick="()=>SelectTask(context)" class="btn btn-info">Comments/Notes</button>
+                    <button @onclick="()=>SelectNotes(context)" class="btn btn-info">Comments/Notes</button>
             </TemplateColumn>
         </QuickGrid>
         @* </div> *@
@@ -42,7 +48,14 @@
         </div>
     </div>
     <div class="col-4">
-        <TaskDetails Task="@SelectedTask"/>
+        @if(isDetails)
+        {
+            <TaskDetails Task="@SelectedTask"/>
+        }
+        else
+        {
+            <TaskNoteSideBar Task="@SelectedTask"/>
+        }
     </div>
 </div>
 
@@ -51,9 +64,11 @@
 <AddTask IsVisible="@AddTaskVisibility" OnClose="HideAddTask" />
 
 @code {
-    public AWTask SelectedTask { get; set; }
+    bool isDetails = true;
+    public AWTask? SelectedTask { get; set; }
     void SelectTask(AWTask task)
     {
+        isDetails = true;
         SelectedTask = task;
         StateHasChanged();
     }
@@ -64,9 +79,11 @@
         await AWTaskService.Get(true);
         StateHasChanged();
     }
-    async Task ShowDetails(AWTask task)
+    async Task SelectNotes(AWTask task)
     {
-        throw new NotImplementedException();
+        SelectedTask = task;
+        isDetails = false;
+        StateHasChanged();
     }
     async Task Edit(AWTask task)
     {
@@ -93,7 +110,6 @@
         
         get
         {
-           
             itemsQueryable = AWTaskService.Objects.AsQueryable();
             var filtered = itemsQueryable;
 
@@ -101,7 +117,6 @@
             {
                 filtered = filtered.Where(p => p.Name.Contains(nameFilter));
             }
-
             return filtered;
         }
     }

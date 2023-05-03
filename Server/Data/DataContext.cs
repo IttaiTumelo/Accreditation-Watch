@@ -142,6 +142,7 @@ namespace Accreditation_Watch.Server.Data
         public DbSet<PendingImplimentation> PendingImplimentations { get; set; }
         public DbSet<Problem> Problems { get; set; }
         public DbSet<Note> Notes { get; set; }
+        public DbSet<NoteMessage> NoteMessages { get; set; }
 
     }
 }

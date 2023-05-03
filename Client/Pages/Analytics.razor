@@ -1,27 +1,31 @@
 ﻿@page "/analytics"
 @inject IProgramService ProgramService
 @inject IProblemService ProblemService
+@inject IAuthService AuthService
+@inject IUserService UserService
+@inject IAWTaskService AWTaskService
 <h3>Analytics</h3>
 
 <div id="@Visibility" class="d-flex justify-content-center align-items-center">
         <div style="background-color : #fff; border-radius: 10px; width: 1000px" class="p-5">
           <div class="row">
-                      <h3 class="col">Add User</h3>
+                      <h5 class="col">Checking prgrams for potential problems</h5>
                       <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
           </div>
             <p class="text-success">@SuccessMessage</p>
         <span class="text-danger">@ErrorMessage</span>
         <div id="@UpdatingResults" class="d-flex justify-content-center align-items-center">
             <div class="loading-section @StyleOne() p-5 " style="width:50%; background-color : #fff; border-radius: 10px;">
-                <p>Processes Document ...</p>
+                <p>Analyzing data ...</p>
                 <div class="progress-container">
                     <div class="progress-bar" style="@_progressBarStyle"></div>
                 </div>
-                <p class="col">@jobDiscription</p>
+                <p class="col">@percentage %  @jobDiscription</p>
             </div>
         </div>
         </div>
 </div>
+
 
 
 <div class="row">
@@ -86,16 +90,17 @@
                     }
                     else 
                     {
-                        <p>Noted</p>
+                        <span>Noted</span>
                     }
                 </TemplateColumn>
             </QuickGrid>
             <Paginator Value="@pagination" />  
-            <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button>
+            @* <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button> *@
         }
         else
         {
-            <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button>
+            <p>No Problems</p>
+            @* <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button> *@
         }
     </div>
     <div class="col-4">
@@ -109,7 +114,7 @@
     public string SuccessMessage { get; set; } = "";
     public string ErrorMessage { get; set; } = "";
     public string UpdatingResults { get; set; }
-    public string _progressBarStyle = "width: 0%; transition: width 1s ease-in-out;";
+    public string _progressBarStyle = "width: 00%; transition: width 1s ease-in-out;";
     public bool loading = false;
     public string StyleOne() => loading ? _loadingStyle : _notLoadingStyle;
     public string _loadingStyle = "display: flex; align-items: center; justify-content: center;";    public string _notLoadingStyle = "display: none;";
@@ -120,7 +125,22 @@
     Problem? SelectedProblem { get; set; }
     async Task CreateTask(Problem problem)
     {
-        throw new NotImplementedException();
+        var userId = await AuthService.GetId();
+        AWTaskDto task = new AWTaskDto()
+        {
+            Description = problem.Description,
+            Name = problem.Name,
+            ProblemId = problem.Id,
+            Assignee = UserService.Objects.FirstOrDefault(u => u.Id == userId),
+            AssignedTo= UserService.Objects.FirstOrDefault(u => u.Id == userId),
+            AssigneeId=userId,
+            AssignedToId= userId,
+            
+        };
+        await AWTaskService.Create(task);
+        StateHasChanged();
+        Close();
+
     }
     int Progress { get; set; } = 1;
     int Total { get; set; } = 100;
@@ -143,14 +163,18 @@
     {
         get
         {
-            var result = ProblemService.Objects.AsQueryable();
-
+            var results = ProblemService.Objects;
+            foreach (var r in results)
+            {
+                r.Noted = AWTaskService.Objects.Any(t => t.ProblemId == r.Id);
+            }
+            var result = results.AsQueryable();
             if (!string.IsNullOrEmpty(nameFilter))
             {
                 result = result.Where(c => c.Name.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
 
             }
-
+            if(result is null || result.Count() == 0) return new List<Problem>().AsQueryable();
             //if (minMedals > 0)
             //{
             //    result = result.Where(c => c.Medals.Total >= minMedals);
@@ -164,12 +188,16 @@
     ProgramSummery? programSummery = new();
     protected override async void OnInitialized()
     {
-        MakeIssues();
+        await AWTaskService.Get();
+        await UserService.Get();
+        await AuthService.InitialiseAuthState();
         programs = await ProgramService.Get();
         await ProblemService.Get();
         programSummery = new(programs);
 
         messages = programSummery.GenerateSummaries();
+        await MakeIssues();
+
         //if(messages.Count > 3)
         //messages.RemoveRange(3, messages.Count - 3);
         //_programs = await ProgramService.Get();
@@ -195,10 +223,17 @@
         }
         StateHasChanged();
     }
-    Task MakeIssues()
+    async Task MakeIssues()
     {
+        IsVisible = true;
+        Total = messages.Count;
+        Progress = 0;
+        StateHasChanged();
+            await Task.Delay(500);
+
         foreach(var issue in messages)
         {
+            Console.WriteLine(issue.Program.ToString());
             ProblemDto problem = new()
             {
                 Name = issue.Name,
@@ -208,14 +243,23 @@
             };
             if(!ProblemService.Objects.Any(p => p.Description == problem.Description))
             {
-                ProblemService.Create(issue);
+                ProblemService.Create(problem);
             }
+            Progress++;
+            UpdateLoading();
+            
         }
-        return Task.CompletedTask;
+        await ProblemService.Get(true);
+            await Task.Delay(500);
+
+        IsVisible  =false;
+        StateHasChanged();
     }
+    int percentage = 0;
         public void UpdateLoading()
     {
-        _progressBarStyle = $"width: {(Progress * 100) / Total}%; transition: width 0.3s ease-in-out;";
+        percentage = (Progress * 100) / Total;
+        _progressBarStyle = $"width: {percentage}%; transition: width 0.3s ease-in-out;";
         StateHasChanged();
     }
 }

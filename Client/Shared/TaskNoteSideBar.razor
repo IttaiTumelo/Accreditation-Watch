@@ -1,0 +1,68 @@
+@inject INoteService NoteService    
+@inject IUserService UserService
+@inject IAuthService AuthService
+    <h4>Create Note</h4>
+    <EditForm Model="newNote">
+            <div class="form-group">
+               <label for="Note">Note Name</label>
+               <InputText id="Note" class="form-control" @bind-Value="newNote.Name" />
+            </div>
+            <div class="form-group">
+               <label for="TaskId">Task</label>
+               <InputSelect id="TaskId" class="form-control" @bind-Value="newNote.State">
+                    @foreach (var item in Enum.GetValues(typeof(NoteState)))
+                    {
+                         <option value="@item">@item</option>
+                    }
+               </InputSelect>
+            </div>
+            <div class="form-group">
+               <label for="CreatedBy">Created By</label>
+               <InputSelect id="CreatedBy" class="form-control" @bind-Value="newNote.CreatorId">
+                    @foreach (var item in UserService.Objects)
+                    {
+                         <option value="@item.Id">@item.Name</option>
+                    }
+               </InputSelect>
+            </div>
+            <div class="form-group">
+               <label for="Modified">What this not is about</label>
+               <InputTextArea id="Modified" class="form-control" @bind-Value="newNote.Content" />
+            </div>
+            <button type="submit" class="btn btn-primary" @onclick="async () => await NoteService.Create(newNote)">Create</button>
+    </EditForm>
+      @if (Task is not null)
+          {
+               <div class="row grid-max-height">
+                    @foreach (var item in NoteService.Objects.Where(x => x.TaskId == Task.Id))
+                    {
+                         <Card Note="item"/>
+                    }
+               </div>
+          }
+          else
+          {
+               <p>No Note Selected</p>
+          }
+
+@code 
+{
+     [Parameter]
+     public AWTask Task { get; set; }
+
+     NoteDto newNote = new NoteDto();
+
+     protected override async void OnParametersSet()
+     {
+
+          if (Task is not null)
+          {
+              await NoteService.Get();
+               newNote.TaskId = Task.Id;
+               newNote.Date = DateTime.Now;
+               await AuthService.InitialiseAuthState();
+               newNote.CreatorId = await AuthService.GetId();
+               newNote.Name = Task.Name;
+          }
+     }
+}

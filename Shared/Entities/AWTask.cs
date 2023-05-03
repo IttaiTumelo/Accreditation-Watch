@@ -15,9 +15,11 @@ namespace Accreditation_Watch.Shared.Entities
         public AWDocument? Document  { get; set; }
         public ResultType? ResultType { get; set; }
         public int? ProblemId { get; set; }
-        public Problem? Problem { get; set; } = new();
-        public int? AssignedToId { get; set; } = new();
-        public User? AssignedTo { get; set; } = new();
+        public Problem? Problem { get; set; }
+        public int? ProgramId { get; set; }
+        public Problem? Program { get; set; }
+        public int? AssignedToId { get; set; }
+        public User? AssignedTo { get; set; }
         public bool IsCompleted { get; set; } = false;
         public List<Note> Notes { get; set; } = new();
         public override List<string> RelatedEntities()
@@ -32,6 +34,9 @@ namespace Accreditation_Watch.Shared.Entities
         public TaskType? Type = null;
         public AWDocument? Document = null;
         public ResultType? ResultType = null;
+        public Problem? Problem = null;
+        public User? AssignedTo = null;
+        public User? Assignee = null;
     }
     public class TaskType : BaseEntity
     {

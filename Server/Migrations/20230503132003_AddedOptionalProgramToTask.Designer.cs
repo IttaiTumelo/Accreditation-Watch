@@ -4,6 +4,7 @@ using Accreditation_Watch.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Accreditation_Watch.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230503132003_AddedOptionalProgramToTask")]
+    partial class AddedOptionalProgramToTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -520,12 +523,15 @@ namespace Accreditation_Watch.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AWProgramId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AWTaskId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CreatorId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -537,69 +543,22 @@ namespace Accreditation_Watch.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProblemId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProgramId")
+                    b.Property<int>("ProgramId")
                         .HasColumnType("int");
 
                     b.Property<int>("State")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TaskId")
-                        .HasColumnType("int");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("AWProgramId");
 
-                    b.HasIndex("ProblemId");
-
-                    b.HasIndex("ProgramId");
-
-                    b.HasIndex("TaskId");
+                    b.HasIndex("AWTaskId");
 
                     b.ToTable("Notes");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.NoteMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NoteId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NoteId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("NoteMessages");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.PendingImplimentation", b =>
@@ -968,48 +927,13 @@ namespace Accreditation_Watch.Server.Migrations
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Note", b =>
                 {
-                    b.HasOne("Accreditation_Watch.Shared.Entities.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId");
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.Problem", "Problem")
-                        .WithMany()
-                        .HasForeignKey("ProblemId");
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AWProgram", "Program")
+                    b.HasOne("Accreditation_Watch.Shared.Entities.AWProgram", null)
                         .WithMany("Notes")
-                        .HasForeignKey("ProgramId");
+                        .HasForeignKey("AWProgramId");
 
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AWTask", "Task")
+                    b.HasOne("Accreditation_Watch.Shared.Entities.AWTask", null)
                         .WithMany("Notes")
-                        .HasForeignKey("TaskId");
-
-                    b.Navigation("Creator");
-
-                    b.Navigation("Problem");
-
-                    b.Navigation("Program");
-
-                    b.Navigation("Task");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.NoteMessage", b =>
-                {
-                    b.HasOne("Accreditation_Watch.Shared.Entities.Note", "Note")
-                        .WithMany("Messages")
-                        .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Note");
-
-                    b.Navigation("User");
+                        .HasForeignKey("AWTaskId");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Problem", b =>
@@ -1036,11 +960,6 @@ namespace Accreditation_Watch.Server.Migrations
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Department", b =>
                 {
                     b.Navigation("Programs");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Note", b =>
-                {
-                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.School", b =>

@@ -61,8 +61,8 @@
           {
                Note = await NoteService.GetByID(Id);
           }
-          if(Note != null)
-          Program =  await ProgramService.GetByID(Note.ProgramId);
+          if(Note != null && Note.ProgramId != null)
+               Program =  await ProgramService.GetByID((int)Note.ProgramId);
 
           StateHasChanged();
      }

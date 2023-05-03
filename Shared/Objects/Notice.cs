@@ -12,5 +12,6 @@ namespace Accreditation_Watch.Shared.Objects
         public string IconeUrl;
         public bool IsAProblem { get; set; } = false;
         public List<Issue> Issues { get; set; } = new();
+
     }
 }

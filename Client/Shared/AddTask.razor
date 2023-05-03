@@ -3,6 +3,9 @@
 @inject IAWTaskService AWTaskService
 @inject IProgramService ProgramService
 @inject IAuthService AuthService
+
+@if(ProblemService.Objects is not null || UserService.Objects is not null || ProgramService.Objects is not null || AWTaskService.Objects is not null || newTask is not null)
+{
     <div id="@Visibility" class="d-flex justify-content-center align-items-center">
         <div style="background-color : #fff; border-radius: 10px;" class="p-5">
             <div class="row">
@@ -33,14 +36,22 @@
                         </div>
                         <div class="form-group">
                             <label for="program-name">Program</label>
-                            <input @bind="newTask.Problem.Program.Name" type="text" class="form-control" id="program-name" placeholder="Program Name"  /> @*need to be bound to something*@
+                            <InputSelect @bind-Value="newTask.ProgramId" class="form-select" aria-label="Default select example" >
+                                @if (ProgramService.Objects is not null)
+                                {
+                                    @foreach (var item in ProgramService.Objects)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </InputSelect>
                         </div>
                     </div>
                     <div class="col">
                         <h5>Assignment Details</h5>
                         <div class="form-group">
                             <label for="program-name">Assigned to</label>
-                            <InputSelect @bind-Value="newTask.AssignedTo.Id" class="form-select" aria-label="Default select example" >
+                            <InputSelect @bind-Value="newTask.AssignedToId" class="form-select" aria-label="Default select example" >
                                 @if (UserService.Objects is not null)
                                 {
                                     @foreach (var item in UserService.Objects)
@@ -69,6 +80,7 @@
                 </div>
         </div>
     </div>
+}
 
 @code {
      bool UsingProblemName { get; set; } = false;
@@ -98,7 +110,7 @@
     void LoadEverything(){
           if(newTask.ProblemId != 0)
           {
-               newTask.Problem = ProblemService.Objects.FirstOrDefault(c => c.Id == newTask.ProblemId);
+               @* newTask.Problem = ProblemService.Objects.FirstOrDefault(c => c.Id == newTask.ProblemId); *@
                newTask.Description = newTask.Problem.Description;
                newTask.Name = newTask.Problem.Name;
                newTask.Problem.Program.Name = newTask.Problem.Name;
@@ -113,13 +125,10 @@
           newTask.AssignedTo=UserService.Objects.First(x=>x.Id== newTask.AssignedTo.Id);
           newTask.AssigneeId=userId;
           newTask.AssignedToId=newTask.AssignedTo.Id;
-          newTask.AssignedTo=null;
-          newTask.Assignee = null;
-          newTask.Problem = null;
+          
             AWTaskService.Create(newTask);
           newTask.AssignedTo=new();
           newTask.Assignee = new();
-          newTask.Problem = new();
             Close();
      }
 
