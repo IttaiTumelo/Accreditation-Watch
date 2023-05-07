@@ -10,7 +10,7 @@ namespace Accreditation_Watch.Client.Services
         private readonly HttpClient _httpClient;
         public BaseService(HttpClient httpClient) => _httpClient = httpClient;
 
-        public List<T> Objects { get; set; }=new();
+        public List<T> Objects { get; set; }
         public T Object { get; set; }=new();
 
         public virtual async Task<T> Create(T dto)
@@ -36,9 +36,11 @@ namespace Accreditation_Watch.Client.Services
 
         public virtual async Task<List<T>> Get(bool forceRefresh)
         {
-            if (forceRefresh) Objects.Clear();
-
-            if(Objects.Count > 0) return Objects; // TODO: Add a check for if the objects are up to date (last updated
+            if (Objects is not null)
+            {
+                if (forceRefresh) Objects.Clear();
+                if(Objects.Count > 0) return Objects; // TODO: Add a check for if the objects are up to date (last updated
+            }
             var request = await _httpClient.GetAsync($"api/{typeof(T).Name}");
             if (!request.IsSuccessStatusCode) throw new Exception(request.ReasonPhrase);
             var objects = request.Content.ReadFromJsonAsync<List<T>>().Result;

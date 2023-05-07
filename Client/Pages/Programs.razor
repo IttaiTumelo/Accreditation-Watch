@@ -8,15 +8,21 @@
 <style>
 
 </style>
+
+@if(isLoading)
+{
+        <Loading/>
+}else{
+
 <div class="row">
      <div class="col-4">
           <h2>Programs</h2>
      </div>
      <div class="col-8">
          <div class="row">
-            <button @onclick="() => NewProgram()" class="btn  btn-info col mx-1">New Program</button>
-            <button @onclick="ViewDepartment" class="btn  btn-info col mx-1">View Departments</button>
-            <button @onclick="ViewSchool" class="btn  btn-info col mx-1">School School</button>
+            <button @onclick="() => NewProgram()" class=" button-outlined col mx-1">New Program</button>
+            <button @onclick="ViewDepartment" class=" button-outlined  col mx-1">View Departments</button>
+            <button @onclick="ViewSchool" class=" button-outlined col mx-1">School School</button>
          </div>
      </div>
 </div>
@@ -37,6 +43,7 @@
         
         <select type="text" @bind="@departmentId" class="form-control" placeholder="All">
             <option  value="0">All</option>
+            
             @foreach (var department in DepartmentService.Objects)
             {
             <option @onclick="()=>{departmentId=department.Id; StateHasChanged();}" value="@department.Id">@department.Name</option>
@@ -76,10 +83,10 @@
                          @* <PropertyColumn Property="p => p.GetDuration()" Sortable="true" Title="Duration" /> *@
                          <PropertyColumn Property="p => p.IsExpired()" Sortable="true" Title="Expired" />
                          <TemplateColumn Title="Actions">
-                              <button @onclick="@(() => ShowDetails(context))" class="badge btn-primary">Details</button>
+                              <button @onclick="@(() => ShowDetails(context))" class="button-outlined  p-1 m-1">Details</button>
                               @if(NoteService.Objects.Where(c=>c.ProgramId == context.Id).Count() > 0)
                               {
-                                   <button @onclick="()=>ShowCards(context)" class="badge btn-primary">Comments/Notes</button>
+                                   <button @onclick="()=>ShowCards(context)" class="button-outlined p-1 m-1">Comments/Notes</button>
                               }
                          </TemplateColumn>
                     </QuickGrid>
@@ -100,30 +107,14 @@
     </div>
     
 </div>
-   @* @if(SelectedProgram is not null){
-          <ProgramDetails Program="@SelectedProgram" IsVisible="@ProgramVisibility" />
-     } *@
+}
+
 <NewProgram  IsVisible="@NewProgramVisibility" />
 
 
-@* @if(_config != null){
-     <div class="row">
-          <div class="col-4">
-               <Chart Config="@_config" />
-          </div>
-          <div class="col-4">
-               <Chart Config="@_config" />
-          </div>
-          <div class="col-4">
-               <Chart Config="@_config" />
-          </div>
-          <div class="col-4">
-               <Chart Config="@_config" />
-          </div>
-     </div>
-} *@
-
 @code {
+     public bool isLoading { get; set; } = true;
+
     void Update(){
         pagination = new PaginationState { ItemsPerPage = rows };
         StateHasChanged();
@@ -218,10 +209,11 @@
 
 protected override async void OnInitialized()
      {
-          await ProgramService.Get();
+        await ProgramService.Get();
         await SchoolService.Get();
         await DepartmentService.Get();
         await NoteService.Get();
+        isLoading =!(ProgramService.Objects is not null && SchoolService.Objects is not null && DepartmentService.Objects is not null && NoteService.Objects is not null);
         itemsQueryable = ProgramService.Objects.AsQueryable();
           StateHasChanged();
     _config = new PieConfig

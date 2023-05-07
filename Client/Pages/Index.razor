@@ -12,9 +12,13 @@
 
 <PageTitle>Dashboard</PageTitle>
 <h3>Dashboard</h3>
-
-
-<div class="row">
+@if(isLoading)
+{
+    <Loading />
+}
+else
+{
+    <div class="row">
     <div class="col-9">
         <div class="my-3">
             <div class="row h-100">
@@ -213,8 +217,8 @@
                 <div class="col-5">
                     <h4>Notes</h4>
                 </div>
-                <div class="col-3">
-                    <button type="button" class="btn btn-primary position-relative" @onclick="()=>{active=true;  StateHasChanged();}">
+                <div class="col-3 p-1">
+                    <button type="button" class="button-success position-relative" @onclick="()=>{active=true;  StateHasChanged();}">
                         Active
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             @NoteService.Active.Count
@@ -222,8 +226,8 @@
                         </span>
                     </button>
                 </div>
-                <div class="col-3">
-                    <button type="button" class="btn btn-primary position-relative" @onclick="()=>{active=false; StateHasChanged();}">
+                <div class="col-3 p-1">
+                    <button type="button" class="button-danger position-relative" @onclick="()=>{active=false; StateHasChanged();}">
                         Dismissed
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             @NoteService.Dismissed.Count
@@ -256,9 +260,13 @@
 
 </div>
 
+}
+
+
 
 
 @code {
+    bool isLoading { get; set;} = true;
     Task ViewAllNotes(){
         NavMng.NavigateTo("/notes");
         return Task.CompletedTask;
@@ -375,6 +383,15 @@
         departments = await DepartmentService.Get();
         schools = await SchoolService.Get();
         users = await UserService.Get();
+
+        isLoading =!(
+            ProgramService.Objects is not null && 
+            SchoolService.Objects is not null && 
+            DepartmentService.Objects is not null && 
+            NoteService.Objects is not null &&
+            UserService.Objects is not null
+            );
+
 
         messages = programSummery.GenerateSummaries();
         if(messages.Count > 3)

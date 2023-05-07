@@ -6,6 +6,13 @@
 @inject IAWTaskService AWTaskService
 <h3>Analytics</h3>
 
+@if(loading)
+{
+    <Loading />
+
+}
+else 
+{
 <div id="@Visibility" class="d-flex justify-content-center align-items-center">
         <div style="background-color : #fff; border-radius: 10px; width: 1000px" class="p-5">
           <div class="row">
@@ -25,8 +32,6 @@
         </div>
         </div>
 </div>
-
-
 
 <div class="row">
     <div class="col-8">
@@ -67,7 +72,7 @@
         </div>
 
 
-        @if (ProblemService.Objects.Count > 0)
+        @if (ProblemService.Objects?.Count > 0)
         {
             <h3>Issues</h3>
             <QuickGrid Items="FilteredProblems" Pagination="@pagination" Theme="default">
@@ -84,13 +89,13 @@
                 <PropertyColumn Property="p => p.ShortDescription" Sortable="true" />
                 
                 <TemplateColumn Title="Actions/State">
-                    <button @onclick ="@(() => SelectedProblem = context)" class="btn btn-primary p-1 m-1">Details</button>
+                    <button @onclick ="@(() => SelectedProblem = context)" class=" button-outlined p-1 m-1">Details</button>
                     @if(!context.Noted){
-                        <button @onclick="@(() => CreateTask(context))" class="btn btn-primary p-1 m-1">Make Task</button>
+                        <button @onclick="@(() => CreateTask(context))" class=" button-outlined p-1 m-1">Make Task</button>
                     }
                     else 
                     {
-                        <span>Noted</span>
+                        <button disabled @onclick="@(() => CreateTask(context))" class=" button-outlined p-1 m-1">Tasked</button>
                     }
                 </TemplateColumn>
             </QuickGrid>
@@ -107,6 +112,8 @@
         <IssueDetails Problem="@SelectedProblem"/>
     </div>
 </div>
+}
+
 
 @code {
     public bool IsVisible { get; set; } = false;
@@ -205,6 +212,15 @@
         //StateHasChanged();
         
         StateHasChanged();
+        loading = !(
+             ProgramService.Objects is not null &&
+                ProblemService.Objects is not null &&
+                UserService.Objects is not null &&
+                AWTaskService.Objects is not null &&
+                UserService.Objects is not null 
+
+            );
+        
 
 
         //print to the condole stat

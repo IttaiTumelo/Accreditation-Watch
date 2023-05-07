@@ -3,11 +3,11 @@
 @inject IProgramService ProgramServices
 @inject IDepartmentService DepartmentService
 <div class="row">
-    <div class="col-9">
+    <div class="col-8">
         <h3>School</h3>
     </div>
-    <div class="col-3">
-        <button @onclick="() => NewSchool()" class="btn  btn-info col mx-1">Add School</button>
+    <div class="col-4">
+        <button @onclick="() => NewSchool()" class="button-outlined col-12 mx-1">Add School</button>
     </div>
 </div>
     @if (SchoolService.Objects == null)
@@ -43,7 +43,7 @@
                     </TemplateColumn>
                     <TemplateColumn Title="Actions">
                     
-                            <button class="btn btn-outline-light" @onclick="()=>ShowDetails(context)">Edit</button>
+                            <button class="button-outlined p-1 m-1" @onclick="()=>ShowDetails(context)">View details</button>
                     </TemplateColumn>
                 </QuickGrid>
                 <Paginator Value="@pagination" />
@@ -65,8 +65,9 @@
     public void ShowDetails(School school)
     {
         SelectedSchoolId = school.Id;
-        ViewSchoolVisibility = ViewSchoolVisibility ? true : true;
+        ViewSchoolVisibility = true;
         StateHasChanged();
+        
     }
     IQueryable<School> FilteredSchools
     {

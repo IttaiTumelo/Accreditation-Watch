@@ -102,22 +102,13 @@
                             <p>@ErrorMessage</p>
                             <p>@SuccessMessage</p>
                             <InputTextArea @bind-Value="Note.Content" class="form-control" placeholder="Comment" />
-                               <button class="btn btn-info col-12 m-2 px-3" @onclick="()=>UpdateStatus()">Update</button>
-                              <button @onclick="Complete" class="btn btn-info">Complete</button>
+                               <button class=" button-success col-12  mt-1" @onclick="()=>UpdateStatus()">Update</button>
+                              <button @onclick="Complete" class=" button-success col-12 mt-1">Complete</button>
+                                <button class=" button-danger col-12 mt-1" @onclick="()=>UpdateStatus()">Delete</button>
                          </div>
                     </div>
-
-                    
-                    <div class="col-12">
-                        //Show time left to expire
-                    </div>
-                    <button class="btn btn-info col-12 m-2 px-3" @onclick="()=>UpdateStatus()">Update</button>
-                    <button class="btn btn-danger col-12 mx-2 px-3" @onclick="()=>UpdateStatus()">Delete Task</button>
-
                 </div>
-                                <Card/>
-
-
+                @* <Card/> *@
             }
 
 

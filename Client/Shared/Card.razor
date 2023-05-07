@@ -1,18 +1,3 @@
-<!-- This card is a resusable component that takes in the following variables 
-     --
-     --
-     --
-     --
-     --
-     This card has the following properties:
-     --
-     --
-     --
-     --
-     It requires the boostrap 5 library to be included in the page	
-     Copyright Zambezi Digital 2023;
-     All rights reserved.
- -->
 @inject INoteService NoteService
 @inject IAuthService AuthService
 @inject IUserService UserService
@@ -20,6 +5,11 @@
 <style>
 
 </style>
+@if(loading)
+{
+     <Loading />
+}
+else{
 <div class="col-12 py-2">
      <div class="our_solution_category">
           <div class="solution_cards_box">
@@ -42,7 +32,9 @@
                               <div class="solu_description h-50 overflow-scroll">
                                    
                                    <div class="col-12">
-                                        @foreach (var message in Note.Messages)
+                                        @if(Note?.Messages is not null)
+                                        {
+                                        @foreach (var message in Note?.Messages)
                                         {
                                              if(message.UserId == MyID){
                                                   @* Message float to the left  *@
@@ -71,6 +63,10 @@
                                                   </div>
                                              }
                                         }
+                                        }else {
+                                             <p>No messages in the notes</p>
+                                        }
+                                        
                                         @* Write message box and send *@
                          
                                    </div>
@@ -124,6 +120,8 @@
           </div>
      </div>
 </div>
+}
+
 
 
 
@@ -162,6 +160,14 @@
           await AuthService.InitialiseAuthState();
           await UserService.Get();
           await NoteMessageService.Get();
+          if(Note is not null)
+               Note = NoteService.Objects.FirstOrDefault(x=>x.Id==Note.Id);
+          loading = !(
+               NoteService.Objects is not null &&
+               UserService.Objects is not null &&
+               NoteMessageService.Objects is not null
+          );
+          StateHasChanged();
           MyID = await AuthService.GetId();
      }
      [Parameter]

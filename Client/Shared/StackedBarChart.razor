@@ -113,8 +113,8 @@ else
         @* _config2.Data.Labels.AddRange(Months.Take(InitalCount)); *@
         foreach (var label in programSummery.GenerateStatuses(Title.ToLower().Trim().Equals("department")))
         {
-            _config2.Data.Labels.Add(SchoolService.Objects.FirstOrDefault(x => int.Parse(label.Name) == x.Id).Name.Trim("School of ".ToCharArray()));
-            //_config2.Data.Labels.Add(label.Name);
+            @* _config2.Data.Labels.Add(SchoolService.Objects.FirstOrDefault(x => int.Parse(label.Name) == x.Id).Name.Trim("School of ".ToCharArray())); *@
+            _config2.Data.Labels.Add(label.Name);
         }
         _config2.Data.Datasets.Add(Dataset1);
         _config2.Data.Datasets.Add(Dataset2);

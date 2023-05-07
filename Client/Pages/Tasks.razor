@@ -2,12 +2,18 @@
 @inject IAWTaskService AWTaskService   
 @inject IProblemService ProblemService
 
-<div class="row">
-    <div class="col-11">
+@if(isLoading)
+{
+    <Loading />
+}
+else
+{
+    <div class="row">
+    <div class="col-10">
         <h3>Tasks</h3>
     </div>
-    <div class="col-1">
-        <button @onclick="HowAddTask" class="btn btn-light">Add Task</button>
+    <div class="col-2">
+        <button @onclick="HowAddTask" class="button-outlined col-12">Add Task</button>
     </div>
 </div>
 <div class="row">
@@ -33,8 +39,8 @@
             @* <PropertyColumn Property="p => p.Problem.Description" Sortable="true" /> *@
             @* <PropertyColumn Property="p => p.Problem.IsResolved" Sortable="true" Title="Duration" /> *@
             <TemplateColumn Title="Actions">
-                    <button @onclick="()=>SelectTask(context)" class="btn btn-info">Details</button>
-                    <button @onclick="()=>SelectNotes(context)" class="btn btn-info">Comments/Notes</button>
+                    <button @onclick="()=>SelectTask(context)" class="button-outlined p-1 m-1">Details</button>
+                    <button @onclick="()=>SelectNotes(context)" class="button-outlined p-1 m-1">Comments/Notes</button>
             </TemplateColumn>
         </QuickGrid>
         @* </div> *@
@@ -58,6 +64,8 @@
         }
     </div>
 </div>
+}
+
 
 
 
@@ -120,12 +128,22 @@
             return filtered;
         }
     }
-
+    public bool isLoading { get; set; } = true;
 
     protected override async void OnInitialized()
     {
         await AWTaskService.Get();
         //await ProblemService.Get();
+        StateHasChanged();
+
+
+        isLoading =!(
+            AWTaskService.Objects is not null
+            @* SchoolService.Objects is not null &&  *@
+            @* DepartmentService.Objects is not null &&  *@
+            @* NoteService.Objects is not null && *@
+            @* UserService.Objects is not null *@
+            );
         StateHasChanged();
     }
 

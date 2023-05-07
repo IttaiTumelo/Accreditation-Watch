@@ -3,38 +3,43 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @attribute [Authorize(Roles = "Admin")]
 
-<div class="row">
-          <h3>History & Logs</h3>
+@if(isLoading)
+{
+     <Loading/>
+}
+else
+{
+     <div class="row">
+               <h3>History & Logs</h3>
+          <div class="col grid-max-height">
+               
+               @if(HistoryService.Objects == null)
+               {
+                    <p>Loading...</p>
+               }
+               else if(HistoryService.Objects.Count == 0)
+               {
+                    <p>No programs found.</p>
+               }
+               else
+               {
+                    <QuickGrid Items="HistoryService.Objects.AsQueryable()" Virtualize="true">
+                         <PropertyColumn Property="p => p.Id" Sortable="true"  />
+                         <PropertyColumn Property="p => p.Name" Sortable="true" />
+                         <PropertyColumn Property="p => p.ShortDescription" Sortable="true" />
+                         <PropertyColumn Property="p => p.User.ShortName" Sortable="true" />
+                         <PropertyColumn Property="p => p.Action" Sortable="true" />
+                         <PropertyColumn Property="p => p.Severity" Sortable="true" />
+                         <PropertyColumn Property="p => p.ActionResult" Sortable="true" Title="Result" />
+                         <PropertyColumn Property="p => p.Date" Sortable="true" Title="Is Date" />
+                    </QuickGrid>
 
-     <div class="col grid-max-height">
-          
-          @if(HistoryService.Objects == null)
-          {
-               <p>Loading...</p>
-          }
-          else if(HistoryService.Objects.Count == 0)
-          {
-               <p>No programs found.</p>
-          }
-          else
-          {
-               <QuickGrid Items="HistoryService.Objects.AsQueryable()" Virtualize="true">
-                    <PropertyColumn Property="p => p.Id" Sortable="true"  />
-                    <PropertyColumn Property="p => p.Name" Sortable="true" />
-                    <PropertyColumn Property="p => p.ShortDescription" Sortable="true" />
-                    <PropertyColumn Property="p => p.User.ShortName" Sortable="true" />
-                    <PropertyColumn Property="p => p.Action" Sortable="true" />
-                    <PropertyColumn Property="p => p.Severity" Sortable="true" />
-                    <PropertyColumn Property="p => p.ActionResult" Sortable="true" Title="Result" />
-                    <PropertyColumn Property="p => p.Date" Sortable="true" Title="Is Date" />
-               </QuickGrid>
-
-          }
+               }
+          </div>
      </div>
-
-</div>
-
+}
 @code {
+     bool isLoading = true;
      PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
      PaginationState pagination2 = new PaginationState { ItemsPerPage = 2 };
 
@@ -42,6 +47,10 @@
 protected override async void OnInitialized()
      {
           await HistoryService.Get();
+          if(HistoryService.Objects != null)
+          {
+               isLoading = false;
+          }
           StateHasChanged();
 
 

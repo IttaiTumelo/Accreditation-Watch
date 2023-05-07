@@ -30,7 +30,7 @@
                <label for="Modified">What this not is about</label>
                <InputTextArea id="Modified" class="form-control" @bind-Value="newNote.Content" />
             </div>
-            <button type="submit" class="btn btn-primary col-12" @onclick="async () => await NoteService.Create(newNote)">Create</button>
+            <button type="submit" class="button-success col-12 my-2" @onclick="async () => await NoteService.Create(newNote)">Create</button>
     </EditForm>
 
                     <h4 type="button" class="position-relative">

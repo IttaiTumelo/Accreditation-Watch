@@ -15,7 +15,7 @@
     /* Add borders and padding to the table cells */
     td {
         border: 1px solid black;
-        padding: 5px;
+        padding: 1px;
     }
 
     /* Add a background color and bold text to the first row */
@@ -59,12 +59,12 @@
         </div>
 </div>
 
-<InputFile id="fileInput" OnChange="UploadFile" />
+<InputFile id="fileInput" OnChange="UploadFile" class="button-outlined" />
 
 @if (dataTable != null)
 {
     <h2>Data</h2>
-    <button @onclick="UploadPrograms">Upload Programs</button>
+    <button @onclick="UploadPrograms" class="button-success">Upload Programs</button>
     <table class="table">
         <thead>
             <tr>
@@ -235,7 +235,8 @@
                 await Task.Delay(2000);
                 continue;
             }
-            var accreditStatus = AccrediteStatuses.FirstOrDefault(x => x.Name.Equals(dataTable?.Rows[Progress]?.ItemArray[3]?.ToString()));
+            int accreditStatusIdFromFile = int.Parse(dataTable?.Rows[Progress]?.ItemArray[3]?.ToString());
+            var accreditStatus = AccrediteStatuses.FirstOrDefault(x => x.Id == accreditStatusIdFromFile);
             if (accreditStatus is null)
             {
                 ErrorMessage = "Failed to extract accreditStatus from db";

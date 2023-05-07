@@ -5,13 +5,14 @@ namespace Accreditation_Watch.Shared.Entities
     public class AWProgram : BaseEntity
     {
         public int AccrediteStatusId { get; set; }
-        public AccrediteStatus? Status { get; set; }
         public int DepartmentId { get; set; }
-        public Department? Department { get; set; }
         public DateTime ValidFrom { get; set; } = DateTime.Now;
         public DateTime ValidTo { get; set; } = DateTime.Now;
         public bool IsAccredited { get => AccrediteStatusId==12; }
+
         public Accredite? Accredite { get; set; }
+        public Department? Department { get; set; }
+        public AccrediteStatus? Status { get; set; }
         public List<Note>? Notes { get; set; } = new();
         public override List<string> RelatedEntities()
         {

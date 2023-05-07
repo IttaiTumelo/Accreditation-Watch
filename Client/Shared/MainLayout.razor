@@ -9,13 +9,13 @@
     <main >
         <div class="hide-">
               <div class="top-row px-4 ">
-            <img src="/images/user.svg" width="30" />
-                @if(roles is not null && roles.Count > 0)
-                {
-                    <h4 target="_blank" class="mx-5 text-white fw-bold">@roles[0] </h4>
-
-                }
-                <img @onclick="_authService.LogOut" src="/images/exit.svg" width="30" />
+                                  @if(roles is not null && roles.Count > 0)
+                    {
+                        <li class="nav-item rounded">
+                            <a class="nav-link active" aria-current="page" href="#"><img src="/images/user.svg" width="20" class="mx-2"/>@roles[0] <img @onclick="_authService.LogOut" src="/images/exit.svg" width="20" class="mx-2" /></a>
+                            
+                        </li>
+                    }
         </div>
 
         </div>
