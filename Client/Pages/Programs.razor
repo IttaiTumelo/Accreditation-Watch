@@ -15,47 +15,39 @@
 }else{
 
 <div class="row">
-     <div class="col-4">
+     <div class="col-lg-4 col-sm-12">
           <h2>Programs</h2>
      </div>
-     <div class="col-8">
+     <div class="col-lg-8 col-sm-12">
          <div class="row">
             <button @onclick="() => NewProgram()" class=" button-outlined col mx-1">New Program</button>
             <button @onclick="ViewDepartment" class=" button-outlined  col mx-1">View Departments</button>
             <button @onclick="ViewSchool" class=" button-outlined col mx-1">School School</button>
+            <div class="col-12">
+                <div class="row">
+                    <label for="customRange2" class="col form-label">Rows</label>
+                    <input type="range" class="col form-range" min="10" max="30" id="customRange2" @bind="@rows" @oninput="Update" >       
+                </div>
+            </div>
+            <div class="col-12">
+    
+                <select type="text" @bind="@departmentId" class="form-control" placeholder="All">
+                    <option  value="0">All</option>
+                    
+                    @foreach (var department in DepartmentService.Objects)
+                    {
+                    <option @onclick="()=>{departmentId=department.Id; StateHasChanged();}" value="@department.Id">@department.Name</option>
+                    }
+                </select>
+
+            </div>
          </div>
      </div>
 </div>
 
 
-<div class="row">
-    <div class="col"></div>
-    <div class="col"></div>
-    <div class="col"></div>
-    <div class="col">
-        <div class="row">
-            <label for="customRange2" class="col form-label">Rows</label>
-            <input type="range" class="col form-range" min="10" max="30" id="customRange2" @bind="@rows" @oninput="Update" >       
-
-        </div>
-    </div>
-    <div class="col">
-        
-        <select type="text" @bind="@departmentId" class="form-control" placeholder="All">
-            <option  value="0">All</option>
-            
-            @foreach (var department in DepartmentService.Objects)
-            {
-            <option @onclick="()=>{departmentId=department.Id; StateHasChanged();}" value="@department.Id">@department.Name</option>
-            }
-        </select>
-
-    </div>
-
-    
-</div>
 <div class="row parent">
-     <div class="col-8 ">
+     <div class="col-lg-8 ">
           @if(ProgramService.Objects == null)
                {
                     <Loading/>
@@ -96,7 +88,7 @@
                }
      </div>
 
-      <div class="col-4 pt-1">
+      <div class="col-lg-4 pt-1">
         @if(details)
         {
             <ProcessProgressDetails  Program="@SelectedProgram"/>

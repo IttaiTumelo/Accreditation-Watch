@@ -19,7 +19,7 @@
 else
 {
     <div class="row">
-    <div class="col-9">
+    <div class="col-lg-9 col-md-12 col-sm-12">
         <div class="my-3">
             <div class="row h-100">
                 <!-- Card 1 -->
@@ -212,13 +212,13 @@ else
 
 
     </div>
-        <div class="p-2  col-3 ">
-            <div class="row my-2">
-                <div class="col-5">
+        <div class="p-2 col-lg-3 col-md-12 col-sm-12 ">
+            <div class="col-12 row my-2">
+                <div class="col-6">
                     <h4>Notes</h4>
                 </div>
                 <div class="col-3 p-1">
-                    <button type="button" class="button-success position-relative" @onclick="()=>{active=true;  StateHasChanged();}">
+                    <button type="button" class="button-success position-relative col-12" @onclick="()=>{active=true;  StateHasChanged();}">
                         Active
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             @NoteService.Active.Count
@@ -227,7 +227,7 @@ else
                     </button>
                 </div>
                 <div class="col-3 p-1">
-                    <button type="button" class="button-danger position-relative" @onclick="()=>{active=false; StateHasChanged();}">
+                    <button type="button" class="button-danger position-relative col-12" @onclick="()=>{active=false; StateHasChanged();}">
                         Dismissed
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             @NoteService.Dismissed.Count

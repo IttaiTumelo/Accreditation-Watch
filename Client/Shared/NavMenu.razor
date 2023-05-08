@@ -1,4 +1,19 @@
-﻿<div class="container-fluid">
+﻿<style>
+    //disappear when screen is small
+    @@media (max-width: 767.98px) {
+        .col-sm-disappear {
+            display:none;
+        }
+    }
+    @@media (min-width: 768px) {
+        .nav-scrollable {
+            overflow-y: auto;
+            max-height: calc(100vh - 3.5rem);
+        }
+    }
+    
+</style>
+<div class="container-fluid">
     <div class="d-flex justify-content-center">
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
@@ -32,7 +47,7 @@
                 <img src="/images/stats.svg" width="20" class="m-1" style="color:white;" />Analytics
             </NavLink>
         </div>
-        <div class="nav-item px-3">
+        <div class="nav-item px-3 col-sm-disappear">
             <NavLink class="nav-link" href="settings">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Settings
             </NavLink>

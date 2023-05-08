@@ -14,7 +14,7 @@
 else 
 {
 <div id="@Visibility" class="d-flex justify-content-center align-items-center">
-        <div style="background-color : #fff; border-radius: 10px; width: 1000px" class="p-5">
+        <div style="background-color : #fff; border-radius: 10px; width: 80%" class="p-3">
           <div class="row">
                       <h5 class="col">Checking prgrams for potential problems</h5>
                       <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
@@ -22,7 +22,7 @@ else
             <p class="text-success">@SuccessMessage</p>
         <span class="text-danger">@ErrorMessage</span>
         <div id="@UpdatingResults" class="d-flex justify-content-center align-items-center">
-            <div class="loading-section @StyleOne() p-5 " style="width:50%; background-color : #fff; border-radius: 10px;">
+            <div class="loading-section @StyleOne() p-5 " style="width:100%; background-color : #fff; border-radius: 10px;">
                 <p>Analyzing data ...</p>
                 <div class="progress-container">
                     <div class="progress-bar" style="@_progressBarStyle"></div>
@@ -34,7 +34,7 @@ else
 </div>
 
 <div class="row">
-    <div class="col-8">
+    <div class="col-lg-8">
         <div class="row">
             <div class="">
                 <h3 class="d-flex">
@@ -108,7 +108,7 @@ else
             @* <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button> *@
         }
     </div>
-    <div class="col-4">
+    <div class="col-lg-4">
         <IssueDetails Problem="@SelectedProblem"/>
     </div>
 </div>
