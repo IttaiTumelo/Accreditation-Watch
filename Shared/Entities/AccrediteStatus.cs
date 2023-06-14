@@ -2,7 +2,5 @@
 {
     public class AccrediteStatus : BaseEntity
     {
-
-
     }
 }

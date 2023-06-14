@@ -11,6 +11,7 @@ namespace Accreditation_Watch.Server.Controllers
         public MailController()
         {
         }
+        
         [HttpPost]
         public async Task<ActionResult> SendMail(MessageMail mail)
         {
