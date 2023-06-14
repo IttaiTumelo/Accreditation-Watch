@@ -12,7 +12,6 @@ namespace Accreditation_Watch.Shared.Entities
         [NotMapped]
         public string ProgressString { get => Progress.ToString(); }
         public TaskType? Type { get; set; }
-        public AWDocument? Document  { get; set; }
         public ResultType? ResultType { get; set; }
         public int? ProblemId { get; set; }
         public Problem? Problem { get; set; }
@@ -24,7 +23,7 @@ namespace Accreditation_Watch.Shared.Entities
         public List<Note> Notes { get; set; } = new();
         public override List<string> RelatedEntities()
         {
-            return new() { "Assignee", "Type", "Document", "ResultType", "Problem", "AssignedTo", "Notes" };
+            return new() { "Assignee", "Type", "ResultType", "Problem", "AssignedTo", "Notes" };
         }
 
     }

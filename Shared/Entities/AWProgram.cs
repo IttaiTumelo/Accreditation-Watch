@@ -10,7 +10,6 @@ namespace Accreditation_Watch.Shared.Entities
         public DateTime ValidTo { get; set; } = DateTime.Now;
         public bool IsAccredited { get => AccrediteStatusId==12; }
 
-        public Accredite? Accredite { get; set; }
         public Department? Department { get; set; }
         public AccrediteStatus? Status { get; set; }
         public List<Note>? Notes { get; set; } = new();
@@ -34,7 +33,7 @@ namespace Accreditation_Watch.Shared.Entities
         
         public override string ToString()
         {
-            return $"{Name} - {Department?.Name} - {Status?.Name} - {ValidFrom.ToShortDateString()} - {ValidTo.ToShortDateString()} - {Accredite?.Name} - {ValidTo.ToShortDateString()}";
+            return $"{Name} - {Department?.Name} - {Status?.Name} - {ValidFrom.ToShortDateString()} - {ValidTo.ToShortDateString()} - {ValidTo.ToShortDateString()}";
         }
         //public override void InitializeFromDto(CreateProgramDto dto)
         //{
