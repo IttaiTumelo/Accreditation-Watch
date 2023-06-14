@@ -86,9 +86,6 @@ namespace Accreditation_Watch.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AccrediteId")
-                        .HasColumnType("int");
-
                     b.Property<int>("AccrediteStatusId")
                         .HasColumnType("int");
 
@@ -109,8 +106,6 @@ namespace Accreditation_Watch.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AccrediteId");
 
                     b.HasIndex("AccrediteStatusId");
 
@@ -136,9 +131,6 @@ namespace Accreditation_Watch.Server.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("DocumentId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("Due")
                         .HasColumnType("datetime2");
@@ -173,8 +165,6 @@ namespace Accreditation_Watch.Server.Migrations
                     b.HasIndex("AssignedToId");
 
                     b.HasIndex("AssigneeId");
-
-                    b.HasIndex("DocumentId");
 
                     b.HasIndex("ProblemId");
 
@@ -872,10 +862,6 @@ namespace Accreditation_Watch.Server.Migrations
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWProgram", b =>
                 {
-                    b.HasOne("Accreditation_Watch.Shared.Entities.Accredite", "Accredite")
-                        .WithMany()
-                        .HasForeignKey("AccrediteId");
-
                     b.HasOne("Accreditation_Watch.Shared.Entities.AccrediteStatus", "Status")
                         .WithMany()
                         .HasForeignKey("AccrediteStatusId")
@@ -887,8 +873,6 @@ namespace Accreditation_Watch.Server.Migrations
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Accredite");
 
                     b.Navigation("Department");
 
@@ -904,10 +888,6 @@ namespace Accreditation_Watch.Server.Migrations
                     b.HasOne("Accreditation_Watch.Shared.Entities.User", "Assignee")
                         .WithMany()
                         .HasForeignKey("AssigneeId");
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AWDocument", "Document")
-                        .WithMany()
-                        .HasForeignKey("DocumentId");
 
                     b.HasOne("Accreditation_Watch.Shared.Entities.Problem", "Problem")
                         .WithMany()
@@ -928,8 +908,6 @@ namespace Accreditation_Watch.Server.Migrations
                     b.Navigation("AssignedTo");
 
                     b.Navigation("Assignee");
-
-                    b.Navigation("Document");
 
                     b.Navigation("Problem");
 

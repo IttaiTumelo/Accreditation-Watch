@@ -35,7 +35,10 @@
                                             </div>
                                             <div class="pt-1 mb-4">
                                                 <button class="btn btn-dark btn-lg btn-block" type="submit" @IsDisabled>Login</button>
-                                                <img src="/images/loading.gif" class="@Visible img-fluid" width="40" />
+                                                @if(isLoading)
+                                                {
+                                                    <Loading/>
+                                                }
                                             </div>
                                         </EditForm>
                                     </div>
@@ -92,9 +95,10 @@
 </div>
 <!------SIgn in page-------->
 @code {
+    private bool isLoading = false;
     PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
     public PendingImplimentationDto newPendingImplimentation { get; set; } = new();
-    public string IsDisabled = "enabled";
+    public string IsDisabled => isLoading ? "disabled" : "";
     public string Visible = "hide-";
     public string ErrorMessage = "";
     protected override async void OnInitialized()
@@ -108,6 +112,8 @@
 
     public async Task HundleSubmit()
     {
+        isLoading = true;
+        StateHasChanged();
         try
         {
             await _authService.LogIn(user);

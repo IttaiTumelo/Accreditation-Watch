@@ -92,7 +92,7 @@ else{
                                         @if(ShowMoreDetails.HasDelegate)
                                         {
                                              <div class="col-6 p-3">
-                                                       <button class="p-0 col-12 btn btn-light" @onclick="()=>ShowMoreDetails.InvokeAsync(Note.Id)">Show More</button>
+                                                       <button class="p-0 col-12 btn btn-light" @onclick="()=>ShowMoreDetails.InvokeAsync(Note.Id)"  data-bs-toggle="modal" data-bs-target="#fullscreenModal">Show More</button>
                                              </div>
                                         }
                                         @if(Note is not null)

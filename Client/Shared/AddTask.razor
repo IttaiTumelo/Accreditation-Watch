@@ -6,12 +6,6 @@
 
 @if(ProblemService.Objects is not null || UserService.Objects is not null || ProgramService.Objects is not null || AWTaskService.Objects is not null || newTask is not null)
 {
-    <div id="@Visibility" class="d-flex justify-content-center align-items-center">
-        <div style="background-color : #fff; border-radius: 10px;" class="p-5">
-            <div class="row">
-                <div class="col-11"><h4>Create Task</h4></div>
-                <div class="col-1"><button @onclick="()=>Close()" class=" btn-close"></button></div>
-            </div>
                 <div class="row">
                     <div class="col">
                         <h5>Basic Task Information</h5>
@@ -78,8 +72,6 @@
                     <button class="button-success col-12 m-2 px-3" @onclick="Create">Create Task</button>
 
                 </div>
-        </div>
-    </div>
 }
 
 @code {
@@ -90,11 +82,11 @@
     [Parameter]
     public AWProgram Program { get; set; } = new();
     [Parameter]
-    public bool IsVisible { get; set; } = false;
+    public bool IsVisible { get; set; } = true;
     public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
     Task Close()
     {
-          IsVisible = false;
+          // IsVisible = false;
           StateHasChanged();
           return OnClose.InvokeAsync();
     }

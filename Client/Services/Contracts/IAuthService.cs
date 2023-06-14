@@ -3,7 +3,6 @@
     public interface IAuthService
     {
         Task<string> LogIn(UserLoginDto user);
-        Task<string> LogInDemo();
         Task<string> LogOut();
         Task<bool> IsInRole(string role);
         Task<List<string>> WhatRoles();

@@ -3,14 +3,66 @@
 @inject IProgramService ProgramServices
 @inject IDepartmentService DepartmentService
 <div class="row">
-    <div class="col-8">
-        <h3>School</h3>
-    </div>
     <div class="col-4">
-        <button @onclick="() => NewSchool()" class="button-outlined col-12 mx-1">Add School</button>
+        <button @onclick="() => NewSchool()" class="button-outlined col-12 mx-1"  data-bs-toggle="modal" data-bs-target="#createschool">Add School</button>
     </div>
 </div>
-    @if (SchoolService.Objects == null)
+
+
+<!-- Modal Dialog Scrollable -->
+<div class="modal fade" id="schooldetails" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@SelectedSchool?.Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (SelectedSchool is not null)
+                {
+                    <SchoolDetailsSIdebar SchoolId="@SelectedSchool.Id"/>
+                }
+                else
+                {
+                    <p>No school selected</p>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div><!-- End Modal Dialog Scrollable-->
+
+
+
+              <!-- Vertically centered Modal -->
+             
+<div class="modal fade" id="createschool" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create School</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @* <NewSchool/> *@
+                            <EditForm Model="newSchool" OnSubmit="Hundle">
+                                <InputText @bind-Value="newSchool.Name" class="form-control" placeholder="Program Name"/>
+                            </EditForm>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-success">Create</button>
+            </div>
+        </div>
+    </div>
+</div><!-- End Vertically centered Modal-->
+
+
+<div class="col-12 ">
+@if (SchoolService.Objects == null)
     {
         <Loading />
     }
@@ -20,51 +72,43 @@
     }
     else
     {
-        <div class="row">
-            <div class="col-9">
-                <QuickGrid Items="FilteredSchools" Theme="default" Virtualize="true" Pagination="@pagination">
-                    <PropertyColumn Property="p => p.Id" Sortable="true" />
-                    <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
-                        <ColumnOptions>
-                            <div class="search-box">
-                                <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="School Name..." />
-                            </div>
-                        </ColumnOptions>
-                    </PropertyColumn>
-                    <TemplateColumn Title="Programs">
-                        <div class="text-center">
-                            <p>@GetNumberOfSchools(context)</p>
-                        </div>
-                    </TemplateColumn>
-                    <TemplateColumn Title="Departments">
-                        <div class="text-center">
-                            <p>@GetNumberOfDepartments(context)</p>
-                        </div>
-                    </TemplateColumn>
-                    <TemplateColumn Title="Actions">
-                    
-                            <button class="button-outlined p-1 m-1" @onclick="()=>ShowDetails(context)">View details</button>
-                    </TemplateColumn>
-                </QuickGrid>
-                <Paginator Value="@pagination" />
-            </div>
-            <div class="col-3">
-                @if (ViewSchoolVisibility)
-                {
-                    <SchoolDetailsSIdebar SchoolId="@SelectedSchoolId" />
-                }
-            </div>
-        </div>
+        <h5 class="card-title col">User list</h5>
+        <table class="table table-hover datatable">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Number of Schools</th>
+                <th scope="col">Department</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody  class="grid-max-height">
+            @foreach (var context in FilteredSchools)
+            {
+                <tr>
+                    <th >@context.Id.ToString()</th>
+                    <th >@context.Name</th>
+                    <th >@GetNumberOfSchools(context).ToString()</th>
+                    <th >@GetNumberOfDepartments(context).ToString()</th>
+                    <th >
+                            <button class="button-outlined p-1 m-1" @onclick="()=>ShowDetails(context)"  data-bs-toggle="modal" data-bs-target="#schooldetails">View details</button>
+                    </th>
+                </tr>
+            }
+            </tbody>
+        </table>
     }
-<NewSchool IsVisible="@NewSchoolVisibility" />
+</div>
+
 
 @code {
     public bool ViewSchoolVisibility { get; set; } = false;
-    public int SelectedSchoolId { get; set; }
+    public School SelectedSchool { get; set; }
     IQueryable<School>? itemsQueryable;
     public void ShowDetails(School school)
     {
-        SelectedSchoolId = school.Id;
+        SelectedSchool = school;
         ViewSchoolVisibility = true;
         StateHasChanged();
         
@@ -112,4 +156,27 @@
     }
     int GetNumberOfSchools(School context) => ProgramServices.Objects.Where(x => x.Department.SchoolId == context.Id).ToList().Count;
     int GetNumberOfDepartments(School context) => DepartmentService.Objects.Where(x => x.SchoolId == context.Id).ToList().Count;
+    
+    
+    
+    public CreateSchoolDto newSchool { get; set; } = new();
+    public List<School> Schools { get; set; }
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    Task Close()
+    {
+        IsVisible = false;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    Task Hundle()
+    {
+        var request = SchoolService.Create(newSchool);
+        OnInitialized();
+    //IsVisible = false;
+    //StateHasChanged();
+        return Task.CompletedTask;
+    }
 }

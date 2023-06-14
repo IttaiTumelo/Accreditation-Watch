@@ -1,67 +1,111 @@
-﻿<style>
-    //disappear when screen is small
-    @@media (max-width: 767.98px) {
-        .col-sm-disappear {
-            display:none;
-        }
-    }
-    @@media (min-width: 768px) {
-        .nav-scrollable {
-            overflow-y: auto;
-            max-height: calc(100vh - 3.5rem);
-        }
-    }
-    
-</style>
-<div class="container-fluid">
-    <div class="d-flex justify-content-center">
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿@* <style> *@
+@*     //disappear when screen is small *@
+@*     @@media (max-width: 767.98px) { *@
+@*         .col-sm-disappear { *@
+@*             display:none; *@
+@*         } *@
+@*     } *@
+@*     @@media (min-width: 768px) { *@
+@*         .nav-scrollable { *@
+@*             overflow-y: auto; *@
+@*             max-height: calc(100vh - 3.5rem); *@
+@*         } *@
+@*     } *@
+@*      *@
+@* </style> *@
+@* <div class="container-fluid"> *@
+@*     <div class="d-flex justify-content-center"> *@
+@*         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu"> *@
+@*             <span class="navbar-toggler-icon"></span> *@
+@*         </button> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu"> *@
+@*     <nav class="flex-column pt-4"> *@
+@*          *@
+@*         <a class="navbar-brand p-4" href=""> *@
+@*             <img src="/images/cbu_logo.png" width="180" /> *@
+@*         </a> *@
+@*         <div class="nav-item px-3"> *@
+@*             <NavLink class="nav-link" href="dashboard" Match="NavLinkMatch.All"> *@
+@*                 <span class="oi oi-home" aria-hidden="true"></span> Dashboard *@
+@*             </NavLink> *@
+@*         </div> *@
+@*         <div class="nav-item px-3"> *@
+@*             <NavLink class="nav-link" href="tasks"> *@
+@*                 <span class="oi oi-plus" aria-hidden="true"></span> Tasks *@
+@*             </NavLink> *@
+@*         </div> *@
+@*         <div class="nav-item px-3"> *@
+@*             <NavLink class="nav-link" href="programs"> *@
+@*                 <span class="oi oi-list-rich" aria-hidden="true"></span> Programs *@
+@*             </NavLink> *@
+@*         </div> *@
+@*         <div class="nav-item px-3"> *@
+@*             <NavLink class="nav-link" href="analytics"> *@
+@*                 <img src="/images/stats.svg" width="20" class="m-1" style="color:white;" />Analytics *@
+@*             </NavLink> *@
+@*         </div> *@
+@*         <div class="nav-item px-3 col-sm-disappear"> *@
+@*             <NavLink class="nav-link" href="settings"> *@
+@*                 <span class="oi oi-list-rich" aria-hidden="true"></span> Settings *@
+@*             </NavLink> *@
+@*         </div> *@
+@*     </nav> *@
+@* </div> *@
+@* *@
+@* @code { *@
+@*     private bool collapseNavMenu = true; *@
+@* *@
+@*     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null; *@
+@* *@
+@*     private void ToggleNavMenu() *@
+@*     { *@
+@*         collapseNavMenu = !collapseNavMenu; *@
+@*     } *@
+@* } *@
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column pt-4">
-        
-        <a class="navbar-brand p-4" href="">
-            <img src="/images/cbu_logo.png" width="180" />
-        </a>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="dashboard" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Dashboard
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tasks">
-                <span class="oi oi-plus" aria-hidden="true"></span> Tasks
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="programs">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Programs
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="analytics">
-                <img src="/images/stats.svg" width="20" class="m-1" style="color:white;" />Analytics
-            </NavLink>
-        </div>
-        <div class="nav-item px-3 col-sm-disappear">
-            <NavLink class="nav-link" href="settings">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Settings
-            </NavLink>
-        </div>
-    </nav>
-</div>
 
-@code {
-    private bool collapseNavMenu = true;
+    <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <div class="d-flex justify-content-center">
+        <img class="img-fluid" width="200" src="/images/cbu_logo.png" alt="CBU Logo">
+      </div>
+      <li class="nav-item">
+        <NavLink class="nav-link " href="/dashboard">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </NavLink>
+      </li><!-- End Dashboard Nav -->
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
+      <li class="nav-item">
+        <NavLink class="nav-link " href="/tasks">
+          <i class="bi bi-grid"></i>
+          <span>Tasks</span>
+        </NavLink>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <NavLink class="nav-link " href="/programs">
+          <i class="bi bi-grid"></i>
+          <span>Programs</span>
+        </NavLink>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <NavLink class="nav-link " href="/analytics">
+          <i class="bi bi-grid"></i>
+          <span>Analytics</span>
+        </NavLink>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <NavLink class="nav-link " href="/settings">
+          <i class="bi bi-grid"></i>
+          <span>Settings</span>
+        </NavLink>
+      </li><!-- End Dashboard Nav -->
+
+    </ul>
+
+  </aside><!-- End Sidebar-->

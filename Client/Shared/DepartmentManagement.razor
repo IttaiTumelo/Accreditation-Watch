@@ -8,48 +8,124 @@
     </div>
     <div class="col-4">
         <div class="row">
-            <button @onclick="() => NewDepartment()" class="button-outlined col mx-1">New Department</button>
+            
+            <button @onclick="() => NewDepartment()" class="button-outlined col mx-1" data-bs-toggle="modal" data-bs-target="#createdepartment">New Department</button>
         </div>
     </div>
 </div>
-@if (DepartmentService.Objects == null)
-{
-    <Loading />
-}
-else if (DepartmentService.Objects.Count == 0)
-{
-    <p>No programs found.</p>
-}
-else
-{
-    <div class="row">
-            <div class="col-9">
-                <QuickGrid Items="itemsQueryable"  Theme="default" Virtualize="true" Pagination="pagination">
-                    <PropertyColumn Property="p => p.Id" Sortable="true" />
-                    <PropertyColumn Property="p => p.ShortName" Sortable="true" />
-                    <PropertyColumn Property="p => p.Programs.Count" Sortable="true" Title="Programs" />
-                    <TemplateColumn Title="Actions">
-                        <button class="button-outlined  p-1 m-1" @onclick="()=>Details(context)" >Details</button>
-                    </TemplateColumn>
-                </QuickGrid>
-                <Paginator Value="@pagination" />
-            </div>
 
-            <div class="col-3">
-                @if(ViewDepartmentVisibility)
+<!-- Modal Dialog Scrollable -->
+<div class="modal fade" id="modalDialogScrollable" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@SelectedDepartment?.Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (ViewDepartmentVisibility)
                 {
-                    <DepartmentDetailsSIdeBar DepartmentId="SelectedDepartmentId" />
+                    <DepartmentDetailsSIdeBar DepartmentId="SelectedDepartment.Id"/>
+                }
+                else
+                {
+                    <p>No school selected</p>
                 }
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
         </div>
+    </div>
+</div><!-- End Modal Dialog Scrollable-->
 
 
-}
-<NewDepartment IsVisible="@NewDepartmentVisibility" />
+
+              <!-- Vertically centered Modal -->
+
+<div class="modal fade" id="createdepartment" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create department</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (Schools is not null)
+                {
+                    <EditForm Model="newDepartment" OnSubmit="Hundle">
+                        <InputText @bind-Value="newDepartment.Name" class="form-control" placeholder="Program Name"/>
+                        <InputSelect @bind-Value="SchoolId" class="form-control" placeholder="Program Name">
+                            @foreach (var school in Schools)
+                            {
+                                <option value="@school.Id">@school.Name</option>
+                            }
+                        </InputSelect>
+                    </EditForm>
+                }
+                else
+                {
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div><!-- End Vertically centered Modal-->
+
+
+
+
+<div class="col-12 ">
+@if (DepartmentService.Objects == null)
+    {
+        <Loading />
+    }
+    else if (DepartmentService.Objects.Count == 0)
+    {
+        <p>No programs found.</p>
+    }
+    else
+    {
+        <h5 class="card-title col">User list</h5>
+        <table class="table table-hover datatable ">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Number of Programs</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="grid-max-height">
+            @foreach (var context in itemsQueryable)
+            {
+                <tr>
+                    <th >@context.Id.ToString()</th>
+                    <th >@context.Name</th>
+                    <th >@context.Programs.Count.ToString()</th>
+                    <th >
+                        <button class="button-outlined  p-1 m-1" @onclick="()=>Details(context)"  data-bs-toggle="modal" data-bs-target="#modalDialogScrollable" >Details</button>
+                    </th>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
+
+
+
 
 @code {
     public bool ViewDepartmentVisibility { get; set; } = false;
-    public int SelectedDepartmentId { get; set; }
+    public Department SelectedDepartment { get; set; }
     public string nameFilter;
     public bool NewDepartmentVisibility { get; set; } = false;
     PaginationState pagination = new PaginationState { ItemsPerPage = 30 };
@@ -86,7 +162,33 @@ else
     async Task Details(Department department)
     {
         ViewDepartmentVisibility = ViewDepartmentVisibility ? true : true;
-        SelectedDepartmentId = department.Id;
+        SelectedDepartment = department;
         StateHasChanged();
+    }
+    
+    
+    public CreateDepartmentDto newDepartment { get; set; } = new();
+    public int SchoolId { get; set; }
+    public List<School> Schools { get; set; }
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    Task Close()
+    {
+        IsVisible = false;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    Task Hundle()
+    {
+    //newDepartment.Programs = new();
+    //newDepartment.School = Schools.First(x => x.Id == SchoolId);
+        newDepartment.SchoolId = Schools.First(x => x.Id == SchoolId).Id;
+        var request = DepartmentService.Create(newDepartment);
+
+        IsVisible = false;
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 }

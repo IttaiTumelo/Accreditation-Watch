@@ -47,7 +47,7 @@ namespace Accreditation_Watch.Client.Services
             LogOut();
             if (user == null) throw new ArgumentNullException("You need to enter valid information");
             var result = await _httpClient.PostAsJsonAsync("api/auth/login", user);
-            if (!result.IsSuccessStatusCode) throw new Exception(result.RequestMessage?.ToString());
+            if (!result.IsSuccessStatusCode) throw new Exception(await result.Content.ReadAsStringAsync());
             var response = await result.Content.ReadAsStringAsync();
             Console.Write($"response : {response}");
             if (response is null) throw new Exception(" Authorization token not recieved from server");
@@ -56,23 +56,7 @@ namespace Accreditation_Watch.Client.Services
             _navigationManager.NavigateTo("/dashboard");
             return response;
         }
-        public async Task<string> LogInDemo()
-        {
-            LogOut();
-            var result = await _httpClient.GetAsync("api/auth");
-            if (!result.IsSuccessStatusCode) throw new Exception(result.RequestMessage?.ToString());
-            var response = await result.Content.ReadAsStringAsync();
-            Console.WriteLine(response.ToString());
-            Console.Write($"response : {response}");
-            if (response is null) throw new Exception(" Authorization token not recieved from server");
-            await _localStorage.SetItemAsStringAsync("token", response);
-            await _authenticationStateProvider.GetAuthenticationStateAsync();
-            _navigationManager.NavigateTo("/dashboard");
-            return response;
-        }
-
-
-
+        
         public async Task<List<string>> WhatRoles()
         {
             await InitialiseAuthState();
@@ -103,6 +87,8 @@ namespace Accreditation_Watch.Client.Services
             else throw new Exception("AS: Invalid user id");
             ;
         }
+        
+        // TODO: make a method that returns the user id
 
         public async Task<string> LogOut()
         {

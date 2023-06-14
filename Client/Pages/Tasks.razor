@@ -2,6 +2,53 @@
 @inject IAWTaskService AWTaskService   
 @inject IProblemService ProblemService
 
+
+
+<!-- Vertically centered Modal -->
+<div class="modal fade" id="verticalycentered" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Vertically Centered</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <AddTask  OnClose="HideAddTask" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div><!-- End Vertically centered Modal-->
+
+<!-- Vertically centered Modal -->
+<div class="modal fade" id="modalDialogScrollable" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Vertically Centered</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (isDetails)
+                {
+                    <TaskDetails Task="@SelectedTask"/>
+                }
+                else
+                {
+                    <TaskNoteSideBar Task="@SelectedTask"/>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div><!-- End Vertically centered Modal-->
+
 @if(isLoading)
 {
     <Loading />
@@ -13,55 +60,73 @@ else
             <h3>Tasks</h3>
         </div>
         <div class="col-lg-3 col-md-6  col-sm-6 ">
-            <button @onclick="HowAddTask" class="button-outlined col-12">Add Task</button>
+            <button @onclick="HowAddTask" class="button-outlined col-12"  data-bs-toggle="modal" data-bs-target="#verticalycentered">Add Task</button>
         </div>
     </div>
 <div class="row">
-    <div class="col-lg-8 col-md-12">
+    <div class="col-lg-12 col-md-12">
         @if(AWTaskService.Objects is null)
         {
             <Loading />
         }
         
-        <QuickGrid Items="FilteredTasks" Pagination="@pagination" Theme="default">
-            <PropertyColumn Property="@(c => c.ShortName)" Sortable="true" Class="country-name">
-                <ColumnOptions>
-                    <div class="search-box">
-                        <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Task Name..." />
+        
+        
+        
+        
+        <div class="row parent">
+            <div class="col-12 ">
+                @if (AWTaskService.Objects == null)
+                {
+                    <Loading/>
+                }
+                else if (AWTaskService.Objects.Count == 0)
+                {
+                    <p>No programs found.</p>
+                }
+                else
+                {
+
+                    <div class="card h-100">
+                        <div class="card-body">
+                    <h5 class="card-title col">Task list</h5>
+                            
+                            <table class="table table-hover datatable">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Due Date</th>
+                                    <th scope="col">Progress</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var context in FilteredTasks)
+                                {
+
+
+                                    <tr>
+                                        <th scope="col">@context.Id.ToString()</th>
+                                        <th scope="col">@context.ShortName</th>
+                                        <th scope="col">@context.Due.ToString()</th>
+                                        <th scope="col">@context.ProgressString</th>
+                                        <th scope="col">
+                                            <button @onclick="() => SelectTask(context)" class="button-outlined p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Details</button>
+                                            <button @onclick="() => SelectNotes(context)" class="button-outlined p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Comments/Notes</button>
+
+
+                                        </th>
+                                    </tr>
+
+                                }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </ColumnOptions>
-            </PropertyColumn>
-            @* <PropertyColumn Property="p => p.Assignee.Name" Sortable="true" Title="Assigned by" /> *@
-            @* <PropertyColumn Property="p => p.AssignedTo.Name" Sortable="true" Title="Assigned to" /> *@
-            <PropertyColumn Property="p => p.Due" Sortable="true" />
-            @* <PropertyColumn Property="p => p.Type" Sortable="true" /> *@
-            <PropertyColumn Property="p => p.ProgressString" Sortable="true" Title="Progress" />
-            @* <PropertyColumn Property="p => p.Problem.Description" Sortable="true" /> *@
-            @* <PropertyColumn Property="p => p.Problem.IsResolved" Sortable="true" Title="Duration" /> *@
-            <TemplateColumn Title="Actions">
-                    <button @onclick="()=>SelectTask(context)" class="button-outlined p-1 m-1">Details</button>
-                    <button @onclick="()=>SelectNotes(context)" class="button-outlined p-1 m-1">Comments/Notes</button>
-            </TemplateColumn>
-        </QuickGrid>
-        @* </div> *@
-
-        <Paginator Value="@pagination" />
-
-
-        <div>
-            @* <h3>AutoGenerated Possible Issues</h3> *@
-            
+                }
+            </div>
         </div>
-    </div>
-    <div class="col-lg-4 col-md-12">
-        @if(isDetails)
-        {
-            <TaskDetails Task="@SelectedTask"/>
-        }
-        else
-        {
-            <TaskNoteSideBar Task="@SelectedTask"/>
-        }
     </div>
 </div>
 }
@@ -69,7 +134,6 @@ else
 
 
 
-<AddTask IsVisible="@AddTaskVisibility" OnClose="HideAddTask" />
 
 @code {
     bool isDetails = true;
@@ -139,10 +203,10 @@ else
 
         isLoading =!(
             AWTaskService.Objects is not null
-            @* SchoolService.Objects is not null &&  *@
-            @* DepartmentService.Objects is not null &&  *@
-            @* NoteService.Objects is not null && *@
-            @* UserService.Objects is not null *@
+            // @* SchoolService.Objects is not null &&  *@
+            // @* DepartmentService.Objects is not null &&  *@
+            // @* NoteService.Objects is not null && *@
+            // @* UserService.Objects is not null *@
             );
         StateHasChanged();
     }

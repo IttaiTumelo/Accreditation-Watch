@@ -1,24 +1,6 @@
 @inject ISchoolService schoolService
-<div class="col-6">
-    <div id="@Visibility" class="d-flex justify-content-center align-items-center">
-        <div style="background-color : #fff; border-radius: 10px;" class="p-5">
-          <div class="row">
-               <div class="col-11"><h4>Add New School</h4></div>
-               <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
-          </div>
-            <div class="row">
-                <div class="col-6">
-                    <EditForm Model="newSchool" OnSubmit="Hundle">
-                        <InputText @bind-Value="newSchool.Name" class="form-control" placeholder="Program Name" />
-                        <button type="submit">Stubmit</button>
-                    </EditForm>
-                </div>
-            </div>
-          </div>
 
-          
-        </div>
-</div>
+
 
 @code {
     public CreateSchoolDto newSchool { get; set; } = new();
