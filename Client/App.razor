@@ -22,17 +22,15 @@
                 </Authorizing>
                 <NotAuthorized>
                     @*<RedirectToLogin/>*@
-                    <p>You are not authorized to access this page...</p>
+                    <Error Type="401" />
 
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
-            <PageTitle>Not found</PageTitle>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
-            </LayoutView>
+            <Error Type="403" />
+
         </NotFound>
     </Router>
 </CascadingAuthenticationState>

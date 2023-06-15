@@ -1,7 +1,7 @@
 ﻿@page "/tasks"
 @inject IAWTaskService AWTaskService   
 @inject IProblemService ProblemService
-
+@attribute [Authorize]
 @if(isLoading)
 {
     <Loading />

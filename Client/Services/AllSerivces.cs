@@ -42,7 +42,6 @@
         {
         }
     }
-
     public class AWTaskService : BaseService<AWTask>, IAWTaskService
     {
         public AWTaskService(HttpClient httpClient) : base(httpClient)

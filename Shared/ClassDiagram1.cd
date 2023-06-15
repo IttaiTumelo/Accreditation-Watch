@@ -1,2 +1,123 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram /> 
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Accreditation_Watch.Shared.Entities.User">
+    <Position X="0.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EACAAAAAACAAAAAAEAAAAAAAACAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Entities\User.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.School">
+    <Position X="11.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\School.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.Problem">
+    <Position X="0.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAQAAAAggAAAAgBAAAAEAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Problem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.Note">
+    <Position X="2.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQIAAgAAEAAGAAAAAAkAAAgAAAAJEEAABQAAAAA=</HashCode>
+      <FileName>Entities\Note.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.NoteMessage">
+    <Position X="4.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAgAAAAAAAAAAAAkAACAAAAAAAAAAAAEAAQA=</HashCode>
+      <FileName>Entities\Note.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.MessageMail">
+    <Position X="11" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAIAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Entities\MessageMail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.History">
+    <Position X="13.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAEAAggAAAAAAAAAAkAAAAAAQABAAAAAAQABAQ=</HashCode>
+      <FileName>Entities\History.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.Department">
+    <Position X="16.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAgAAAAAAAAAEAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Department.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.AWTask">
+    <Position X="14.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAgAQIAAAAgFAAAAAARAAEAABAAABAKAQABAACACAA=</HashCode>
+      <FileName>Entities\AWTask.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.AWProgram">
+    <Position X="13.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAsAAAAgAAEAAAAQEVMEAAAACAAACAAAAAAAAA=</HashCode>
+      <FileName>Entities\AWProgram.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.AWLog">
+    <Position X="14.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAIgAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Entities\AWLog.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Accreditation_Watch.Shared.Entities.AccrediteStatus">
+    <Position X="8.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\AccrediteStatus.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Accreditation_Watch.Shared.Entities.Role">
+    <Position X="5.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABABAAAAAAAAAAAAAAAAAIAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Role.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Accreditation_Watch.Shared.Entities.Serverity">
+    <Position X="4" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAAgAAAAAAAAgAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Entities\Problem.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Accreditation_Watch.Shared.Entities.NoteState">
+    <Position X="7.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAABAAAAAA=</HashCode>
+      <FileName>Entities\Note.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Accreditation_Watch.Shared.Entities.Progress" Collapsed="true">
+    <Position X="10.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAQAAAAAAAABAAAgA=</HashCode>
+      <FileName>Entities\AWTask.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Accreditation_Watch.Shared.Entities.Action">
+    <Position X="9.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAgAAEAAEAAAAAAAQAAAAA=</HashCode>
+      <FileName>Entities\AWLog.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

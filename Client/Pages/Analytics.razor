@@ -4,6 +4,7 @@
 @inject IAuthService AuthService
 @inject IUserService UserService
 @inject IAWTaskService AWTaskService
+@attribute [Authorize]
 <h3>Analytics</h3>
 
 @if(loading)
@@ -90,8 +91,11 @@ else
                 
                 <TemplateColumn Title="Actions/State">
                     <button @onclick ="@(() => SelectedProblem = context)" class=" button-outlined p-1 m-1">Details</button>
-                    @if(!context.Noted){
-                        <button @onclick="@(() => CreateTask(context))" class=" button-outlined p-1 m-1">Make Task</button>
+                    @if(!context.Noted)
+                    {
+                    <AuthorizeView Context="authContext" Roles="Developer, Director">
+                            <button @onclick="@(() => CreateTask(context))" class=" button-outlined p-1 m-1">Make Task</button>
+                        </AuthorizeView>
                     }
                     else 
                     {

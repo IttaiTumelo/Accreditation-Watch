@@ -106,12 +106,12 @@ a, .btn-link {
 /* ///////////////////////////////////////////////////////////////////// */
 
 
-/* 
+ 
 .quickgrid {
     width: 100%;
     table-layout: fixed;
 }
-
+/*
     .quickgrid tr {
         height: 3em;
     }

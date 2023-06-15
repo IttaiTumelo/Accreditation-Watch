@@ -1,7 +1,7 @@
 ﻿@inject NavigationManager NavManager;
 @inject IPendingImplimentationService PendingImplimentationService;
 @inject IAuthService _authService;
-
+@inject AuthenticationStateProvider _authStateProvider
 @page "/log-in"
 @page "/"
 <style>
@@ -23,6 +23,7 @@
                                         <EditForm Model="user" OnSubmit="HundleSubmit">
                                             <div class="d-flex align-items-center mb-3 pb-1">
                                                 <span class="h1 fw-bold mb-0">CBU ACCREDITATION WATCH</span>
+                                                <span class="h1 fw-bold mb-0">@authStatus</span>
                                             </div>
                                             <div class="form-outline mb-4">
                                                 @*<InputText @bind-Value="user.UserName" id="form2Example" type="email" class="form-control form-control-lg" />*@
@@ -97,8 +98,23 @@
     public string IsDisabled = "enabled";
     public string Visible = "hide-";
     public string ErrorMessage = "";
+    string authStatus = "";
     protected override async void OnInitialized()
     {
+
+        var authState = await _authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user is not null && user.Identity.IsAuthenticated)
+        {
+            Console.WriteLine($"User is authenticated: {user.Identity.Name}");
+            NavManager.NavigateTo("/dashboard");
+        }
+        else
+        {
+            Console.WriteLine("User is not authenticated");
+        }
+        
         await PendingImplimentationService.Get();
         StateHasChanged();
     }

@@ -47,7 +47,7 @@ namespace Accreditation_Watch.Client.Services
             LogOut();
             if (user == null) throw new ArgumentNullException("You need to enter valid information");
             var result = await _httpClient.PostAsJsonAsync("api/auth/login", user);
-            if (!result.IsSuccessStatusCode) throw new Exception(result.RequestMessage?.ToString());
+            if (!result.IsSuccessStatusCode) throw new Exception(await result.Content.ReadAsStringAsync());
             var response = await result.Content.ReadAsStringAsync();
             Console.Write($"response : {response}");
             if (response is null) throw new Exception(" Authorization token not recieved from server");

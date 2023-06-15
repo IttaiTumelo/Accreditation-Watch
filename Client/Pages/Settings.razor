@@ -1,6 +1,8 @@
 @page "/settings"
 @page "/settings/{Section}"
 @inject NavigationManager NavMng
+@attribute [Authorize(Roles = $"{nameof(Role.Developer)}, {nameof(Role.Director)}")]
+
 <style>
     vbody {
         min-height: 80vh;

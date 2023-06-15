@@ -5,6 +5,7 @@
 @inject IUserService UserService
 @inject NavigationManager NavMng
 @inject INoteService NoteService
+@attribute [Authorize]
 @*@attribute [Authorize(Roles = "Admin")]*@
 
 
@@ -308,10 +309,6 @@ else
         NavMng.NavigateTo("settings/departments");
     }
     
-}
-
-
-@code {
     List<AWProgram>? programs { get; set; } = new();
     List<School>? schools { get; set; } = new();
     List<Department>? departments { get; set; } = new();
