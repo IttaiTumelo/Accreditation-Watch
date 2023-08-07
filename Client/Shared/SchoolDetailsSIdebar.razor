@@ -41,7 +41,7 @@
           await DepartmentService.Get();
           await ProgramService.Get();
           await SchoolService.Get();
-          School = await SchoolService.GetByID(SchoolId);
+          School = (await SchoolService.Get(id: SchoolId)).First();
           StateHasChanged();
      }
      public async Task Delete()

@@ -13,4 +13,9 @@ namespace Accreditation_Watch.Shared.Objects
         public string Url { get; set; }
         public DateTime? Date { get; set; }
     }
+    public class Account
+    {
+        public int ID { get; set; }
+        public double Balance { get; set; }
+    }
 }

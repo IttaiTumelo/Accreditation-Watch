@@ -5,11 +5,11 @@ namespace Accreditation_Watch.Shared.Objects
 {
     public class ProgramSummery
     {
-        public readonly List<AWProgram>? _programs;
+        public readonly List<Program>? _programs;
         private readonly int _goodCount;
         private readonly int _umberCount;
         private readonly int _badCount;
-        public ProgramSummery(List<AWProgram> programs)
+        public ProgramSummery(List<Program> programs)
         {
             _programs = programs;
             foreach (var program in _programs)
@@ -69,6 +69,31 @@ namespace Accreditation_Watch.Shared.Objects
                     problem.Description += $"The program {program.Name} is about to expire on {program.ValidTo.ToShortDateString()}.\n";
                     problem.Serverity = problem.Serverity < Serverity.High ? Serverity.High : problem.Serverity;
                 }
+                if (problem.Program.Reminder.FirstReminder &&
+                         program.ValidTo - DateTime.Today <= TimeSpan.FromDays(180))
+                {
+                    // If it is about to expire, add a warning message to the summary
+                    problem.Description += $"The 6-Month-Remaining-Reminder has been sent.\n";
+                    problem.Serverity = problem.Serverity < Serverity.Low ? Serverity.Medium : problem.Serverity;
+                }
+                else  if (!problem.Program.Reminder.SecondReminder &&
+                          program.ValidTo - DateTime.Today <= TimeSpan.FromDays(90))
+                {
+                    // If it is about to expire, add a warning message to the summary
+                    problem.Description += $"The 6 and 3-Month-Remaining-Reminder has been sent.\n";
+                    problem.Serverity = problem.Serverity < Serverity.Low ? Serverity.Medium : problem.Serverity;
+                }
+                else  if (!problem.Program.Reminder.ThirdReminder &&
+                          program.ValidTo - DateTime.Today <= TimeSpan.FromDays(30))
+                {
+                    // If it is about to expire, add a warning message to the summary
+                    problem.Description += $"The 6 and 3 and 1-Month-Remaining-Reminder has been sent.\n";
+                    problem.Serverity = problem.Serverity < Serverity.Low ? Serverity.Medium : problem.Serverity;
+                }
+                else
+                {
+                    
+                }
 
                 // Check if the summary is not empty
                 if (problem.Description != "")
@@ -91,7 +116,7 @@ namespace Accreditation_Watch.Shared.Objects
             int daysThreshold = 30;
             
             // Group the programs by their school or department
-            IEnumerable<IGrouping<string, AWProgram>> groups;
+            IEnumerable<IGrouping<string, Program>> groups;
             if (byDepartment) groups = _programs.GroupBy(p => p.Department.Name);
             else groups = _programs.GroupBy(p => p.Department.SchoolId.ToString());
 

@@ -42,7 +42,7 @@
      protected override async void OnParametersSet ()
      {
           await DepartmentService.Get();
-          Department = await DepartmentService.GetByID(DepartmentId);
+          Department = (await DepartmentService.Get(id: DepartmentId)).First();
           await ProgramService.Get();
           await SchoolService.Get();
           StateHasChanged();

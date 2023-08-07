@@ -4,6 +4,7 @@
 @inject ISchoolService SchoolService
 @inject INoteService NoteService
 @using Microsoft.AspNetCore.Components.QuickGrid
+@using Program=Accreditation_Watch.Shared.Entities.Program
 @inject NavigationManager  NavigationManager;
 <!-- Modal Dialog Scrollable -->
 <div class="modal fade" id="modalDialogScrollable" tabindex="-1">
@@ -24,7 +25,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
             </div>
         </div>
     </div>
@@ -77,8 +78,8 @@
                        <div class="card-body">
                            <div class="row">
                            <h5 class="card-title col">Program list</h5>
-                               <div class=" col row">
-                                   <button @onclick="() => NewProgram()" class="col-2 button-outlined col mx-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollableAddProgram">New Program</button>
+                               <div class="col row">
+                                   <button @onclick="()=>NewProgram()" class="col-5 button-outlined" data-bs-toggle="modal" data-bs-target="#modalDialogScrollableAddProgram">New Program</button>
                                    @* TODO: Inform the user that they can add departments and schools from the settings*@
                                    <div class="col">
                                        <div class="row mb-3">
@@ -104,6 +105,7 @@
                                <tr>
                                    <th scope="col">#</th>
                                    <th scope="col">Name</th>
+                                   <th scope="col">Time Left</th>
                                    <th scope="col">Department</th>
                                    <th scope="col">Status</th>
                                    <th scope="col">Actions</th>
@@ -112,20 +114,41 @@
                                <tbody>
                                @foreach (var context in FilteredPrograms)
                                {
-
-                                   <tr>
-                                       <th scope="col">@context.Id</th>
-                                       <th scope="col">@context.Name</th>
-                                       <th scope="col">@context.Department.ShortName</th>
-                                       <th scope="col">@context.IsExpired()</th>
-                                       <th scope="col">
-                                           <button @onclick="@(() => ShowDetails(context))" class="button-outlined  p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Details</button>
-                                           @if (NoteService.Objects.Where(c => c.ProgramId == context.Id).Count() > 0)
-                                           {
-                                               <button @onclick="() => ShowCards(context)" class="button-outlined p-1 m-1">Comments/Notes</button>
-                                           }
-                                       </th>
-                                   </tr>
+                                   if (context.IsExpired())
+                                   {
+                                       <tr class="bg-danger">
+                                           <th scope="col">@context.Id</th>
+                                           <th scope="col">@context.Name</th>
+                                           <th scope="col">@AWFunctions.GetTimeLeft(context.ValidTo)</th>
+                                           <th scope="col">@context.Department.ShortName</th>
+                                           <th scope="col">@context.IsExpired()</th>
+                                           <th scope="col">
+                                               <button @onclick="@(() => ShowDetails(context))" class="button-outlined  p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Details</button>
+                                               @if (NoteService.Objects.Where(c => c.ProgramId == context.Id).Count() > 0)
+                                               {
+                                                   <button  data-bs-target="#modalDialogScrollable" @onclick="() => ShowCards(context)" class="button-outlined p-1 m-1">Comments/Notes</button>
+                                               }
+                                           </th>
+                                       </tr>
+                                   }
+                                   else
+                                   {
+                                       <tr>
+                                           <th scope="col">@context.Id</th>
+                                           <th scope="col">@context.Name</th>
+                                           <th scope="col">@AWFunctions.GetTimeLeft(context.ValidTo)</th>
+                                           <th scope="col">@context.Department.ShortName</th>
+                                           <th scope="col">@context.IsExpired()</th>
+                                           <th scope="col">
+                                               <button @onclick="@(() => ShowDetails(context))" class="button-outlined  p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Details</button>
+                                               @if (NoteService.Objects.Where(c => c.ProgramId == context.Id).Count() > 0)
+                                               {
+                                                   <button  data-bs-target="#modalDialogScrollable" @onclick="() => ShowCards(context)" class="button-outlined p-1 m-1">Comments/Notes</button>
+                                               }
+                                           </th>
+                                       </tr>
+                                   }
+                            
 
                                }
                                </tbody>
@@ -145,6 +168,8 @@
 
 
 @code {
+
+
      public bool isLoading { get; set; } = true;
 
     void Update(){
@@ -154,9 +179,9 @@
     static int rows {get; set;} = 10;
     public bool details = true;
     public int departmentId;
-    IQueryable<AWProgram>? itemsQueryable;
+    IQueryable<Program>? itemsQueryable;
 
-    IQueryable<AWProgram> FilteredPrograms
+    IQueryable<Program> FilteredPrograms
     {
         get
         {
@@ -183,7 +208,7 @@
     public bool ProgramVisibility { get; set; } = false;
     public bool NewProgramVisibility { get; set; } = false;
     public string nameFilter;
-    Task ShowDetails(AWProgram program)
+    Task ShowDetails(Program program)
     {
         ResetAll();
         details = true;
@@ -192,7 +217,7 @@
         StateHasChanged();
         return Task.CompletedTask; 
     }
-    Task ShowCards(AWProgram program)
+    Task ShowCards(Program program)
     {
         ResetAll();
         details = false;
@@ -211,7 +236,7 @@
     }
 
 
-    Task Update(AWProgram program)
+    Task Update(Program program)
     { 
         ResetAll();
         SelectedProgram = program;
@@ -235,7 +260,7 @@
     }
     PaginationState pagination = new PaginationState { ItemsPerPage = rows };
 
-     AWProgram SelectedProgram { get; set; }
+     Program SelectedProgram { get; set; }
 
      private PieConfig _config;
 

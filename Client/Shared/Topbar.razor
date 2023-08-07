@@ -2,6 +2,153 @@
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IAuthService AuthService
+@inject IUserService UserService
+@inject INoteMessageService NoteMessageService
+
+
+<!-- Vertically centered Modal -->
+<div class="modal fade" id="noti" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            @if (Note is not null)
+            {
+              <h5 class="modal-title">@Note.Name</h5>
+            }
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            
+            <div class="col-12">
+              
+              <div class="row h-25">
+                <div class="col-4">
+                  <div class="col-12">
+                    @if (Note is not null)
+                    {
+                      <small>@Note.Name</small>
+                      <p>@Note.Content</p>
+                    }
+                  </div>
+                </div>
+                <div class="solu_description h-50 overflow-scroll">
+
+                  <div class="col-12">
+                    @if (Note is not null)
+                    {
+                      @if (Note.Messages is not null)
+                      {
+                        @foreach (var message in Note.Messages)
+                        {
+                          if (message.UserId == MyId)
+                          {
+                                                  @* Message float to the left  *@
+                            <div class="row">
+                              <div class="col-12">
+                                <div class="float-end alert alert-primary  p-1 m-1 col-7"
+                                     role="alert">
+                                  <small class="text-muted p-0 m-0">
+                                    @message.Content - @AWFunctions.HowLongAgo(message.Time)
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                          else
+                          {
+                                                  @* Message float to the right  *@
+                            <div class="row">
+                              <div class="col-12">
+                                <div class="float-start alert alert-secondary p-1 m-1 col-7"
+                                     role="alert">
+                                  <small class="p-0 m-0">@UserService.Objects.FirstOrDefault(x => x.Id == message.UserId).Name</small>
+                                  <small class="text-muted p-0 m-0">
+                                    @message.Content - @AWFunctions.HowLongAgo(message.Time)
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        }
+                      }
+                      else
+                      {
+                        <p>No messages in the notes</p>
+                      }
+                    }
+                    else
+                    {
+                      <p>failed messages in the notes</p>
+
+                    }
+                    
+
+                    @* Write message box and send *@
+
+                  </div>
+                </div>
+
+                @* <div class="row"> *@
+                @*      @if(ShowMoreDetails.HasDelegate) *@
+                @*      { *@
+                @*           <div class="col-6 p-3"> *@
+                @*                     <button class="p-0 col-12 btn btn-light" @onclick="()=>ShowMoreDetails.InvokeAsync(Note.Id)"  data-bs-toggle="modal" data-bs-target="#fullscreenModal">Show More</button> *@
+                @*           </div> *@
+                @*      } *@
+                @*      @if(Note is not null) *@
+                @*      { *@
+                @*           @if(Note.State != NoteState.Expired) *@
+                @*           { *@
+                @*                <div class="col-6 p-3"> *@
+                @*                          <button class=" p-0 col-12 btn btn-light" @onclick="()=>DismissNote(Note)">Dismiss</button> *@
+                @*                </div> *@
+                @*           } *@
+                @*      } else { *@
+                @*           <div> *@
+                @*                <p>The note is null</p> *@
+                @*           </div> *@
+                @*      } *@
+                @*       *@
+                @* </div> *@
+                @* @if(loading) *@
+                @* { *@
+                @*      <Loading /> *@
+                @* } *@
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button class=" p-0 col-12 btn btn-light" @onclick="() => DismissNote(Note)" data-bs-dismiss="modal">Dismiss</button>
+              <div class="p-0 col-12">
+                <EditForm Model="@newMessage" OnSubmit="PostMessage">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="input-group mb-3">
+                        <input type="text" class="form-control"
+                               placeholder="Write a message"
+                               aria-label="Recipient's username"
+                               @bind="@newMessage.Content"
+                               aria-describedby="button-addon2">
+                        <button class="btn btn-outline-secondary"
+                                id="button-addon2"
+                                type="submit">Send</button>
+                      </div>
+                    </div>
+                  </div>
+                </EditForm>
+              </div>
+
+              @* <small>@note</small> *@
+            </div>
+              @* <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> *@
+
+            </div>
+        </div>
+    </div>
+</div><!-- End Vertically centered Modal-->
+
+
+
 <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
 
@@ -68,9 +215,9 @@
                 }
                 else
                 {
-                  @foreach (var item in notes)
+                  @foreach (var item in NoteService.Active)
                   {
-                    <li class="notification-item">
+                    <li class="notification-item" @onclick="()=>SelectNote(item)"  data-bs-toggle="modal" data-bs-target="#noti">
                       <i class="bi bi-info-circle text-primary"></i>
                       <div>
                         <h4>@item.Name</h4>
@@ -216,6 +363,7 @@
 
 @code {
   bool active = true;
+  public Note Note { get; set; }
   string userName;
   string userRole;
   List<Note> notes 
@@ -231,14 +379,23 @@
       }
     }
   }
-
+  public void SelectNote(Note _note)
+  {
+    Note = _note;
+    StateHasChanged();
+  }
+   int MyId = 1;
+  public NoteMessageDto newMessage = new NoteMessageDto();
   protected override async void OnInitialized()
   {
+    
+    await NoteMessageService.Get();
     await NoteService.Get();
+    await UserService.Get();
     var user = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User;
     userName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value.ToString();
     userRole = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value.ToString();
-
+    MyId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value.ToString());
 
 
     StateHasChanged();
@@ -248,5 +405,22 @@
     NavigationManager.NavigateTo("/notes");
     return Task.CompletedTask;
   }
-
+  async Task PostMessage(){
+    newMessage.Name = $"Message from {UserService.Objects.First(x=>x.Id==MyId).Name}";
+    newMessage.NoteId = Note.Id;
+    newMessage.UserId = await AuthService.GetId();
+    await NoteMessageService.Create(newMessage);
+    newMessage = new();
+    await NoteService.Get(true);
+    StateHasChanged();
+  }
+  
+  
+  async Task DismissNote(Note note){
+    note.State = NoteState.Expired;
+    await NoteService.Update(note);
+    Console.WriteLine("Note Dismissed");
+    // await OnNoteDismissed.InvokeAsync();
+    StateHasChanged();
+  }
 }

@@ -1,3 +1,4 @@
+@using Program=Accreditation_Watch.Shared.Entities.Program
 @inject INoteService NoteService
 @inject IProgramService ProgramService
 @inject IUserService UserService
@@ -84,7 +85,7 @@
      [Parameter]
      public Note Note { get; set; }
      [Parameter]
-     public AWProgram Program { get; set; }
+     public Program Program { get; set; }
      public int MyID { get; set; }
      protected override async void OnInitialized()
      {

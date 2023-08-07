@@ -4,6 +4,7 @@ using Accreditation_Watch.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccreditationWatch.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230731080228_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -544,9 +547,6 @@ namespace AccreditationWatch.Server.Migrations
                     b.Property<int>("AccreditStatusId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Degree")
-                        .HasColumnType("int");
-
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
@@ -556,6 +556,9 @@ namespace AccreditationWatch.Server.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReminderId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ValidFrom")
                         .HasColumnType("datetime2");
@@ -568,6 +571,8 @@ namespace AccreditationWatch.Server.Migrations
                     b.HasIndex("AccreditStatusId");
 
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("ReminderId");
 
                     b.ToTable("Programs");
                 });
@@ -590,9 +595,6 @@ namespace AccreditationWatch.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProgramId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("SecondReminder")
                         .HasColumnType("bit");
 
@@ -600,9 +602,6 @@ namespace AccreditationWatch.Server.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProgramId")
-                        .IsUnique();
 
                     b.ToTable("Reminders");
                 });
@@ -997,18 +996,17 @@ namespace AccreditationWatch.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Department");
-
-                    b.Navigation("Status");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Reminder", b =>
-                {
-                    b.HasOne("Accreditation_Watch.Shared.Entities.Program", null)
-                        .WithOne("Reminder")
-                        .HasForeignKey("Accreditation_Watch.Shared.Entities.Reminder", "ProgramId")
+                    b.HasOne("Accreditation_Watch.Shared.Entities.Reminder", "Reminder")
+                        .WithMany()
+                        .HasForeignKey("ReminderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Reminder");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Task", b =>
@@ -1063,9 +1061,6 @@ namespace AccreditationWatch.Server.Migrations
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Program", b =>
                 {
                     b.Navigation("Notes");
-
-                    b.Navigation("Reminder")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.School", b =>

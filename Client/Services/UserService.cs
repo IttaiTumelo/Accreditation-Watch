@@ -2,6 +2,8 @@
 
 namespace Accreditation_Watch.Client.Services
 {
+    using Task=System.Threading.Tasks.Task;
+
     public class UserService : BaseService<User>, IUserService
     {
         private readonly HttpClient _httpClient;
@@ -48,5 +50,19 @@ namespace Accreditation_Watch.Client.Services
                     throw new Exception(request.Result.ReasonPhrase);
                 }
           }
-     }
+
+          public async Task<Boolean> CheckUsers()
+          {
+                var request = await _httpClient.GetAsync($"api/{typeof(User).Name}/CheckUsers");
+                if (request.IsSuccessStatusCode)
+                {
+                    var response = await request.Content.ReadFromJsonAsync<Boolean>();
+                    return response;
+                }
+                else
+                {
+                    throw new Exception(request.ReasonPhrase);
+                }
+          }
+    }
 }

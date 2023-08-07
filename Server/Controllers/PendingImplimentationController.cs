@@ -11,15 +11,15 @@
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PendingImplimentation>>> GetPendingImplimentations()
+        public async Task<ActionResult<IEnumerable<PendingImplementation>>> GetPendingImplimentations()
         {
-            return await _context.PendingImplimentations.ToListAsync();
+            return await _context.PendingImplementations.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PendingImplimentation>> GetPendingImplimentation(int id)
+        public async Task<ActionResult<PendingImplementation>> GetPendingImplimentation(int id)
         {
-            var pendingImplimentation = await _context.PendingImplimentations.FindAsync(id);
+            var pendingImplimentation = await _context.PendingImplementations.FindAsync(id);
 
             if (pendingImplimentation == null)
             {
@@ -30,14 +30,14 @@
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPendingImplimentation(int id, PendingImplimentation pendingImplimentation)
+        public async Task<IActionResult> PutPendingImplimentation(int id, PendingImplementation pendingImplementation)
         {
-            if (id != pendingImplimentation.Id)
+            if (id != pendingImplementation.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(pendingImplimentation).State = EntityState.Modified;
+            _context.Entry(pendingImplementation).State = EntityState.Modified;
 
             try
             {
@@ -59,24 +59,24 @@
         }
 
         [HttpPost]
-        public async Task<ActionResult<PendingImplimentation>> PostPendingImplimentation(PendingImplimentation pendingImplimentation)
+        public async Task<ActionResult<PendingImplementation>> PostPendingImplimentation(PendingImplementation pendingImplementation)
         {
-            _context.PendingImplimentations.Add(pendingImplimentation);
+            _context.PendingImplementations.Add(pendingImplementation);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPendingImplimentation", new { id = pendingImplimentation.Id }, pendingImplimentation);
+            return CreatedAtAction("GetPendingImplimentation", new { id = pendingImplementation.Id }, pendingImplementation);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PendingImplimentation>> DeletePendingImplimentation(int id)
+        public async Task<ActionResult<PendingImplementation>> DeletePendingImplimentation(int id)
         {
-            var pendingImplimentation = await _context.PendingImplimentations.FindAsync(id);
+            var pendingImplimentation = await _context.PendingImplementations.FindAsync(id);
             if (pendingImplimentation == null)
             {
                 return NotFound();
             }
 
-            _context.PendingImplimentations.Remove(pendingImplimentation);
+            _context.PendingImplementations.Remove(pendingImplimentation);
             await _context.SaveChangesAsync();
 
             return pendingImplimentation;
@@ -84,7 +84,7 @@
 
         private bool PendingImplimentationExists(int id)
         {
-            return _context.PendingImplimentations.Any(e => e.Id == id);
+            return _context.PendingImplementations.Any(e => e.Id == id);
         }
         
         

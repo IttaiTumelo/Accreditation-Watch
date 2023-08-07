@@ -3,6 +3,8 @@ using System.Security.Claims;
 
 namespace Accreditation_Watch.Client.Services
 {
+    using Task=System.Threading.Tasks.Task;
+
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;

@@ -1,18 +1,8 @@
 @page "/departments"
 @inject IDepartmentService DepartmentService
+@inject ISchoolService SchoolService
 @inject IProgramService ProgramService
 
-<div class="row">
-    <div class="col-8">
-        <h3>Departments</h3>
-    </div>
-    <div class="col-4">
-        <div class="row">
-            
-            <button @onclick="() => NewDepartment()" class="button-outlined col mx-1" data-bs-toggle="modal" data-bs-target="#createdepartment">New Department</button>
-        </div>
-    </div>
-</div>
 
 <!-- Modal Dialog Scrollable -->
 <div class="modal fade" id="modalDialogScrollable" tabindex="-1">
@@ -55,8 +45,10 @@
                 @if (Schools is not null)
                 {
                     <EditForm Model="newDepartment" OnSubmit="Hundle">
-                        <InputText @bind-Value="newDepartment.Name" class="form-control" placeholder="Program Name"/>
-                        <InputSelect @bind-Value="SchoolId" class="form-control" placeholder="Program Name">
+                        <InputText @bind-Value="newDepartment.Name" class="form-control my-1" placeholder="Department name"/>
+                        <InputText @bind-Value="newDepartment.Email" class="form-control my-1" placeholder="Department email"/>
+                        <InputSelect @bind-Value="SchoolId" class="form-control my-1" placeholder="School">
+                            <option value="0" disabled="">Select School</option>
                             @foreach (var school in Schools)
                             {
                                 <option value="@school.Id">@school.Name</option>
@@ -93,12 +85,22 @@
     }
     else
     {
-        <h5 class="card-title col">User list</h5>
+        <div class="d-flex justify-content-between">
+            @* <div class="col-3"> *@
+                <h5 class="card-title">Department list</h5>
+            @* </div> *@
+            @* <div class="col-3 justify-content-end"> *@
+            <div class="my-2">
+                <button @onclick="() => NewDepartment()" class="button-outlined" data-bs-toggle="modal" data-bs-target="#createdepartment">New Department</button>
+            </div>
+            @* </div> *@
+        </div>
         <table class="table table-hover datatable ">
             <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
+                <th scope="col">Email</th>
                 <th scope="col">Number of Programs</th>
                 <th scope="col">Actions</th>
             </tr>
@@ -107,10 +109,11 @@
             @foreach (var context in itemsQueryable)
             {
                 <tr>
-                    <th >@context.Id.ToString()</th>
-                    <th >@context.Name</th>
-                    <th >@context.Programs.Count.ToString()</th>
-                    <th >
+                    <th>@context.Id.ToString()</th>
+                    <th>@context.Name</th>
+                    <th>@context.Email</th>
+                    <th>@context.Programs.Count.ToString()</th>
+                    <th>
                         <button class="button-outlined  p-1 m-1" @onclick="()=>Details(context)"  data-bs-toggle="modal" data-bs-target="#modalDialogScrollable" >Details</button>
                     </th>
                 </tr>
@@ -124,6 +127,7 @@
 
 
 @code {
+    public List<School> Schools { get; set; }
     public bool ViewDepartmentVisibility { get; set; } = false;
     public Department SelectedDepartment { get; set; }
     public string nameFilter;
@@ -132,7 +136,9 @@
     protected override async Task OnInitializedAsync()
     {
         await DepartmentService.Get();
+        Schools = await SchoolService.Get();
         itemsQueryable = DepartmentService.Objects.AsQueryable();
+        StateHasChanged();
     }
     IQueryable<Department>? itemsQueryable;
     IQueryable<Department> FilteredSchools
@@ -169,7 +175,6 @@
     
     public CreateDepartmentDto newDepartment { get; set; } = new();
     public int SchoolId { get; set; }
-    public List<School> Schools { get; set; }
     [Parameter]
     public bool IsVisible { get; set; } = false;
     public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";

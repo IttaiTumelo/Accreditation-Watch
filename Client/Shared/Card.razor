@@ -15,18 +15,18 @@ else{
           <div class="solution_cards_box">
                     <div class="solution_card d-flex p-4">
                          <div class="col-12">
-                              <div class="row h-25">
+                              <div class="row">
                                    <div class="col-8">
                                         <div class="solu_title">
-                                             <h6>@MainTitle</h6>
+                                             <h6>@Note.Name</h6>
                                         </div>
                                    </div>
-                                   <div class="col-4">
-                                        <small>@TimeStamp</small>
-                                   </div>
+                                   @* <div class="col-4"> *@
+                                   @*      <small>@TimeStamp</small> *@
+                                   @* </div> *@
                                    <div class="col-12">
-                                        <small>@SupportingTitle</small>
-                                   <p>@Description</p>
+                                        <small>@Note.Content</small>
+                                   @* <p>@Description</p> *@
                                    </div>
                               </div>
                               <div class="solu_description h-50 overflow-scroll">
@@ -54,7 +54,7 @@ else{
                                                        <div class="col-12">
                                                             <div class="float-start alert alert-secondary p-1 m-1 col-7"
                                                                  role="alert">
-                                                                      <small class="p-0 m-0">@UserService.Objects.FirstOrDefault(x=>x.Id==message.UserId).Name</small>
+                                                                      @* <small class="p-0 m-0">@UserService.Objects.FirstOrDefault(x=>x.Id==message.UserId).Name</small> *@
                                                                            <small class="text-muted p-0 m-0">
                                                                                 @message.Content - @AWFunctions.HowLongAgo(message.Time)
                                                                            </small>
@@ -92,7 +92,7 @@ else{
                                         @if(ShowMoreDetails.HasDelegate)
                                         {
                                              <div class="col-6 p-3">
-                                                       <button class="p-0 col-12 btn btn-light" @onclick="()=>ShowMoreDetails.InvokeAsync(Note.Id)"  data-bs-toggle="modal" data-bs-target="#fullscreenModal">Show More</button>
+                                                       <button class="p-0 col-12 btn btn-light" @onclick="()=>ShowMoreDetails.InvokeAsync(Note.Id)"  data-bs-toggle="modal" data-bs-target="#verticalycentered">Show More</button>
                                              </div>
                                         }
                                         @if(Note is not null)

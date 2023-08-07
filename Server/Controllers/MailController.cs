@@ -47,7 +47,7 @@ namespace Accreditation_Watch.Server.Controllers
                 smtp.Disconnect(true);
             }
             if (failed is null)
-                return Ok("Sent");
+                return Ok(value: "Sent");
             else return BadRequest(failed);
 
         }

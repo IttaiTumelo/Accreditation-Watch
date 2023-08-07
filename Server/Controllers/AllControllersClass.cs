@@ -1,16 +1,19 @@
 ﻿namespace Accreditation_Watch.Server.Controllers
 {
-    public class AccrediteController : BaseController<Accredite, CreateAccrediteDto>
+    using Program=Shared.Entities.Program;
+    using Task=Shared.Entities.Task;
+
+    public class AccreditController : BaseController<Accredite, CreateAccrediteDto>
     {
-        public AccrediteController(DataContext dataContext) : base(dataContext) { }
+        public AccreditController(DataContext dataContext) : base(dataContext) { }
     }
-    public class AccrediteStatusController : BaseController<AccrediteStatus, AccrediteStatus>
+    public class AccreditStatusController : BaseController<AccreditStatus, AccreditStatus>
     {
-        public AccrediteStatusController(DataContext dataContext) : base(dataContext) { }
+        public AccreditStatusController(DataContext dataContext) : base(dataContext) { }
     }
-    public class AWProgramController : BaseController<AWProgram, CreateProgramDto>
+    public class programController : BaseController<Program, CreateProgramDto>
     {
-        public AWProgramController(DataContext dataContext) : base(dataContext) { }
+        public programController(DataContext dataContext) : base(dataContext) { }
     }
     public class DepartmentController : BaseController<Department, CreateDepartmentDto>
     {
@@ -24,7 +27,7 @@
     {
         public HistoryController(DataContext dataContext) : base(dataContext) { }
     }
-    // public class PendingImplimentationController : BaseController<PendingImplimentation, PendingImplimentationDto>
+    // public class PendingImplimentationController : BaseController<PendingImplementation, PendingImplementationDto>
     // {
     //     public PendingImplimentationController(DataContext dataContext) : base(dataContext) { }
     // }
@@ -33,7 +36,7 @@
         public SchoolController(DataContext dataContext) : base(dataContext) { }
     }
     //deprecated replaced by AWTasks
-    public class TaskController : BaseController<AWTask, AWTaskDto>
+    public class TaskController : BaseController<Task, TaskDto>
     {
         public TaskController(DataContext dataContext) : base(dataContext) { }
     }
@@ -41,7 +44,7 @@
     {
         public ProblemController(DataContext dataContext) : base(dataContext) { }
     }
-    public class AWTaskController : BaseController<AWTask, AWTaskDto>
+    public class AWTaskController : BaseController<Task, TaskDto>
     {
         public AWTaskController(DataContext dataContext) : base(dataContext) { }
     }
@@ -52,5 +55,11 @@
     public class NoteMessageController : BaseController<NoteMessage, NoteMessageDto>
     {
         public NoteMessageController(DataContext dataContext) : base(dataContext) { }
+    }
+    
+    
+    public class ReminderController : BaseController<Reminder, Reminder>
+    {
+        public ReminderController(DataContext dataContext) : base(dataContext) { }
     }
 }

@@ -12,7 +12,7 @@ namespace Accreditation_Watch.Shared.Entities
         public int AWProgramId { get; set; }
         public bool Noted { get; set; } = false;
         // [NotMapped]
-        public AWProgram? Program { get; set; }
+        public Program? Program { get; set; }
         public bool Equals(ProblemDto other)
         {
             return Description.Equals(other.Description);
@@ -26,7 +26,7 @@ namespace Accreditation_Watch.Shared.Entities
     public class ProblemDto : Problem
     {
         public int? Id { get; } = 0;
-        public readonly AWProgram? Program = null;
+        public readonly Program? Program = null;
     }
 
     public enum Serverity{

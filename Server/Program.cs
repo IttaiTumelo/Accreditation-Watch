@@ -4,7 +4,6 @@ global using Accreditation_Watch.Shared.Entities;
 global using Accreditation_Watch.Server.Data;
 global using Swashbuckle.AspNetCore.SwaggerGen;
 global using Microsoft.EntityFrameworkCore;
-
 using Microsoft.AspNetCore.ResponseCompression;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;

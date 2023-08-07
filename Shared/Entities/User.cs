@@ -21,7 +21,7 @@
         public string? Token { get; set; } = null;
         public byte[]? PasswordHash { get; set; } = null;
         public byte[]? PasswordSalt { get; set; } = null;
-        public Role? Role { get; set; } = null;
+        public Role Role { get; set; } = Role.Secretary;
         public string Password { get; set; }
 
     }

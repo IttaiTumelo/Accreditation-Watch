@@ -1,3 +1,4 @@
+@using Program=Accreditation_Watch.Shared.Entities.Program
 <!-- This card is a resusable component that takes in the following variables 
      --
      --
@@ -222,7 +223,7 @@
 
 @code {
      [Parameter]
-     public AWProgram Program { get; set; }
+     public Program Program { get; set; }
      public bool loading = false;
     
      public string TimeStamp { get; set; } = string.Empty;

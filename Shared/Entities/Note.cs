@@ -8,11 +8,11 @@ namespace Accreditation_Watch.Shared.Entities
            public NoteState State { get; set; } = NoteState.Valid;
            public List<NoteMessage> Messages { get; set; } = new();
           public int? TaskId { get; set; }
-        public AWTask? Task { get; set; }
+        public Task? Task { get; set; }
         public int? ProblemId { get; set; }
         public Problem? Problem { get; set; }
         public int? ProgramId { get; set; }
-        public AWProgram? Program { get; set; }
+        public Program? Program { get; set; }
             public int? CreatorId { get; set; }
         public User? Creator { get; set; }
 

@@ -4,7 +4,6 @@
 @inject IDepartmentService DepartmentService
 <div class="row">
     <div class="col-4">
-        <button @onclick="() => NewSchool()" class="button-outlined col-12 mx-1"  data-bs-toggle="modal" data-bs-target="#createschool">Add School</button>
     </div>
 </div>
 
@@ -49,7 +48,8 @@
             <div class="modal-body">
                 @* <NewSchool/> *@
                             <EditForm Model="newSchool" OnSubmit="Hundle">
-                                <InputText @bind-Value="newSchool.Name" class="form-control" placeholder="Program Name"/>
+                                <InputText @bind-Value="newSchool.Name" class="form-control my-1" placeholder="School Name"/>
+                                <InputText @bind-Value="newSchool.Email" class="form-control my-1" placeholder="School Dean Email"/>
                             </EditForm>
             </div>
             <div class="modal-footer">
@@ -62,9 +62,17 @@
 
 
 <div class="col-12 ">
-@if (SchoolService.Objects == null)
+    <div class="d-flex justify-content-between">
+        <div>
+            <h5 class="card-title">School list</h5>
+        </div>
+        <div class="my-2">
+            <button @onclick="() => NewSchool()" class="button-outlined" data-bs-toggle="modal" data-bs-target="#createschool">Add School</button>
+        </div>
+    </div>
+    @if (SchoolService.Objects == null)
     {
-        <Loading />
+        <Loading/>
     }
     else if (SchoolService.Objects.Count == 0)
     {
@@ -72,30 +80,40 @@
     }
     else
     {
-        <h5 class="card-title col">User list</h5>
+
         <table class="table table-hover datatable">
             <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
-                <th scope="col">Number of Schools</th>
+                <th scope="col">Dean Email</th>
+                <th scope="col">Number of Programs</th>
                 <th scope="col">Department</th>
                 <th scope="col">Actions</th>
             </tr>
             </thead>
-            <tbody  class="grid-max-height">
-            @foreach (var context in FilteredSchools)
+            <tbody class="grid-max-height">
+            @if (FilteredSchools is not null)
             {
-                <tr>
-                    <th >@context.Id.ToString()</th>
-                    <th >@context.Name</th>
-                    <th >@GetNumberOfSchools(context).ToString()</th>
-                    <th >@GetNumberOfDepartments(context).ToString()</th>
-                    <th >
-                            <button class="button-outlined p-1 m-1" @onclick="()=>ShowDetails(context)"  data-bs-toggle="modal" data-bs-target="#schooldetails">View details</button>
-                    </th>
-                </tr>
+                @foreach (var context in FilteredSchools)
+                {
+                    <tr>
+                        <th>@context.Id.ToString()</th>
+                        <th>@context.Name</th>
+                        <th>@context.Email</th>
+                        <th>@GetNumberOfSchools(context).ToString()</th>
+                        <th>@GetNumberOfDepartments(context).ToString()</th>
+                        <th>
+                            <button class="button-outlined p-1 m-1" @onclick="() => ShowDetails(context)" data-bs-toggle="modal" data-bs-target="#schooldetails">View details</button>
+                        </th>
+                    </tr>
+                }
             }
+            else
+            {
+                <Loading/>
+            }
+            
             </tbody>
         </table>
     }

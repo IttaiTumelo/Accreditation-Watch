@@ -10,3 +10,5 @@ global using Blazored.LocalStorage;
 global using System.Text.Json;
 global using System.Net.Http.Headers;
 global using System.Security.Claims;
+// global using Excel = Microsoft.Office.Interop.Excel;
+// global using Word = Microsoft.Office.Interop.Word;

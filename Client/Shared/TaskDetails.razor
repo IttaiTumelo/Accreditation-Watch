@@ -1,3 +1,4 @@
+@using Task=Accreditation_Watch.Shared.Entities.Task
 @inject IDepartmentService DepartmentService
 @inject ISchoolService SchoolService
 @inject IAccrediteStatusService AccrediteStatusService
@@ -100,18 +101,12 @@
                               <button @onclick="Complete" class="button-success col-12">Complete</button>
                          </div>
                     </div>
-
-                    
-                   
                 </div>
-                                @* <Card/> *@
-
-
             }
 
 
 @code {
-     async Task Complete()
+     async System.Threading.Tasks.Task Complete()
      {
           Task.IsCompleted = true;
           await TaskService.Update(Task);
@@ -122,18 +117,18 @@
      public string ErrorMessage { get; set; } = "";
      public string SuccessMessage { get; set; } = "";
     [Parameter]
-    public AWTask Task { get; set; } = new();
+    public Task Task { get; set; } = new();
     [Parameter]
     public bool IsVisible { get; set; } = false;
     public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
     public List<School> Schools { get; set; } = new List<School>();
-    public List<AccrediteStatus> AccrediteStatuses { get; set; } = new List<AccrediteStatus>();
-    async Task Close()
+    public List<AccreditStatus> AccrediteStatuses { get; set; } = new List<AccreditStatus>();
+    async System.Threading.Tasks.Task Close()
     {
         IsVisible = false;
         StateHasChanged();
     }
-     async Task UpdateStatus()
+     async System.Threading.Tasks.Task UpdateStatus()
     {
           if(!(Note.Content.Length >0))
           ErrorMessage = "Please enter a comment";

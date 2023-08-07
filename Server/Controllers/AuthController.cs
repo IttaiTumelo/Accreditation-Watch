@@ -31,7 +31,7 @@ namespace Accreditation_Watch.Server.Controllers
             if (result == null) return BadRequest("Invalid Email");
             if (!AWFunctions.VerifyPassword(user.Password, result.PasswordHash, result.PasswordSalt)) return BadRequest("Incorrect Password");
             AWFunctions.GetDeatailsFromToken(AWFunctions.CreateToken(user, result));
-            return Ok(AWFunctions.CurrentUser.Token);
+            return Ok(value: AWFunctions.CurrentUser.Token);
         }
 
         [HttpGet]
@@ -58,7 +58,7 @@ namespace Accreditation_Watch.Server.Controllers
                 );
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             AWFunctions.GetDeatailsFromToken(jwt);
-            return Ok(jwt);
+            return Ok(value: jwt);
         }
 
         [HttpGet("auto")]
@@ -76,7 +76,7 @@ namespace Accreditation_Watch.Server.Controllers
             if (user == null) return BadRequest("The token provided during auto login has been corrupted");
             AWFunctions.GetDeatailsFromToken(AWFunctions.CreateToken(user));
             //return Ok(ZambeziFunctions.CurrentUser.Token);
-            return Ok("trial");
+            return Ok(value: "trial");
         }
 
     }

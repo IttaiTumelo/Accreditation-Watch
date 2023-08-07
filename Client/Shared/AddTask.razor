@@ -1,3 +1,4 @@
+@using Program=Accreditation_Watch.Shared.Entities.Program
 @inject IUserService UserService
 @inject IProblemService ProblemService
 @inject IAWTaskService AWTaskService
@@ -76,11 +77,11 @@
 
 @code {
      bool UsingProblemName { get; set; } = false;
-     AWTaskDto newTask = new AWTaskDto();
+     TaskDto newTask = new TaskDto();
      [Parameter]
      public EventCallback OnClose { get; set; }
     [Parameter]
-    public AWProgram Program { get; set; } = new();
+    public Program Program { get; set; } = new();
     [Parameter]
     public bool IsVisible { get; set; } = true;
     public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
