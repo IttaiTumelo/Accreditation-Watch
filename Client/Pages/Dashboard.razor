@@ -1,0 +1,424 @@
+@using Program=Accreditation_Watch.Shared.Entities.Program
+@using System.Diagnostics
+@inject IProgramService ProgramService
+@inject IDepartmentService DepartmentService
+@inject ISchoolService SchoolService
+@inject IUserService UserService
+@inject NavigationManager NavMng
+@inject INoteService NoteService
+
+@if(IsLoading)
+{
+    <Loading />
+}else if (schools.Count == 0)
+{
+    <h5 class="text-center">No data to display, please load the system with at least a program, a department and a school</h5>
+}
+else
+{
+    <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="my-3">
+            <div class="row h-100">
+                <!-- Card 1 -->
+                <div class="col-md-4">
+                    <div class="card shadow-lg rounded h-100">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h5 class="card-title">Accredited</h5>
+                                </div>
+                                <div class="col-5 text-center">
+                                    <h1 class="card-text">@programs?.Count(x => x.AccreditStatusId == 12)</h1>
+                                </div>
+                            </div>
+                            <p class="card-text">The number of programs that are cuurently running and are accredited</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                @* <div class="col-md-3">
+                    <div class="card shadow-lg rounded h-100">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h5 class="card-title">Pending</h5>
+                                    <p class="card-text">Updated: 5 min ago</p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <h1 class="card-text">@programs?.Count(x => x.AccreditStatusId == 6)</h1>
+                                </div>
+                            </div>
+                            <p class="card-text">These are the programs that are pending ZAQA approval</p>
+                        </div>
+                    </div>
+                </div>        *@
+                 <!-- Card 2 -->
+                <div class="col-md-4">
+                    <div class="card shadow-lg rounded h-100">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h5 class="card-title">Rejected</h5>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <h1 class="card-text">
+                                        @programs?.Count(x =>
+                                        x.AccreditStatusId == 1 ||
+                                        x.AccreditStatusId == 2 ||
+                                        x.AccreditStatusId == 13 ||
+                                        x.AccreditStatusId == 8)
+                                    </h1>
+                                </div>
+                            </div>
+                            <p class="card-text">These are programs that are rejeceted by the Sanate, CAD, HEA or has been denied approval for some specific reason</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="col-md-4">
+                    <div class="card shadow-lg rounded h-100">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h5 class="card-title">Require Attention</h5>
+                                </div>
+                                <div class="col-5 text-center">
+                                    <h1 class="card-text">@programSummery?.BadCount</h1>
+                                </div>
+                            </div>
+                            <p class="card-text">These are programs that are about to expire, or need attention, or has been rejected</p>
+                        </div>
+                    </div>
+                </div>
+
+            
+                                    
+            </div> <!-- End of row -->
+            <div class="row my-5">
+                <!-- Card 1 -->
+                
+                                
+                                                        <div class="col-md-12 col-lg-3 h-25" @onclick="Schools">
+                                                            <div class="card shadow-lg rounded">
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col-7">
+                                                                            <h5 class="card-title">Schools</h5>
+                                                                        </div>
+                                                                        <div class="col-5 text-center">
+                                                                            <h1 class="card-text">@schools?.Count</h1>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Card 1 -->
+                                                        <div class="col-md-12 col-lg-3 h-25" @onclick="Departments">
+                                                            <div class="card shadow-lg rounded">
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col-7">
+                                                                            <h5 class="card-title">Departments</h5>
+                                                                        </div>
+                                                                        <div class="col-5 text-center">
+                                                                            <h1 class="card-text">@departments?.Count</h1>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Card 1 -->
+                                                        <div class="col-md-12 col-lg-3 h-25" @onclick="Programs">
+                                                            <div class="card shadow-lg rounded">
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col-7">
+                                                                            <h5 class="card-title">Programs</h5>
+                                                                        </div>
+                                                                        <div class="col-5 text-center">
+                                                                            <h1 class="card-text">@programs?.Count</h1>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Card 1 -->
+                                                        <div class="col-md-12 col-lg-3  h-25" @onclick="Users">
+                                                            <div class="card shadow-lg rounded">
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col-7">
+                                                                            <h5 class="card-title">Users</h5>
+                                                                        </div>
+                                                                        <div class="col-5 text-center">
+                                                                            <h1 class="card-text">@users?.Count</h1>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+            </div>
+        </div> <!-- End of container -->
+
+        <div class="my-5">
+            <div class="row h-100">
+                <!-- Card 1 -->
+                              <div class="col-md-6">
+                                  <div class="card shadow-lg rounded h-100">
+                                      <div class="card-body">
+                                          @*<h4 class="card-title">Sales by Region</h4>*@
+                                          <div class="row">
+                                              <div class="col-12">
+                                                  @if (_config != null)
+                                                  {
+                                                      <Chart Config="@_config" />
+              
+                                                  }
+                                                  @*<img src="sales_graph.png" alt="Sales by Region" class="img-fluid">*@
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>  <!-- Card 1 -->
+                                                    <div class="col-md-6">
+                                                        <div class="card shadow-lg rounded h-100">
+                                                            <div class="card-body">
+                                                                @*<h4 class="card-title">Sales by Region</h4>*@
+                                                                <div class="row">
+                                                                    <div class="col-12">
+                                                                                                        <StackedBarChart Title="@TypeOfView" />
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                
+               
+            </div> <!-- End of row -->
+        </div> <!-- End of container -->
+        
+
+
+    </div>
+ 
+</div>
+
+}
+
+
+
+
+@code {
+
+    [Parameter]
+    public Degree Degree { get; set; } = Degree.Unset;
+    
+    bool IsLoading { get; set;} = true;
+    Task ViewAllNotes(){
+        NavMng.NavigateTo("/notes");
+        return Task.CompletedTask;
+    }
+    @* public async Task ReloadContent(){ *@
+    @*     $1$ await NoteService.Get(); #1# *@
+    @*     StateHasChanged(); *@
+    @* } *@
+    bool _active = true;
+    List<Note> Notes 
+        {
+            get
+            {
+                if(_active)
+                {
+                    return NoteService.Active;
+                }else
+                {
+                    return NoteService.Dismissed;
+                }
+            }
+        }
+
+    
+
+
+    public string TypeOfView = "School";
+
+    Task Schools()
+    {
+        NavMng.NavigateTo("settings/schools");
+        return Task.CompletedTask;
+    }
+
+    Task Users()
+    {
+        NavMng.NavigateTo("settings/users");
+        return Task.CompletedTask;
+    }
+
+    Task Programs()
+    {
+        NavMng.NavigateTo("programs");
+        return Task.CompletedTask;
+    }
+
+    Task Departments()
+    {
+        NavMng.NavigateTo("settings/departments");
+        return Task.CompletedTask;
+    }
+    
+}
+
+
+@code {
+    List<Program>? programs { get; set; } = new();
+    List<School>? schools { get; set; } = new();
+    List<Department>? departments { get; set; } = new();
+    List<Problem>? messages { get; set; } = new();
+    List<User>? users { get; set; } = new();
+
+    public Notice Notice1 = new()
+        {
+            IconeUrl = "/images/triangle.svg",
+            IsAProblem = true,
+            Name = "Issues",
+            Issues = new()
+            {
+                new Issue()
+                {
+                    Name = "Bachelors of Science in Computer Science has not undergone internal evaluated",
+                    Url = "google.com"
+                },
+                new Issue()
+                {
+                    Name = "Masters in Cyber Security has been approved by ADC but not submitted to HEA for Approval",
+                    Url = "google.com"
+                },
+                new Issue()
+                {
+                    Name = "Accreditation request for diploma in information systems has been rejected dues to the",
+                    Url = "google.com"
+                },
+            },
+        };
+    public Notice Notifications = new()
+        {
+            IconeUrl = "/images/bell.svg",
+            IsAProblem = false,
+            Name = "Notifications",
+            Issues = new()
+            {
+                new Issue()
+                {
+                    Name = "Bachelors of Science in Computer Science has not undergone internal evaluated",
+                    Url = "google.com",
+                    Date = DateTime.Now.AddDays(-20),
+                },
+                new Issue()
+                {
+                    Name = "Masters in Cyber Security has been approved by ADC but not submitted to HEA for Approval",
+                    Url = "google.com",
+                    Date = DateTime.Now.AddDays(-20),
+                },
+                new Issue()
+                {
+                    Name = "Accreditation request for diploma in information systems has been rejected dues to the",
+                    Url = "google.com",
+                    Date = DateTime.Now,
+                },
+            },
+        };
+
+
+    private PieConfig? _config;
+
+    ProgramSummery? programSummery = new();
+
+    protected override async void OnInitialized()
+    {
+        await NoteService.Get();
+        programs = await ProgramService.Get(Degree);
+        programSummery = new(programs);
+        departments = await DepartmentService.Get();
+        schools = await SchoolService.Get();
+        users = await UserService.Get();
+
+        IsLoading =!(
+            ProgramService.Objects is not null && 
+            SchoolService.Objects is not null && 
+            DepartmentService.Objects is not null && 
+            NoteService.Objects is not null &&
+            UserService.Objects is not null
+            );
+
+
+        messages = programSummery.GenerateSummaries();
+        if(messages.Count > 3)
+        messages.RemoveRange(3, messages.Count - 3);
+        //_programs = await ProgramService.Get();
+        //ProgramSummery = new ProgramSummery(_programs);
+        //StateHasChanged();
+
+        _config = new PieConfig
+            {
+                Options = new PieOptions
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = true,
+                        Text = "Programs Status Summary"
+                    }
+                }
+            };
+        foreach (string label in new[] { "Requiring Attention", "May Require Attention", "Does not Require Attention" })
+        {
+            _config.Data.Labels.Add(label);
+        }
+        PieDataset<int> dataset = new PieDataset<int>(new[] { programSummery.BadCount, programSummery.UmberCount, programSummery.GoodCount })
+            {
+                BackgroundColor = new[]
+                    {
+            ColorUtil.ColorHexString(255, 99, 132), // Slice 1 aka "Red"
+            ColorUtil.ColorHexString(255, 205, 86), // Slice 2 aka "Yellow"
+            ColorUtil.ColorHexString(75, 192, 192), // Slice 3 aka "Green"
+        }
+            };
+        _config.Data.Datasets.Add(dataset);
+        StateHasChanged();
+    }
+}
+
+
+@code {
+    private const int InitalCount = 7;
+}
+
+@code {
+    private const int value = 6;
+    public PieConfig _doughnutConfig = new PieConfig
+        {
+            //make this piechart a doughnut
+
+                Options = new PieOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Programs Status Summary"
+                },
+                Tooltips = new Tooltips
+                {
+                    Mode = InteractionMode.Index,
+                    Intersect = false,  
+                },
+            }
+        };
+    public void config()
+    {
+        
+    }
+}
