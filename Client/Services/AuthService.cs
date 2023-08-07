@@ -3,6 +3,8 @@ using System.Security.Claims;
 
 namespace Accreditation_Watch.Client.Services
 {
+    using Task=System.Threading.Tasks.Task;
+
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
@@ -56,23 +58,7 @@ namespace Accreditation_Watch.Client.Services
             _navigationManager.NavigateTo("/dashboard");
             return response;
         }
-        public async Task<string> LogInDemo()
-        {
-            LogOut();
-            var result = await _httpClient.GetAsync("api/auth");
-            if (!result.IsSuccessStatusCode) throw new Exception(result.RequestMessage?.ToString());
-            var response = await result.Content.ReadAsStringAsync();
-            Console.WriteLine(response.ToString());
-            Console.Write($"response : {response}");
-            if (response is null) throw new Exception(" Authorization token not recieved from server");
-            await _localStorage.SetItemAsStringAsync("token", response);
-            await _authenticationStateProvider.GetAuthenticationStateAsync();
-            _navigationManager.NavigateTo("/dashboard");
-            return response;
-        }
-
-
-
+        
         public async Task<List<string>> WhatRoles()
         {
             await InitialiseAuthState();
@@ -103,6 +89,8 @@ namespace Accreditation_Watch.Client.Services
             else throw new Exception("AS: Invalid user id");
             ;
         }
+        
+        // TODO: make a method that returns the user id
 
         public async Task<string> LogOut()
         {

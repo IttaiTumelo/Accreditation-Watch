@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Accreditation_Watch.Server.Migrations
+namespace AccreditationWatch.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
     partial class DataContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,230 @@ namespace Accreditation_Watch.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWDocument", b =>
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AccreditStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccreditStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false,
+                            Name = "ADC Approved"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDeleted = false,
+                            Name = "Applied to HEA"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsDeleted = false,
+                            Name = "Regular Accreditation"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsDeleted = false,
+                            Name = "Conditional Accreditation"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsDeleted = false,
+                            Name = "Rejected"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IsDeleted = false,
+                            Name = "School-Department Review"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            IsDeleted = false,
+                            Name = "Pending Review"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            IsDeleted = false,
+                            Name = "Under Review"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            IsDeleted = false,
+                            Name = "Reviewed"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            IsDeleted = false,
+                            Name = "About to Expire"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            IsDeleted = false,
+                            Name = "Expired"
+                        });
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Accredite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccreditStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AccrediteContact")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccrediteDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccrediteExpirationDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccrediteName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccrediteNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccrediteURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccreditStatusId");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("Accredits");
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AccrediteType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccreditTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false,
+                            Name = "Accredited"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDeleted = false,
+                            Name = "Provisional"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsDeleted = false,
+                            Name = "Denied"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsDeleted = false,
+                            Name = "Withdrawn"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsDeleted = false,
+                            Name = "NotApplicable"
+                        });
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Department", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SchoolId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Document", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -76,354 +299,6 @@ namespace Accreditation_Watch.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AWDocuments");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWProgram", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccrediteStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ValidFrom")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ValidTo")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccrediteStatusId");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.ToTable("Programs");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWTask", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AssignedToId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("AssigneeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Due")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProblemId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProgramId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Progress")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ResultTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignedToId");
-
-                    b.HasIndex("AssigneeId");
-
-                    b.HasIndex("ProblemId");
-
-                    b.HasIndex("ProgramId");
-
-                    b.HasIndex("ResultTypeId");
-
-                    b.HasIndex("TypeId");
-
-                    b.ToTable("AWTask");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Accredite", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AccrediteContact")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AccrediteDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AccrediteExpirationDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AccrediteName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AccrediteNotes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("AccrediteStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AccrediteURL")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccrediteStatusId");
-
-                    b.HasIndex("TypeId");
-
-                    b.ToTable("Accredites");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AccrediteStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AccrediteStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsDeleted = false,
-                            Name = "ADC Approved"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IsDeleted = false,
-                            Name = "Submitted to HEA"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            IsDeleted = false,
-                            Name = "At ZAQA"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            IsDeleted = false,
-                            Name = "Pending payment"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            IsDeleted = false,
-                            Name = "Pending Made"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            IsDeleted = false,
-                            Name = "Accredited"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            IsDeleted = false,
-                            Name = "Rejected"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            IsDeleted = false,
-                            Name = "Requires restructuring"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            IsDeleted = false,
-                            Name = "Sent back to school for restructuring"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            IsDeleted = false,
-                            Name = "back from school"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            IsDeleted = false,
-                            Name = "Requires review"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            IsDeleted = false,
-                            Name = "About to expire"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            IsDeleted = false,
-                            Name = "Exipired"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            IsDeleted = false,
-                            Name = "Internally reviewed"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            IsDeleted = false,
-                            Name = "Externally reviewed"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            IsDeleted = false,
-                            Name = "Reaccredited"
-                        });
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AccrediteType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AccrediteTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsDeleted = false,
-                            Name = "Accredited"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IsDeleted = false,
-                            Name = "Provisional"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            IsDeleted = false,
-                            Name = "Denied"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            IsDeleted = false,
-                            Name = "Withdrawn"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            IsDeleted = false,
-                            Name = "NotApplicable"
-                        });
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Department", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SchoolId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SchoolId");
-
-                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Feedback", b =>
@@ -594,7 +469,7 @@ namespace Accreditation_Watch.Server.Migrations
                     b.ToTable("NoteMessages");
                 });
 
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.PendingImplimentation", b =>
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.PendingImplementation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -614,7 +489,7 @@ namespace Accreditation_Watch.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PendingImplimentations");
+                    b.ToTable("PendingImplementations");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Problem", b =>
@@ -645,14 +520,91 @@ namespace Accreditation_Watch.Server.Migrations
                     b.Property<bool>("Noted")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("ProgramId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Serverity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AWProgramId");
+                    b.HasIndex("ProgramId");
 
                     b.ToTable("Problems");
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Program", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccreditStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Degree")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ValidTo")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccreditStatusId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("Programs");
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Reminder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("FirstReminder")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProgramId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("SecondReminder")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ThirdReminder")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProgramId")
+                        .IsUnique();
+
+                    b.ToTable("Reminders");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.ResultType", b =>
@@ -703,6 +655,10 @@ namespace Accreditation_Watch.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -718,63 +674,136 @@ namespace Accreditation_Watch.Server.Migrations
                         new
                         {
                             Id = 1,
+                            Email = "",
                             IsDeleted = false,
                             Name = "School of Business"
                         },
                         new
                         {
                             Id = 2,
+                            Email = "",
                             IsDeleted = false,
                             Name = "School of Education"
                         },
                         new
                         {
                             Id = 3,
+                            Email = "",
                             IsDeleted = false,
                             Name = "School of Engineering"
                         },
                         new
                         {
                             Id = 4,
+                            Email = "",
                             IsDeleted = false,
                             Name = "School of Health Sciences"
                         },
                         new
                         {
                             Id = 5,
+                            Email = "",
                             IsDeleted = false,
                             Name = "School of Humanities and Social Sciences"
                         },
                         new
                         {
                             Id = 6,
+                            Email = "",
                             IsDeleted = false,
                             Name = "School of Natural Sciences"
                         },
                         new
                         {
                             Id = 7,
+                            Email = "",
                             IsDeleted = false,
                             Name = "School of Nursing"
                         },
                         new
                         {
                             Id = 8,
+                            Email = "",
                             IsDeleted = false,
                             Name = "School of Pharmacy"
                         },
                         new
                         {
                             Id = 9,
+                            Email = "",
                             IsDeleted = false,
                             Name = "School of Public Health"
                         },
                         new
                         {
                             Id = 10,
+                            Email = "",
                             IsDeleted = false,
                             Name = "School of Social Work"
                         });
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Task", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AssignedToId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AssigneeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Due")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProblemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProgramId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ResultTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedToId");
+
+                    b.HasIndex("AssigneeId");
+
+                    b.HasIndex("ProblemId");
+
+                    b.HasIndex("ProgramId");
+
+                    b.HasIndex("ResultTypeId");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("AWTask");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.TaskType", b =>
@@ -819,7 +848,7 @@ namespace Accreditation_Watch.Server.Migrations
                         {
                             Id = 4,
                             IsDeleted = false,
-                            Name = "Reaccreditation"
+                            Name = "Re-accreditation"
                         });
                 });
 
@@ -860,69 +889,11 @@ namespace Accreditation_Watch.Server.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWProgram", b =>
-                {
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AccrediteStatus", "Status")
-                        .WithMany()
-                        .HasForeignKey("AccrediteStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.Department", "Department")
-                        .WithMany("Programs")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-
-                    b.Navigation("Status");
-                });
-
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWTask", b =>
-                {
-                    b.HasOne("Accreditation_Watch.Shared.Entities.User", "AssignedTo")
-                        .WithMany()
-                        .HasForeignKey("AssignedToId");
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.User", "Assignee")
-                        .WithMany()
-                        .HasForeignKey("AssigneeId");
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.Problem", "Problem")
-                        .WithMany()
-                        .HasForeignKey("ProblemId");
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.Problem", "Program")
-                        .WithMany()
-                        .HasForeignKey("ProgramId");
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.ResultType", "ResultType")
-                        .WithMany()
-                        .HasForeignKey("ResultTypeId");
-
-                    b.HasOne("Accreditation_Watch.Shared.Entities.TaskType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeId");
-
-                    b.Navigation("AssignedTo");
-
-                    b.Navigation("Assignee");
-
-                    b.Navigation("Problem");
-
-                    b.Navigation("Program");
-
-                    b.Navigation("ResultType");
-
-                    b.Navigation("Type");
-                });
-
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Accredite", b =>
                 {
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AccrediteStatus", "AccrediteStatus")
+                    b.HasOne("Accreditation_Watch.Shared.Entities.AccreditStatus", "AccreditStatus")
                         .WithMany()
-                        .HasForeignKey("AccrediteStatusId")
+                        .HasForeignKey("AccreditStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -932,7 +903,7 @@ namespace Accreditation_Watch.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AccrediteStatus");
+                    b.Navigation("AccreditStatus");
 
                     b.Navigation("Type");
                 });
@@ -967,11 +938,11 @@ namespace Accreditation_Watch.Server.Migrations
                         .WithMany()
                         .HasForeignKey("ProblemId");
 
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AWProgram", "Program")
+                    b.HasOne("Accreditation_Watch.Shared.Entities.Program", "Program")
                         .WithMany("Notes")
                         .HasForeignKey("ProgramId");
 
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AWTask", "Task")
+                    b.HasOne("Accreditation_Watch.Shared.Entities.Task", "Task")
                         .WithMany("Notes")
                         .HasForeignKey("TaskId");
 
@@ -1005,23 +976,78 @@ namespace Accreditation_Watch.Server.Migrations
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Problem", b =>
                 {
-                    b.HasOne("Accreditation_Watch.Shared.Entities.AWProgram", "Program")
+                    b.HasOne("Accreditation_Watch.Shared.Entities.Program", "Program")
                         .WithMany()
-                        .HasForeignKey("AWProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProgramId");
 
                     b.Navigation("Program");
                 });
 
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWProgram", b =>
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Program", b =>
                 {
-                    b.Navigation("Notes");
+                    b.HasOne("Accreditation_Watch.Shared.Entities.AccreditStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("AccreditStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Accreditation_Watch.Shared.Entities.Department", "Department")
+                        .WithMany("Programs")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.AWTask", b =>
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Reminder", b =>
                 {
-                    b.Navigation("Notes");
+                    b.HasOne("Accreditation_Watch.Shared.Entities.Program", null)
+                        .WithOne("Reminder")
+                        .HasForeignKey("Accreditation_Watch.Shared.Entities.Reminder", "ProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Task", b =>
+                {
+                    b.HasOne("Accreditation_Watch.Shared.Entities.User", "AssignedTo")
+                        .WithMany()
+                        .HasForeignKey("AssignedToId");
+
+                    b.HasOne("Accreditation_Watch.Shared.Entities.User", "Assignee")
+                        .WithMany()
+                        .HasForeignKey("AssigneeId");
+
+                    b.HasOne("Accreditation_Watch.Shared.Entities.Problem", "Problem")
+                        .WithMany()
+                        .HasForeignKey("ProblemId");
+
+                    b.HasOne("Accreditation_Watch.Shared.Entities.Program", "Program")
+                        .WithMany()
+                        .HasForeignKey("ProgramId");
+
+                    b.HasOne("Accreditation_Watch.Shared.Entities.ResultType", "ResultType")
+                        .WithMany()
+                        .HasForeignKey("ResultTypeId");
+
+                    b.HasOne("Accreditation_Watch.Shared.Entities.TaskType", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId");
+
+                    b.Navigation("AssignedTo");
+
+                    b.Navigation("Assignee");
+
+                    b.Navigation("Problem");
+
+                    b.Navigation("Program");
+
+                    b.Navigation("ResultType");
+
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Department", b =>
@@ -1034,9 +1060,22 @@ namespace Accreditation_Watch.Server.Migrations
                     b.Navigation("Messages");
                 });
 
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Program", b =>
+                {
+                    b.Navigation("Notes");
+
+                    b.Navigation("Reminder")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Accreditation_Watch.Shared.Entities.School", b =>
                 {
                     b.Navigation("Departments");
+                });
+
+            modelBuilder.Entity("Accreditation_Watch.Shared.Entities.Task", b =>
+                {
+                    b.Navigation("Notes");
                 });
 #pragma warning restore 612, 618
         }

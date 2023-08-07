@@ -1,211 +1,186 @@
 @inject INoteService NoteService
 @inject IAuthService AuthService
 @inject IUserService UserService
-@inject AuthenticationStateProvider _authStateProvider
 @inject INoteMessageService NoteMessageService
 <style>
 
 </style>
-@if (loading)
+@if(loading)
 {
-    <Loading />
+     <Loading />
 }
-else
-{
-    <div class="col-12 py-2">
-        <div class="our_solution_category">
-            <div class="solution_cards_box">
-                <div class="solution_card d-flex p-4">
-                    <div class="col-12">
-                        <div class="row h-25">
-                            <div class="col-8">
-                                <div class="solu_title">
-                                    <h6>@MainTitle</h6>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <small>@TimeStamp</small>
-                            </div>
-                            <div class="col-12">
-                                <small>@SupportingTitle</small>
-                                <p>@Description</p>
-                            </div>
-                        </div>
-                        <div class="solu_description h-50 overflow-scroll overflow-hidden">
-
-                            <div class="col-12">
-                                @if (Note?.Messages is not null)
-                                {
-                                    @foreach (var message in Note?.Messages)
-                                    {
-                                        if (message.UserId == MyID)
-                                        {
-                                            @* Message float to the left  *@
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="float-end alert alert-primary  p-1 m-1 col-7"
-                                                         role="alert">
-                                                        <small class="text-muted p-0 m-0">
-                                                            @message.Content - @AWFunctions.HowLongAgo(message.Time)
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            @* Message float to the right  *@
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="float-start alert alert-secondary p-1 m-1 col-7"
-                                                         role="alert">
-                                                        <small class="p-0 m-0">@UserService.Objects.FirstOrDefault(x=>x.Id==message.UserId).Name</small>
-                                                        <small class="text-muted p-0 m-0">
-                                                            @message.Content - @AWFunctions.HowLongAgo(message.Time)
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    <p>No messages in the notes</p>
-                                }
-
-                                @* Write message box and send *@
-
-                            </div>
-                        </div>
-                        @if (Note.Creator.Id == MyID || Note.Task.AssignedToId == MyID || Note.Task.AssigneeId == MyID || Me.Claims.ToList()[1].ToString().Equals("Director") || Me.Claims.ToList()[1].ToString().Equals("Coordinator") || Me.Claims.ToList()[1].ToString().Equals("Developer"))
-                        {
-                            <EditForm Model="@newMessage" OnSubmit="PostMessage">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control"
-                                                   placeholder="Write a message"
-                                                   aria-label="Recipient's username"
-                                            @bind="@newMessage.Content"
-                                                   aria-describedby="button-addon2">
-                                            <button class="btn btn-outline-secondary"
-                                                    id="button-addon2"
-                                                    type="submit">
-                                                Send
-                                            </button>
+else{
+<div class="col-12 py-2">
+     <div class="our_solution_category">
+          <div class="solution_cards_box">
+                    <div class="solution_card d-flex p-4">
+                         <div class="col-12">
+                              <div class="row">
+                                   <div class="col-8">
+                                        <div class="solu_title">
+                                             <h6>@Note.Name</h6>
                                         </div>
-                                    </div>
-                                </div>
-                            </EditForm>
+                                   </div>
+                                   @* <div class="col-4"> *@
+                                   @*      <small>@TimeStamp</small> *@
+                                   @* </div> *@
+                                   <div class="col-12">
+                                        <small>@Note.Content</small>
+                                   @* <p>@Description</p> *@
+                                   </div>
+                              </div>
+                              <div class="solu_description h-50 overflow-scroll">
+                                   
+                                   <div class="col-12">
+                                        @if(Note?.Messages is not null)
+                                        {
+                                        @foreach (var message in Note?.Messages)
+                                        {
+                                             if(message.UserId == MyID){
+                                                  @* Message float to the left  *@
+                                                  <div class="row">
+                                                       <div class="col-12">
+                                                            <div class="float-end alert alert-primary  p-1 m-1 col-7"
+                                                                 role="alert">
+                                                                 <small class="text-muted p-0 m-0">
+                                                                                @message.Content - @AWFunctions.HowLongAgo(message.Time) 
+                                                                           </small>
+                                                            </div>
+                                                       </div>
+                                                  </div>
+                                             } else {
+                                                  @* Message float to the right  *@
+                                                  <div class="row">
+                                                       <div class="col-12">
+                                                            <div class="float-start alert alert-secondary p-1 m-1 col-7"
+                                                                 role="alert">
+                                                                      @* <small class="p-0 m-0">@UserService.Objects.FirstOrDefault(x=>x.Id==message.UserId).Name</small> *@
+                                                                           <small class="text-muted p-0 m-0">
+                                                                                @message.Content - @AWFunctions.HowLongAgo(message.Time)
+                                                                           </small>
+                                                            </div>
+                                                       </div>
+                                                  </div>
+                                             }
+                                        }
+                                        }else {
+                                             <p>No messages in the notes</p>
+                                        }
+                                        
+                                        @* Write message box and send *@
+                         
+                                   </div>
+                              </div>
+                                             <EditForm Model="@newMessage" OnSubmit="PostMessage">
+                                             <div class="row">
+                                                  <div class="col-12">
+                                                       <div class="input-group mb-3">
+                                                            <input type="text" class="form-control"
+                                                                 placeholder="Write a message"
+                                                                 aria-label="Recipient's username"
+                                                                 @bind="@newMessage.Content"
+                                                                 aria-describedby="button-addon2">
+                                                            <button class="btn btn-outline-secondary"
+                                                                 id="button-addon2"
+                                                                 type="submit"
+                                                                 >Send</button>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                        </EditForm>
+                                   <div class="row">
+                                        @if(ShowMoreDetails.HasDelegate)
+                                        {
+                                             <div class="col-6 p-3">
+                                                       <button class="p-0 col-12 btn btn-light" @onclick="()=>ShowMoreDetails.InvokeAsync(Note.Id)"  data-bs-toggle="modal" data-bs-target="#verticalycentered">Show More</button>
+                                             </div>
+                                        }
+                                        @if(Note is not null)
+                                        {
+                                             @if(Note.State != NoteState.Expired)
+                                             {
+                                                  <div class="col-6 p-3">
+                                                            <button class=" p-0 col-12 btn btn-light" @onclick="()=>DismissNote(Note)">Dismiss</button>
+                                                  </div>
+                                             }
+                                        } else {
+                                             <div>
+                                                  <p>The note is null</p>
+                                             </div>
+                                        }
+                                        
+                                   </div>
+                                   @if(loading)
+                                   {
+                                        <Loading />
+                                   }
+                         </div>
 
-                        }
-                        <div class="row">
-                            @if (ShowMoreDetails.HasDelegate)
-                            {
-                                <div class="col-6 p-3">
-                                    <button class="p-0 col-12 btn btn-light" @onclick="()=>ShowMoreDetails.InvokeAsync(Note.Id)">Show More</button>
-                                </div>
-                            }
-                            @if (Note is not null)
-                            {
-                                @if (Note.State != NoteState.Expired)
-                                {
-                                    <div class="col-6 p-3">
-                                        <button class=" p-0 col-12 btn btn-light" @onclick="()=>DismissNote(Note)">Dismiss</button>
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <div>
-                                    <p>The note is null</p>
-                                </div>
-                            }
-
-                        </div>
-                        @if (loading)
-                        {
-                            <Loading />
-                        }
                     </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
+          </div>
+     </div>
+</div>
 }
 
 
 
 
 @code {
-    public NoteMessageDto newMessage = new NoteMessageDto();
-    public bool loading = false;
-    [Parameter]
-    public Note Note { get; set; }
-    [Parameter]
-    public string MainTitle { get; set; } = "Card Title";
-    [Parameter]
-    public NoteState SupportingTitle { get; set; }
-    [Parameter]
-    public string Description { get; set; } = "Card Description";
-    [Parameter]
-    public string ButtonText { get; set; } = string.Empty;
-    [Parameter]
-    public string ButtonLink { get; set; } = string.Empty;
-    [Parameter]
-    public string TimeStamp { get; set; } = string.Empty;
-    public int MyID { get; set; }
-    public ClaimsPrincipal Me { get; set; }
-    async Task DismissNote(Note note)
-    {
-        loading = true;
+     public NoteMessageDto newMessage = new NoteMessageDto();
+     public bool loading = false;
+     [Parameter]
+     public Note Note { get; set; }
+     [Parameter]
+     public string MainTitle { get; set; } = "Card Title";
+     [Parameter]
+     public NoteState SupportingTitle { get; set; }
+     [Parameter]
+     public string Description { get; set; } = "Card Description";
+     [Parameter]
+     public string ButtonText { get; set; } = string.Empty;
+     [Parameter]
+     public string ButtonLink { get; set; } = string.Empty;
+     [Parameter]
+     public string TimeStamp { get; set; } = string.Empty;
+     public int MyID { get; set; }
+     async Task DismissNote(Note note){
+          loading = true;
         note.State = NoteState.Expired;
         await NoteService.Update(note);
         Console.WriteLine("Note Dismissed");
-        loading = false;
-        await OnNoteDismissed.InvokeAsync();
+          loading = false;
+          await OnNoteDismissed.InvokeAsync();
     }
-    [Parameter]
-    public EventCallback<int> ShowMoreDetails { get; set; }
+     [Parameter]
+     public EventCallback<int> ShowMoreDetails { get; set;}
+     
+     protected override async void OnInitialized()
+     {
+          await NoteService.Get();
+          await AuthService.InitialiseAuthState();
+          await UserService.Get();
+          await NoteMessageService.Get();
+          if(Note is not null)
+               Note = NoteService.Objects.FirstOrDefault(x=>x.Id==Note.Id);
+          loading = !(
+               NoteService.Objects is not null &&
+               UserService.Objects is not null &&
+               NoteMessageService.Objects is not null
+          );
+          StateHasChanged();
+          MyID = await AuthService.GetId();
+     }
+     [Parameter]
+     public EventCallback OnNoteDismissed { get; set; }
 
-    protected override async void OnInitialized()
-    {
-        await NoteService.Get();
-        await AuthService.InitialiseAuthState();
-        await UserService.Get();
-        await NoteMessageService.Get();
-        if (Note is not null)
-            Note = NoteService.Objects.FirstOrDefault(x => x.Id == Note.Id);
-        loading = !(
-             NoteService.Objects is not null &&
-             UserService.Objects is not null &&
-             NoteMessageService.Objects is not null
-        );
-        StateHasChanged();
-
-
-        MyID = await AuthService.GetId();
-
-
-        var authState = await _authStateProvider.GetAuthenticationStateAsync();
-        Me = authState.User;
-
-
-    }
-    [Parameter]
-    public EventCallback OnNoteDismissed { get; set; }
-
-    async Task PostMessage()
-    {
-        loading = true;
-        newMessage.Name = $"Message from {UserService.Objects.First(x => x.Id == MyID).Name}";
-        newMessage.NoteId = Note.Id;
-        newMessage.UserId = await AuthService.GetId();
-        await NoteMessageService.Create(newMessage);
-        newMessage = new();
-        await NoteService.Get(true);
-        loading = false;
-    }
+     async Task PostMessage(){
+          loading = true;
+          newMessage.Name = $"Message from {UserService.Objects.First(x=>x.Id==MyID).Name}";
+          newMessage.NoteId = Note.Id;
+          newMessage.UserId = await AuthService.GetId();
+          await NoteMessageService.Create(newMessage);
+          newMessage = new();
+          await NoteService.Get(true);
+          loading = false;
+     }
 }

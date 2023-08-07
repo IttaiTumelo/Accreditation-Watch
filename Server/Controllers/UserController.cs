@@ -3,7 +3,12 @@
     public class UserController : BaseController<User, UserDto>
     {
         public UserController(DataContext dataContext) : base(dataContext) { }
-
+        [HttpGet("CheckUsers")]
+        public ActionResult<bool> NoUser()
+        {
+            var noUser =  !_context.Users.ToList().Any();
+            return  noUser;
+        }
         [HttpPost]
         public override async Task<ActionResult<User>> Post(UserDto newUser)
         {
@@ -22,7 +27,7 @@
             };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            return Ok(user);
+            return Ok(value: user);
         }
         [HttpPut("updateUserRole/")]
         public async Task<ActionResult<User>> UpdateRole(User user)
@@ -31,7 +36,7 @@
             if (userToUpdate is null) return BadRequest("User not found");
             userToUpdate.Role = user.Role;
             await _context.SaveChangesAsync();
-            return Ok(userToUpdate);
+            return Ok(value: userToUpdate);
         }
     }
 }

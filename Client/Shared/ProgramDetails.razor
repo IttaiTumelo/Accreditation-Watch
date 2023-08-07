@@ -1,3 +1,4 @@
+@using Program=Accreditation_Watch.Shared.Entities.Program
 @inject IDepartmentService DepartmentService
 @inject ISchoolService SchoolService
 @inject IAccrediteStatusService AccrediteStatusService
@@ -61,7 +62,7 @@
                         </div>
                         <div class="form-group">
                             <label for="program-name">Status*</label>
-                            <InputSelect @bind-Value="Program.AccrediteStatusId" class="form-select" aria-label="Default select example">
+                            <InputSelect @bind-Value="Program.AccreditStatusId" class="form-select" aria-label="Default select example">
                                 @if (AccrediteStatuses is not null)
                                 {
                                     @foreach (var item in AccrediteStatuses)
@@ -93,14 +94,14 @@
 }
 @code {
     [Parameter]
-    public AWProgram Program { get; set; } = new();
+    public Program Program { get; set; } = new();
     [Parameter]
     public bool IsVisible { get; set; } = false;
     public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
     private PieConfig _config;
     //public List<Department> Departments { get; set; } = new List<Department>();
     public List<School> Schools { get; set; } = new List<School>();
-    public List<AccrediteStatus> AccrediteStatuses { get; set; }
+    public List<AccreditStatus> AccrediteStatuses { get; set; }
     Task Close()
     {
         IsVisible = false;

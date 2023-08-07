@@ -1,52 +1,124 @@
 ﻿@page "/analytics"
+@using Program=Accreditation_Watch.Shared.Entities.Program
 @inject IProgramService ProgramService
 @inject IProblemService ProblemService
 @inject IAuthService AuthService
 @inject IUserService UserService
 @inject IAWTaskService AWTaskService
-@attribute [Authorize]
+@inject IJSRuntime JS
+<div class="@Visibility">
+    <div class="progress mt-0">
+        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: @percentage%" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+</div>
 <h3>Analytics</h3>
-
-@if(loading)
-{
-    <Loading />
-
-}
-else 
-{
-<div id="@Visibility" class="d-flex justify-content-center align-items-center">
-        <div style="background-color : #fff; border-radius: 10px; width: 80%" class="p-3">
-          <div class="row">
-                      <h5 class="col">Checking prgrams for potential problems</h5>
-                      <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
-          </div>
-            <p class="text-success">@SuccessMessage</p>
-        <span class="text-danger">@ErrorMessage</span>
-        <div id="@UpdatingResults" class="d-flex justify-content-center align-items-center">
-            <div class="loading-section @StyleOne() p-5 " style="width:100%; background-color : #fff; border-radius: 10px;">
-                <p>Analyzing data ...</p>
-                <div class="progress-container">
-                    <div class="progress-bar" style="@_progressBarStyle"></div>
-                </div>
-                <p class="col">@percentage %  @jobDiscription</p>
+<!-- Modal Dialog Scrollable -->
+<div class="modal fade" id="modalDialogScrollable" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@SelectedProblem?.Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <IssueDetails Problem="@SelectedProblem"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
-        </div>
-</div>
+    </div>
+</div><!-- End Modal Dialog Scrollable-->
 
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Program Summaries</h5>
+        <div class="row">
+
+            @foreach (var context in messages)
+            {
+                <div class="col-lg-4 col-md-3 col-sm-12">
+                    @switch (context.Serverity)
+                    {
+
+                        case Serverity.Medium:
+                            <div class="alert alert-info  alert-dismissible fade show" role="alert">
+                                <h4 class="alert-heading">Attention will be needed</h4>
+                                <p>@context.Description</p>
+                                <hr>
+                                <p class="mb-0">@context.Program.Name</p>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            break;
+                        case Serverity.High:
+                            <div class="alert alert-warning  alert-dismissible fade show" role="alert">
+                                <h4 class="alert-heading"> Attention needed</h4>
+                                <p>@context.Description</p>
+                                <hr>
+                                <p class="mb-0">@context.Program.Name</p>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            break;
+
+                        case Serverity.Critical:
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <h4 class="alert-heading">Urgent Attention Required</h4>
+                                <p>@context.Description</p>
+                                <hr>
+                                <p class="mb-0">@context.Program.Name</p>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            break;
+                        default:
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <h4 class="alert-heading">Attention May be needed</h4>
+                                <p>@context.Description</p>
+                                <hr>
+                                <p class="mb-0">@context.Program.Name</p>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            break;
+
+
+
+
+
+
+                    }
+
+                </div>
+            }
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-12">
         <div class="row">
             <div class="">
                 <h3 class="d-flex">
                     <img src="/images/triangle.svg" width="20" class="m-2" />
-                    Program Summeries
+                    Program Summaries
                 </h3>
                 <div class="grid">
                     <ol>
                         @if (messages is not null)
+                        {
                             @for (int i = 0; i < limit && i < messages.Count; i++)//must change to variable
-                                {
+                            {
                                 <li>
                                     <div class="row">
                                         <div class="col">
@@ -55,6 +127,8 @@ else
                                     </div>
                                 </li>
                             }
+                        }
+                       
                         else {
                             <li>
                                 <div class="row">
@@ -75,53 +149,87 @@ else
 
         @if (ProblemService.Objects?.Count > 0)
         {
-            <h3>Issues</h3>
-            <QuickGrid Items="FilteredProblems" Pagination="@pagination" Theme="default">
-                <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name">
-                    <ColumnOptions>
-                        <div class="search-box">
-                            <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Country name..." />
-                        </div>
-                    </ColumnOptions>
-                </PropertyColumn>
-                @*<PropertyColumn Property="p => p.Department.Name" Sortable="true" Title="Department" />*@
-                @*<PropertyColumn Property="p => p.Status.Name" Sortable="true" />*@
-                @* <PropertyColumn Property="p => p.IsResolved" Sortable="true" /> *@
-                <PropertyColumn Property="p => p.ShortDescription" Sortable="true" />
-                
-                <TemplateColumn Title="Actions/State">
-                    <button @onclick ="@(() => SelectedProblem = context)" class=" button-outlined p-1 m-1">Details</button>
-                    @if(!context.Noted)
-                    {
-                    <AuthorizeView Context="authContext" Roles="Developer, Director">
-                            <button @onclick="@(() => CreateTask(context))" class=" button-outlined p-1 m-1">Make Task</button>
-                        </AuthorizeView>
-                    }
-                    else 
-                    {
-                        <button disabled @onclick="@(() => CreateTask(context))" class=" button-outlined p-1 m-1">Tasked</button>
-                    }
-                </TemplateColumn>
-            </QuickGrid>
-            <Paginator Value="@pagination" />  
+            @* <h3>Issues</h3> *@
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Issues</h5>
+
+              <!-- Table with hoverable rows -->
+              <table class="table table-hover datatable">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                @foreach(var context in FilteredProblems)
+                {
+                    <tr>
+                        <th scope="row">@context.Id</th>
+                        <td>@context.Name</td>
+                        <td>@context.ShortDescription</td>
+                        <td>
+                            <button @onclick ="@(() => SelectedProblem = context)" class=" button-outlined p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Details</button>
+                            @if(!context.Noted){
+                                <button @onclick="@(() => CreateTask(context))" class=" button-outlined p-1 m-1">Make Task</button>
+                            }
+                            else 
+                            {
+                                <button disabled @onclick="@(() => CreateTask(context))" class=" button-outlined p-1 m-1">Make Task</button>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+              </table>
+              <!-- End Table with hoverable rows -->
+            </div>
+          </div>
+            
+            @* <QuickGrid Items="FilteredProblems" Pagination="@pagination" Theme="default"> *@
+            @*     <PropertyColumn Property="@(c => c.Name)" Sortable="true" Class="country-name"> *@
+            @*         <ColumnOptions> *@
+            @*             <div class="search-box"> *@
+            @*                 <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Country name..." /> *@
+            @*             </div> *@
+            @*         </ColumnOptions> *@
+            @*     </PropertyColumn> *@
+            @*     $1$<PropertyColumn Property="p => p.Department.Name" Sortable="true" Title="Department" />#1# *@
+            @*     $1$<PropertyColumn Property="p => p.Status.Name" Sortable="true" />#1# *@
+            @*     $1$ <PropertyColumn Property="p => p.IsResolved" Sortable="true" /> #1# *@
+            @*     <PropertyColumn Property="p => p.ShortDescription" Sortable="true" /> *@
+            @*      *@
+            @*     <TemplateColumn Title="Actions/State"> *@
+            @*         <button @onclick ="@(() => SelectedProblem = context)" class=" button-outlined p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Details</button> *@
+            @*         @if(!context.Noted){ *@
+            @*             <button @onclick="@(() => CreateTask(context))" class=" button-outlined p-1 m-1">Make Task</button> *@
+            @*         } *@
+            @*         else  *@
+            @*         { *@
+            @*             <button disabled @onclick="@(() => CreateTask(context))" class=" button-outlined p-1 m-1">Tasked</button> *@
+            @*         } *@
+            @*     </TemplateColumn> *@
+            @* </QuickGrid> *@
+            @* <Paginator Value="@pagination" />   *@
             @* <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button> *@
         }
         else
         {
             <p>No Problems</p>
-            @* <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button> *@
+            <button @onclick="MakeIssues" class="btn btn-info">Create Issues</button>
         }
     </div>
-    <div class="col-lg-4">
-        <IssueDetails Problem="@SelectedProblem"/>
-    </div>
+   
 </div>
-}
+@* } *@
 
 
 @code {
-    public bool IsVisible { get; set; } = false;
-    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    public bool IsVisible { get; set; } = true;
+    public string Visibility => IsVisible ? "" : "d-none";
     public string SuccessMessage { get; set; } = "";
     public string ErrorMessage { get; set; } = "";
     public string UpdatingResults { get; set; }
@@ -137,7 +245,7 @@ else
     async Task CreateTask(Problem problem)
     {
         var userId = await AuthService.GetId();
-        AWTaskDto task = new AWTaskDto()
+        TaskDto task = new TaskDto()
         {
             Description = problem.Description,
             Name = problem.Name,
@@ -157,7 +265,7 @@ else
     int Total { get; set; } = 100;
     public string viewprogram { get; set;} = "View All";
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
-    List<AWProgram>? programs { get; set; } = new();
+    List<Program>? programs { get; set; } = new();
     List<Problem>? messages { get; set; } = new();
     public string nameFilter;
     public string jobDiscription { get; set; }
@@ -245,6 +353,7 @@ else
     }
     async Task MakeIssues()
     {
+        // await JS.InvokeVoidAsync("data-bs-toggle", "verticalycentered");
         IsVisible = true;
         Total = messages.Count;
         Progress = 0;

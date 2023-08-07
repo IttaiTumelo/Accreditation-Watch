@@ -1,3 +1,4 @@
+@using Task=Accreditation_Watch.Shared.Entities.Task
 @inject INoteService NoteService    
 @inject IUserService UserService
 @inject IAuthService AuthService
@@ -58,7 +59,7 @@
 @code 
 {
      [Parameter]
-     public AWTask Task { get; set; }
+     public Task Task { get; set; }
 
      NoteDto newNote = new NoteDto();
 

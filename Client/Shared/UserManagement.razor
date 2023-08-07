@@ -1,78 +1,112 @@
 ﻿@inject IUserService UserService
-@attribute [Authorize(Roles = "Admin")]
-<h3>User Management</h3>
+@* @attribute [Authorize(Roles = "Admin")] *@
 <div class="row">
     <div class="col-12">
-        <div class="row">
-            <div class="col">
-                <h4>All Users</h4>
-            </div>
-            <div class="col">
-                <button @onclick="()=>IsVisible = true" class="btn btn-primary float-end">Add User</button>
+     
+        <div class="row parent">
+            <div class="col-12 ">
+                @if (UserService.Objects == null)
+                {
+                    <Loading/>
+                }
+                else if (UserService.Objects.Count == 0)
+                {
+                    <p>No programs found.</p>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">User list</h5>
+                        </div>
+                        <div class="my-2">
+                            <button class="button-outlined" data-bs-toggle="modal" data-bs-target="#addnewuser">Add User</button>
+                        </div>
+                    </div>
+                    <table class="table table-hover datatable">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Roles</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody  class="grid-max-height">
+                        @foreach (var context in UserService.Objects)
+                        {
+                            <tr>
+                                <th >@context.Id.ToString()</th>
+                                <th >@context.Name</th>
+                                <th >@context.Email</th>
+                                <th >
+
+                                    <select type="text" @bind="@context.Role" class="form-control" placeholder="Basic">
+                                        @foreach (var role in Enum.GetValues(typeof(Role)))
+                                        {
+                                            <option value="@role">@role</option>
+                                        }
+                                    </select>
+                                </th>
+                                <th >
+                                    <button @onclick="() => SetRole(context)" class="btn btn-primary">Save</button>
+                                </th>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
             </div>
         </div>
-
-        <QuickGrid Items="Users.AsQueryable()" Theme="default" Virtualize="true">
-            <PropertyColumn Property="p => p.Id" Sortable="true" />
-            <PropertyColumn Property="p => p.Name" Sortable="true" />
-            <PropertyColumn Property="p => p.Email" Sortable="true" />
-            @*<PropertyColumn Property="p => p.Role.Name" Sortable="true" />*@
-            <TemplateColumn Title="Role">
-                <!-- Split dropend button -->
-                
-                <select type="text" @bind="@context.Role" class="form-control" placeholder="Basic">
-                    @foreach (var role in Enum.GetValues(typeof(Role)))
-                    {
-                        <option value="@role">@role</option>
-                    }
-                </select>
-
-            </TemplateColumn>
-            <TemplateColumn Title="Action">
-                <button  @onclick="()=>SetRole(context)" class="btn btn-primary">Save</button>
-                
-            </TemplateColumn>
-        </QuickGrid>
     </div>
-
 </div>
 
 
-<div id="@Visibility" class="d-flex justify-content-center align-items-center">
-       
-        <div style="background-color : #fff; border-radius: 10px;" class="p-5">
-          <div class="row">
-                      <h3 class="col">Add User</h3>
-                      <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
-          </div>
-            <p class="text-danger">@ErrorMessage</p>
-            <p class="text-success">@SuccessMessage</p>
-        <span class="text-danger">@ErrorMessage</span>
-        <EditForm Model="newUser" OnValidSubmit="AddUser">
-            @*<DataAnnotationsValidator />*@
-            <div class="form-group">
-                <label for="Name">Name</label>
-                <InputText class="form-control" id="Name" @bind-Value="newUser.Name" />
+             
+<div class="modal fade" id="addnewuser" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="form-group">
-                <label for="Email">Email</label>
-            <InputText class="form-control" id="Email" @bind-Value="newUser.Email" />
+            <div class="modal-body">
+                <p class="text-danger">@ErrorMessage</p>
+                <p class="text-success">@SuccessMessage</p>
+                <span class="text-danger">@ErrorMessage</span>
+                <EditForm Model="newUser" OnValidSubmit="AddUser">
+                    @*<DataAnnotationsValidator />*@
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <InputText class="form-control" id="Name" @bind-Value="newUser.Name"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="Email">Email</label>
+                        <InputText class="form-control" id="Email" @bind-Value="newUser.Email"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="Email">Password</label>
+                        <InputText class="form-control" id="Email" @bind-Value="newUser.Password"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="Role">Role</label>
+                        <InputSelect class="form-control" id="Role" @bind-Value="newUser.Role">
+                            <option value="Admin">Admin</option>
+                            <option value="User">User</option>
+                        </InputSelect>
+                    </div>
+                </EditForm>
             </div>
-            <div class="form-group">
-                <label for="Email">Password</label>
-                <InputText class="form-control" id="Email" @bind-Value="newUser.Password" />
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-success">Create</button>
             </div>
-            <div class="form-group">
-                <label for="Role">Role</label>
-            <InputSelect class="form-control" id="Role" @bind-Value="newUser.Role">
-                    <option value="Admin">Admin</option>
-                    <option value="User">User</option>
-                </InputSelect>
-            </div>
-            <button type="submit" class="btn btn-primary col-12 my-2">Add User</button>
-        </EditForm>
         </div>
-</div>
+    </div>
+</div><!-- End Vertically centered Modal-->
+
+
 
 
 @code {

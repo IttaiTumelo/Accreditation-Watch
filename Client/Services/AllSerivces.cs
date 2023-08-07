@@ -1,12 +1,15 @@
 ﻿namespace Accreditation_Watch.Client.Services
 {
+    using Program=Accreditation_Watch.Shared.Entities.Program;
+    using Task=Accreditation_Watch.Shared.Entities.Task;
+
     public class AccrediteService : BaseService<Accredite>, IAccrediteService
     {
         public AccrediteService(HttpClient httpClient) : base(httpClient)
         {
         }
     }
-    public class AccrediteStatusService : BaseService<AccrediteStatus>, IAccrediteStatusService
+    public class AccrediteStatusService : BaseService<AccreditStatus>, IAccrediteStatusService
     {
         public AccrediteStatusService(HttpClient httpClient) : base(httpClient)
         {
@@ -24,16 +27,29 @@
         {
         }
     }
-    public class PendingImplimentationService : BaseService<PendingImplimentation>, IPendingImplimentationService
+    public class PendingImplimentationService : BaseService<PendingImplementation>, IPendingImplimentationService
     {
         public PendingImplimentationService(HttpClient httpClient) : base(httpClient)
         {
         }
     }
-    public class ProgramService : BaseService<AWProgram>, IProgramService
+    public class ProgramService : BaseService<Program>, IProgramService
     {
         public ProgramService(HttpClient httpClient) : base(httpClient)
         {
+        }
+
+        public async Task<List<Program>> Get(Degree degree = Degree.Unset)
+        {
+            if(Objects.Count == 0)
+            {
+                var request = await HttpClient.GetAsync($"api/Program");
+                if (!request.IsSuccessStatusCode) throw new Exception(request.ReasonPhrase);
+                var objects = await request.Content.ReadFromJsonAsync<List<Program>>();
+                Objects = objects ?? throw new Exception("No objects were found");
+            }
+            
+            return degree == Degree.Unset? Objects : Objects.Where(obj => obj.Degree == degree).ToList();
         }
     }
     public class SchoolService : BaseService<School>, ISchoolService
@@ -42,7 +58,8 @@
         {
         }
     }
-    public class AWTaskService : BaseService<AWTask>, IAWTaskService
+
+    public class AWTaskService : BaseService<Task>, IAWTaskService
     {
         public AWTaskService(HttpClient httpClient) : base(httpClient)
         {

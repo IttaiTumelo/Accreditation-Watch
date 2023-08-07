@@ -204,8 +204,33 @@ namespace Accreditation_Watch.Shared.General
         return $"{span.Seconds}s ago";
     }
 
+     public static string GetTimeLeft(DateTime endDate)
+     {
+         // Get the current date and time
+         DateTime currentDate = DateTime.Now;
+
+         // Check if the end date is in the future
+         if (endDate > currentDate)
+         {
+             // Calculate the time span between the two dates
+             TimeSpan timeLeft = endDate - currentDate;
+
+             // Format the time span as a string
+             // string formattedTimeLeft = string.Format("{0} days, {1} hours, {2} minutes, {3} seconds", timeLeft.Days, timeLeft.Hours, timeLeft.Minutes, timeLeft.Seconds);
+             string formattedTimeLeft = string.Format("{0} days, {1} hours", timeLeft.Days, timeLeft.Hours, timeLeft.Minutes, timeLeft.Seconds);
+
+             // Return the formatted string
+             return formattedTimeLeft;
+         }
+         else
+         {
+             // Return an empty string if the end date is in the past
+             return "This program has expired";
+         }
+     }
 
 
 
     }
+    
 }

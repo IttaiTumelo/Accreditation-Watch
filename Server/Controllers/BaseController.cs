@@ -1,5 +1,8 @@
 ﻿namespace Accreditation_Watch.Server.Controllers
 {
+    using Program=Shared.Entities.Program;
+    using Task=Shared.Entities.Task;
+    
     [ApiController]
     [Route("api/[controller]")]
     public class BaseController<T, TDto> : ControllerBase where T : BaseEntity, new() where TDto : BaseEntity
@@ -56,7 +59,7 @@
                         history.ActionResult = $"Failed because of {e.Message}";
                         _context.Histories.Add(history);
                         _context.SaveChanges();
-                        return Ok(e.Message + "\n\n " + e.StackTrace);
+                        return Ok(value: e.Message + "\n\n " + e.StackTrace);
                     }
                 }
                 //else return NotFound($"No {typeof(T).Name}(s) found");
@@ -65,7 +68,7 @@
                     history.ActionResult = "Success";
                     _context.Histories.Add(history);
                     _context.SaveChanges();
-                    return Ok(new List<T>());
+                    return Ok(value: new List<T>());
                 }
             }
             else
@@ -73,12 +76,12 @@
                 history.ActionResult = $"Failed because of {query}";
                 _context.Histories.Add(history);
                 _context.SaveChanges();
-                return NotFound();
+                return Ok(value: new());
             }
             history.ActionResult = "Success";
             _context.Histories.Add(history);
             _context.SaveChanges();
-            return Ok(query.ToList());
+            return Ok(value: query.ToList());
         }
 
         [HttpPost("byValue")]
@@ -118,7 +121,7 @@
                 history.ActionResult = "Success";
                 _context.Histories.Add(history);
                 _context.SaveChanges();
-                return Ok(result.ToList());
+                return Ok(value: result.ToList());
             }
             else
             {
@@ -129,6 +132,36 @@
             }
         }
 
+        [HttpGet("by_name/{name}")]
+        public virtual async Task<ActionResult<T>> GetByName(string name)
+        {
+            var accessToken = HttpContext.Request.Headers["Authorization"]
+                .FirstOrDefault(h => h.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                ?.Substring("Bearer ".Length);
+            T entity2 = new T();
+            if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
+            User user = AWFunctions.GetDeatailsFromToken(accessToken);
+
+            History history = new History()
+            {
+                Name = "Get with filters request",
+                Description = $"User {user.Email} requested get get the details of {typeof(T).Name}(s) with the following name {name}",
+                UserId = user.Id,
+                Date = DateTime.Now,
+                Action = "Get All",
+                Severity = Severity.Low,
+                InitialState = "",
+                FinalState = "",
+            };
+
+            var query = _context.Set<T>().AsQueryable();
+            var result = query.FirstOrDefault(x => x.Name.Trim().ToLower().Equals(name.ToLower().Trim()));
+            if (result is null) return NotFound($"No {typeof(T).Name} with name '{name}' found ");
+            return Ok(result);
+
+
+
+        }
 
         [HttpPost]
         public virtual async Task<ActionResult<T>> Post(TDto entity) //Post(TDto entity)
@@ -159,7 +192,7 @@
             history.ActionResult = "Success";
             _context.Histories.Add(history);
             await _context.SaveChangesAsync();
-            return Ok(entity);
+            return Ok(value: entity);
         }
 
         [HttpPut]
@@ -204,7 +237,7 @@
             });
             _context.SaveChanges();
             var updatedEntity = await _context.Set<T>().FindAsync(entity.Id);
-            return Ok(updatedEntity);
+            return Ok(value: updatedEntity);
         }
 
         [HttpDelete("{id}")]
@@ -242,7 +275,7 @@
             _context.Histories.Add(history);
             _context.SaveChanges();
             // _context.Set<T>().Remove(entity);
-            return Ok(entity);
+            return Ok(value: entity);
         }
         [HttpGet("deleted")]
         public virtual async Task<ActionResult<IEnumerable<T>>> GetDeleted()
@@ -278,7 +311,7 @@
                 history.ActionResult = $"Success";
                 _context.Histories.Add(history);
                 _context.SaveChanges();
-                return Ok(result.ToList());
+                return Ok(value: result.ToList());
             }
         }
 
@@ -314,7 +347,7 @@
             history.ActionResult = $"Success";
             _context.Histories.Add(history);
             _context.SaveChanges();
-            return Ok(entity);
+            return Ok(value: entity);
         }
 
         [HttpDelete]
@@ -327,7 +360,7 @@
             }
             _context.Set<T>().RemoveRange(entities);
             await _context.SaveChangesAsync();
-            return Ok(entities);
+            return Ok(value: entities);
         }
     }
 }

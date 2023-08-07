@@ -3,61 +3,46 @@
 @inject IDepartmentService DepartmentService
 @inject IProgramService ProgramService
 @inject IAccrediteStatusService AccrediteStatusService
+<div class="@Visibility">
+    <div class="progress mt-3" style="height: 25px;">
+        
+        <div class="progress-bar progress-bar-striped bg-successjustify-content-around" role="progressbar" style="width: @percentage%" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">
+        </div>
+        
+    </div>
+            <p class="text-center">@percentage% -- @jobDiscription</p>
+    <div class="progress mt-3" style="height: 25px;">
+            
+        <div class="progress-bar progress-bar-striped bg-successjustify-content-around" role="progressbar" style="width: @percentage2%" aria-valuenow="@percentage2" aria-valuemin="0" aria-valuemax="100">
+        </div>
+    </div>
+            <p class="text-center">@percentage2%</p>
+    
+</div>
 
-
-
-<style>
-    /* Use a monospace font for the table */
-    table {
-        font-family: "Courier New", Courier, monospace;
-    }
-
-    /* Add borders and padding to the table cells */
-    td {
-        border: 1px solid black;
-        padding: 1px;
-    }
-
-    /* Add a background color and bold text to the first row */
-    tr:first-child {
-        background-color: lightgray;
-        font-weight: bold;
-    }
-
-    /* Add a background color and text alignment to the first column */
-    tr td:first-child {
-        background-color: lightgray;
-        text-align: center;
-    }
-
-    /* Add some spacing between the table and the page margins */
-    table {
-        margin: 20px;
-    }   
-</style>
 <h1>Upload Excel File</h1>
 <h1 class="bg-danger">@ErrorMessage</h1>
 <h3>@Title</h3>
 
-<div id="@Visibility" class="d-flex justify-content-center align-items-center">
-        <div style="background-color : #fff; border-radius: 10px; width: 1000px" class="p-5">
-          <div class="row">
-                      <h3 class="col">Add User</h3>
-                      <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div>
-          </div>
-            <p class="text-success">@SuccessMessage</p>
-        <span class="text-danger">@ErrorMessage</span>
-        <div id="@UpdatingResults" class="d-flex justify-content-center align-items-center">
-            <div class="loading-section @StyleOne() p-5 " style="width:50%; background-color : #fff; border-radius: 10px;">
-                <p>Processes Document ...</p>
-                <div class="progress-container">
-                    <div class="progress-bar" style="@_progressBarStyle"></div>
-                </div>
-                <p class="col">@jobDiscription</p>
-            </div>
-        </div>
-        </div>
-</div>
+@* <div id="@Visibility" class="d-flex justify-content-center align-items-center"> *@
+@*         <div style="background-color : #fff; border-radius: 10px; width: 1000px" class="p-5"> *@
+@*           <div class="row"> *@
+@*                       <h3 class="col">Add User</h3> *@
+@*                       <div class="col-1"><button @onclick="()=>Close()" class=" btn-close btn-danger"></button></div> *@
+@*           </div> *@
+@*             <p class="text-success">@SuccessMessage</p> *@
+@*         <span class="text-danger">@ErrorMessage</span> *@
+@*         <div id="@UpdatingResults" class="d-flex justify-content-center align-items-center"> *@
+@*             <div class="loading-section @StyleOne() p-5 " style="width:50%; background-color : #fff; border-radius: 10px;"> *@
+@*                 <p>Processes Document ...</p> *@
+@*                 <div class="progress-container"> *@
+@*                     <div class="progress-bar" style="@_progressBarStyle"></div> *@
+@*                 </div> *@
+@*                 <p class="col">@jobDiscription</p> *@
+@*             </div> *@
+@*         </div> *@
+@*         </div> *@
+@* </div> *@
 
 <InputFile id="fileInput" OnChange="UploadFile" class="button-outlined" />
 
@@ -68,15 +53,19 @@
     <table class="table">
         <thead>
             <tr>
-                @foreach (DataColumn column in dataTable.Columns)
+                @foreach (var column in dataTable.Rows[0].ItemArray)
                 {
-                    <th>@column.ColumnName</th>
+                    <th>@column?.ToString()</th>
                 }
             </tr>
         </thead>
         <tbody>
             @foreach (DataRow row in dataTable.Rows)
             {
+                if (dataTable.Rows.IndexOf(row)==0)
+                {
+                    continue;
+                }
                 <tr>
                     @foreach (var item in row.ItemArray)
                     {
@@ -92,7 +81,8 @@
 @code {
 
     public bool IsVisible { get; set; } = false;
-    public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+    public string Visibility => IsVisible ? "" : "d-none";
+
     public string SuccessMessage { get; set; } = "";
     public void Close()
     {
@@ -103,17 +93,21 @@
 
 
     int Progress { get; set; } = 1;
-    int Total { get; set; } = 100;
-    List<School> Schools { get; set; }
-    List<Department> Departments { get; set; }
-    List<AccrediteStatus> AccrediteStatuses { get; set; }
+    int ProgressX { get; set; } = 0;
+    int Total { get; set; } = 1;
+    int TotalX { get; set; } = 1;
+    int stage { get; set; } = 0;
+    int stages { get; set; } = 6;
+    // List<School> Schools { get; set; }
+    // List<Department> Departments { get; set; }
+    // List<AccreditStatus> AccrediteStatuses { get; set; }
     DataTable dataTable;
 
     protected override async void OnInitialized()
     {
-        Schools = await SchoolService.Get();
-        Departments = await DepartmentService.Get();
-        AccrediteStatuses = await AccrediteStatusService.Get();
+        await SchoolService.Get();
+        await DepartmentService.Get();
+        await AccrediteStatusService.Get();
         StateHasChanged();
 
     }
@@ -143,136 +137,157 @@
 
     async Task UploadPrograms()
     {
+        
         IsVisible = true;
         List<CreateDepartmentDto> departments = new(); 
         List<CreateProgramDto> programs = new();
         List<CreateSchoolDto> schools = new();
         //Stage One Extraxt School from the table
-        for (Total = dataTable.Rows.Count, Progress = 0; Progress < Total; Progress++, StateHasChanged())
+        stage = 1;
+
+        for (TotalX = Total = dataTable.Rows.Count, Progress =1; Progress < Total; Progress++, ProgressX++, StateHasChanged())
         {
-            var schoolName = dataTable?.Rows[Progress]?.ItemArray[2]?.ToString();
-            if(schoolName is null)
+            var schoolName = dataTable?.Rows[Progress]?.ItemArray[0]?.ToString();
+            var schoolEmail = dataTable?.Rows[Progress]?.ItemArray[1]?.ToString();
+            if(schoolName is null || schoolEmail is null)
             {
-                ErrorMessage = "Failed to extract School name";
+                ErrorMessage = "Failed to extract School name or email";
                 StateHasChanged();
-                await Task.Delay(2000);
+                await Task.Delay(10000);
                 continue;
             }
             if (schools.FirstOrDefault(x => x.Name.Equals(schoolName)) is null)
-                schools.Add(new() { Name = schoolName});
-            jobDiscription = $"Stage 1 : Loading Schools from Excel Sheet: on  {dataTable.Rows[Progress].ItemArray[1].ToString()}";
+                schools.Add(new() { Name = schoolName, Email = schoolEmail});
+            jobDiscription = $"Stage 1 : Loading Schools from Excel Sheet: on  {dataTable.Rows[Progress].ItemArray[0].ToString()}";
             UpdateLoading();
 
         }
+        stage = 2;
 
         //Stage Two, Upload schools to the database
-        for (Total = schools.Count, Progress = 0; Progress < Total; Progress++, StateHasChanged())
+        for (TotalX += Total = schools.Count, Progress = 0; Progress < Total; Progress++, ProgressX++, StateHasChanged())
         {
             jobDiscription = $"Stage 2 : Uploading Schools from Excel Sheet: on  {schools[Progress].Name} . school {Progress+1} of {schools.Count}";
             var result = await SchoolService.Create(schools[Progress]);
             UpdateLoading();
         }
+
         _progressBarStyle = $"width: {(Progress * 100) / Total}%; transition: width 0.3s ease-in-out;";
         OnInitialized();
+        await Task.Delay(1000);
         //Stage three
-        Schools = await SchoolService.Get(true);
-        for (Total = dataTable.Rows.Count, Progress = 0; Progress < Total; Progress++, StateHasChanged())
+        stage = 3;
+
+        await SchoolService.Get(true);
+        for (TotalX += Total = dataTable.Rows.Count, Progress = 1; Progress < Total; Progress++, ProgressX++, StateHasChanged())
         {
-            var departmentName = dataTable?.Rows[Progress]?.ItemArray[1]?.ToString();
-            var schoolName = dataTable?.Rows[Progress]?.ItemArray[2]?.ToString();
-            var school = Schools.FirstOrDefault(x => x.Name.Equals(schoolName));
-            if (departmentName is null)
+            var departmentName = dataTable?.Rows[Progress]?.ItemArray[2]?.ToString();
+            var departmentEmail = dataTable?.Rows[Progress]?.ItemArray[3]?.ToString();
+            var schoolName = dataTable?.Rows[Progress]?.ItemArray[0]?.ToString();
+            var school = SchoolService.Objects.FirstOrDefault(x => x.Name.ToLower().Equals(schoolName.ToLower()));
+            if (departmentName is null || departmentEmail is null)
             {
                 ErrorMessage = "Failed to extract department name";
                 StateHasChanged();
-                await Task.Delay(2000);
+                await Task.Delay(10000);
                 continue;
             }
             if (school is null)
             {
                 ErrorMessage = $"Failed find school with  name {schoolName}";
                 StateHasChanged();
-                await Task.Delay(2000);
+                await Task.Delay(10000);
                 continue;
             }
             if (departments.FirstOrDefault(x => x.Name.Equals(departmentName)) is null)
                 departments.Add(new() { 
                     Name = departmentName,
+                    Email = departmentEmail,
                     SchoolId = school.Id,
                 });
             jobDiscription = $"Stage 3 : Loading Deaprtment from Excel Sheet: on  {dataTable.Rows[Progress].ItemArray[2].ToString()}";
             UpdateLoading();
 
         }
+        stage = 4;
+
         //Stage four, Upload departments to the database
-        for (Total = departments.Count, Progress = 0; Progress < Total; Progress++, StateHasChanged())
+        for (TotalX += Total = departments.Count, Progress = 0; Progress < Total; Progress++, ProgressX++, StateHasChanged())
         {
             jobDiscription = $"Stage four : Uploading Departments from Excel Sheet: on  {departments[Progress].Name} . department {Progress + 1} of {departments.Count}";
             var result = await DepartmentService.Create(departments[Progress]);
             UpdateLoading();
         }
-        Departments = await DepartmentService.Get(true);
-        AccrediteStatuses = await AccrediteStatusService.Get(true);
+        await DepartmentService.Get(true);
+        await AccrediteStatusService.Get(true);
 
         //Stage five Extraxt programs from the table
-        for (Total = dataTable.Rows.Count, Progress = 0; Progress < Total; Progress++, StateHasChanged())
+        stage = 5;
+
+        for (TotalX += Total = dataTable.Rows.Count, Progress = 1; Progress < Total; Progress++, ProgressX++, StateHasChanged())
         {
-            var programName = dataTable?.Rows[Progress]?.ItemArray[0]?.ToString();
+            var programName = dataTable?.Rows[Progress]?.ItemArray[4]?.ToString();
             if (programName is null)
             {
                 ErrorMessage = "Failed to extract program name";
                 StateHasChanged();
-                await Task.Delay(2000);
+                await Task.Delay(10000);
                 continue;
             }
-            var departmentName = dataTable?.Rows[Progress]?.ItemArray[1]?.ToString();
             
-            var dep = Departments.FirstOrDefault(x => x.Name.Equals(departmentName));
+            var departmentName = dataTable?.Rows[Progress]?.ItemArray[2]?.ToString();
+            
+            var dep = DepartmentService.Objects.FirstOrDefault(x => x.Name.ToLower().Equals(departmentName.ToLower()));
             if(dep is null)
             {
                 ErrorMessage = "Failed to extract department name during program progress";
                 StateHasChanged();
-                await Task.Delay(2000);
+                await Task.Delay(10000);
                 continue;
             }
-            int accreditStatusIdFromFile = int.Parse(dataTable?.Rows[Progress]?.ItemArray[3]?.ToString());
-            var accreditStatus = AccrediteStatuses.FirstOrDefault(x => x.Id == accreditStatusIdFromFile);
+            int accreditStatusIdFromFile = int.Parse(dataTable?.Rows[Progress]?.ItemArray[5]?.ToString());
+            var accreditStatus = AccrediteStatusService.Objects.FirstOrDefault(x => x.Id == accreditStatusIdFromFile);
             if (accreditStatus is null)
             {
                 ErrorMessage = "Failed to extract accreditStatus from db";
                 StateHasChanged();
-                await Task.Delay(2000);
+                await Task.Delay(10000);
                 continue;
             }
-            if (schools.FirstOrDefault(x => x.Name.Equals(programName)) is null)
+            if (programs.FirstOrDefault(x => x.Name.Equals(programName)) is null)
                 programs.Add(new() 
                 { 
                     Name = programName,
                     DepartmentId = dep.Id,
-                    AccrediteStatusId = accreditStatus.Id, /////
-                    ValidFrom = DateTime.Parse(dataTable.Rows[Progress].ItemArray[4].ToString()),
-                    ValidTo = DateTime.Parse(dataTable.Rows[Progress].ItemArray[5].ToString()),
+                    AccreditStatusId = accreditStatus.Id, /////
+                    ValidFrom = DateTime.Parse(dataTable.Rows[Progress].ItemArray[6].ToString()),
+                    ValidTo = DateTime.Parse(dataTable.Rows[Progress].ItemArray[7].ToString()),
                 });
             else
             {
                 ErrorMessage = "duplicate prog name";
                 StateHasChanged();
-                await Task.Delay(2000);
+                await Task.Delay(10000);
                 continue;
             }
-            jobDiscription = $"Stage 5 : Loading program from Excel Sheet: on  {dataTable.Rows[Progress].ItemArray[0].ToString()}";
+            jobDiscription = $"Stage 5 : Loading program from Excel Sheet: on  {dataTable.Rows[Progress].ItemArray[4].ToString()}";
             await ProgramService.Get(true);
             UpdateLoading();
 
         }
 
         //Stage six, Upload departments to the database
-        for (Total = programs.Count, Progress = 0; Progress < Total; Progress++, StateHasChanged())
+        stage = 6;
+
+        for (TotalX += Total = programs.Count, Progress = 0; Progress < Total; Progress++, ProgressX++, StateHasChanged())
         {
             jobDiscription = $"Stage 6 : Uploading progras from Excel Sheet: on  {programs[Progress].Name} . program {Progress + 1} of {programs.Count}";
             var result = await ProgramService.Create(programs[Progress]);
             UpdateLoading();
         }
+        ProgressX = TotalX;
+        UpdateLoading();
+
         await Task.Delay(1000);
         IsVisible = false;
     }
@@ -312,9 +327,13 @@
     {
         Progress++;
     }
-
+    int percentage = 0;
+    int percentage2 = 0;
+    
     public void UpdateLoading()
     {
+        percentage = ((Progress * 100) / (Total));
+        percentage2 = ((stage * 100) / (stages));
         _progressBarStyle = $"width: {(Progress * 100) / Total}%; transition: width 0.3s ease-in-out;";
         StateHasChanged();
     }

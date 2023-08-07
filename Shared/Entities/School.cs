@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Accreditation_Watch.Shared.Entities
 {
-    public class School : BaseEntity
-    {
+    public class School : BaseEntity {
+        public string Email { get; set; } = String.Empty;
         public List<Department>? Departments { get; set; } = new();
         public override List<string> RelatedEntities()
         {

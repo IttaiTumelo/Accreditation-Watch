@@ -2,6 +2,8 @@
 
 namespace Accreditation_Watch.Client
 {
+    using Task=System.Threading.Tasks.Task;
+
     public class CBUAuthService : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;

@@ -8,8 +8,8 @@
 @inject IProblemService ProblemService
 
 <div class="row">
-                <div class="col-11"><h4>@Problem?.Name</h4></div>
-                <div class="col-1"><button @onclick="()=>Close()" class=" btn-close"></button></div>
+                @* <div class="col-11"><h4>@Problem?.Name</h4></div> *@
+                @* <div class="col-1"><button @onclick="()=>Close()" class=" btn-close"></button></div> *@
             </div>
 
 
@@ -129,7 +129,7 @@
     public bool IsVisible { get; set; } = false;
     public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
     public List<School> Schools { get; set; } = new List<School>();
-    public List<AccrediteStatus> AccrediteStatuses { get; set; } = new List<AccrediteStatus>();
+    public List<AccreditStatus> AccrediteStatuses { get; set; } = new List<AccreditStatus>();
     async Task Close()
     {
         IsVisible = false;
@@ -141,16 +141,17 @@
           ErrorMessage = "Please enter a comment";
           else
           {
-               @* Note.Name = Task.Progress.ToString(); *@
-               @* Note.UserId = await AuthService.GetId();
-               ErrorMessage = ""; *@
+               // @* Note.Name = Task.Progress.ToString(); *@
+               // @* Note.UserId = await AuthService.GetId();
+               ErrorMessage = ""; 
+              // *@
 
-               @* await NoteService.Create(Note); *@
-               @* Task.Problem.Program = ProblemService.Objects.First(x=>x.Id == Task.Problem.AWProgramId).Program;
-               Task.Notes.Add(Note);
-               await TaskService.Update(Task);
-               SuccessMessage = "Status Updated";
-               StateHasChanged(); *@
+               // @* await NoteService.Create(Note); *@
+               // @* Task.Problem.Program = ProblemService.Objects.First(x=>x.Id == Task.Problem.AWProgramId).Program;
+               // Task.Notes.Add(Note);
+               // await TaskService.Update(Task);
+               // SuccessMessage = "Status Updated";
+               // StateHasChanged(); *@
           }
     }
     protected override async void OnInitialized()

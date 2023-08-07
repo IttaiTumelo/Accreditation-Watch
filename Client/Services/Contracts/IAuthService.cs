@@ -1,9 +1,10 @@
 ﻿namespace Accreditation_Watch.Client.Services.Contracts
 {
+    using Task=System.Threading.Tasks.Task;
+
     public interface IAuthService
     {
         Task<string> LogIn(UserLoginDto user);
-        Task<string> LogInDemo();
         Task<string> LogOut();
         Task<bool> IsInRole(string role);
         Task<List<string>> WhatRoles();

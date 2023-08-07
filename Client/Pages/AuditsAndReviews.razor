@@ -1,6 +1,7 @@
 ﻿@page "/audits_and_reviews"
 @inject IProgramService ProgramService
 @using Microsoft.AspNetCore.Components.QuickGrid
+@using Program=Accreditation_Watch.Shared.Entities.Program
 <h3>Audits & Reviews</h3>
 
 <div class="row">
@@ -92,7 +93,7 @@
 
 
 @code {
-     PaginationState pagination = new PaginationState { ItemsPerPage = 3 };List<AWProgram> programs { get; set; }
+     PaginationState pagination = new PaginationState { ItemsPerPage = 3 };List<Program> programs { get; set; }
      
 
 

@@ -1,3 +1,4 @@
+@using Program=Accreditation_Watch.Shared.Entities.Program
 @inject IDepartmentService DepartmentService
 @inject ISchoolService SchoolService
 @inject IAccrediteStatusService AccrediteStatusService
@@ -7,11 +8,6 @@
  @if(busy){
                <Loading/>
             }
-<div class="row">
-                <div class="col-11"><h4>@Program?.Name</h4></div>
-                <div class="col-1"><button @onclick="()=>Close()" class=" btn-close"></button></div>
-            </div>
-           
 
 
 
@@ -49,7 +45,7 @@
                         </div>
                         <div class="form-group">
                             <label for="program-name">School</label>
-                            <input type="text" class="form-control" id="program-name" @bind="Program.Department.SchoolId" disabled /> @*must change this to the actual school name*@
+                            <input type="text" class="form-control" id="program-name" @bind="@SchoolService.Objects.FirstOrDefault(s=>s.Id==Program.Department.SchoolId).Name" disabled /> @*must change this to the actual school name*@
                         </div>
                     </div>
                     <div class="col-12">
@@ -60,7 +56,7 @@
                                    
                                     @for (int i = 0; i < AccrediteStatuses.Count && i< 6; i++)
                                     {
-                                        @if(Program.AccrediteStatusId > 10){
+                                        @if(Program.AccreditStatusId > 10){
                                              <div class=" step step-completed">
                                                  <div>
                                                       <div class="circle">@AccrediteStatuses[i].Id</div>
@@ -74,20 +70,20 @@
                                         {
                                              @if(i == 3)
                                              {
-                                                  @if(AWFunctions.IsBetween(Program.AccrediteStatusId, 7, 10, true))
+                                                  @if(AWFunctions.IsBetween(Program.AccreditStatusId, 7, 10, true))
                                                   {
                                                        <div class="step step-danger">
                                                             <div>
                                                                  <div class="circle">!</div>
                                                             </div>
                                                             <div>
-                                                                 <div class="title">@AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccrediteStatusId)?.Name</div>
+                                                                 <div class="title">@AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccreditStatusId)?.Name</div>
                                                                  <div class="caption">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores, repellendus maxime vero voluptate, animi veritatis nemo error iusto suscipit dolorem illum harum. Eveniet officia at facilis alias suscipit minus?</div>
                                                             </div>
                                                        </div>
                                                   }
                                              }
-                                             @if(AccrediteStatuses[i].Id==Program.AccrediteStatusId)
+                                             @if(AccrediteStatuses[i].Id==Program.AccreditStatusId)
                                              {
                                              <div class="step step-active">
                                                   <div>
@@ -99,7 +95,7 @@
                                                   </div>
                                              </div>
                                              }
-                                             else if(Program.AccrediteStatusId >= AccrediteStatuses[i].Id && Program.AccrediteStatusId <=6)
+                                             else if(Program.AccreditStatusId >= AccrediteStatuses[i].Id && Program.AccreditStatusId <=6)
                                              {
                                              <div class=" step step-completed">
                                                   <div>
@@ -125,26 +121,26 @@
                                              }    
                                         }
                                     }
-                                     @if(AWFunctions.IsBetween(Program.AccrediteStatusId, 10, 14))
+                                     @if(AWFunctions.IsBetween(Program.AccreditStatusId, 10, 14))
                                              {
                                                   <div class="step step-danger">
                                                        <div>
                                                             <div class="circle">!</div>
                                                        </div>
                                                        <div>
-                                                            <div class="title">@AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccrediteStatusId)?.Name</div>
+                                                            <div class="title">@AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccreditStatusId)?.Name</div>
                                                             <div class="caption">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores, repellendus maxime vero voluptate, animi veritatis nemo error iusto suscipit dolorem illum harum. Eveniet officia at facilis alias suscipit minus?</div>
                                                        </div>
                                                   </div>
                                              }
-                                   else if (Program.AccrediteStatusId >= 14)
+                                   else if (Program.AccreditStatusId >= 14)
                                              {
                                                   <div class="step step-completed">
                                                        <div>
                                                             <div class="circle">i</div>
                                                        </div>
                                                        <div>
-                                                            <div class="title">@AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccrediteStatusId)?.Name</div>
+                                                            <div class="title">@AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccreditStatusId)?.Name</div>
                                                             <div class="caption">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores, repellendus maxime vero voluptate, animi veritatis nemo error iusto suscipit dolorem illum harum. Eveniet officia at facilis alias suscipit minus?</div>
                                                        </div>
                                                   </div>
@@ -154,41 +150,53 @@
                          </div>
                          <div>
                               <h6>Update Status</h6>
-                              <InputSelect @bind-Value="Program.AccrediteStatusId" class="form-select" aria-label="Default select example" >
-                                <option value="@Program.AccrediteStatusId">@AccrediteStatusService.Objects.First(acc=>acc.Id==Program.AccrediteStatusId).Name</option>
+                              <InputSelect @bind-Value="Program.AccreditStatusId" class="form-select" aria-label="Default select example" >
+                                <option value="@Program.AccreditStatusId">@AccrediteStatusService.Objects.First(acc=>acc.Id==Program.AccreditStatusId).Name</option>
                                 @if (AccrediteStatuses is not null)
                                 {
-                                   @if(Program.AccrediteStatusId == 1)
+                                   @if(Program.AccreditStatusId == 1)
                                    {
                                         <option value="2">@AccrediteStatusService.Objects.First(x=>x.Id==2).Name</option>
-                                   }else if(Program.AccrediteStatusId > 1)
+                                   }else if(Program.AccreditStatusId > 1)
                                    {
-                                             <option value="@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccrediteStatusId-1).Id">@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccrediteStatusId-1).Name</option>
-                                             <option value="@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccrediteStatusId+1).Id">@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccrediteStatusId+1).Name</option>
+                                             <option value="@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId-1).Id">@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId-1).Name</option>
+                                             <option value="@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId+1).Id">@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId+1).Name</option>
                                    }
                                 }
                             </InputSelect>
                             <p>@ErrorMessage</p>
                             <p>@SuccessMessage</p>
                             <InputTextArea @bind-Value="Note.Content" class="form-control" placeholder="Comment" />
-                               <button class=" button-success col-12 my-1" @onclick="()=>UpdateStatus()">Update</button>
+                               <button class=" button-success col-12 my-1" @onclick="()=>UpdateStatus().ToString()">Update</button>
 
-                              <button class=" button-success col-12 my-1" @onclick="()=>UpdateStatus()">Update</button>
-                              <button class=" button-danger col-12 my-1" @onclick="()=>UpdateStatus()">Delete Program</button>
+                              <button class=" button-success col-12 my-1" @onclick="()=>UpdateStatus().ToString()">Update</button>
+                              <button class=" button-danger col-12 my-1" @onclick="()=>UpdateStatus().ToString()">Delete Program</button>
                          </div>
                     </div>
 
-                    <div class="col-12">
-                        <h5>Accreditation Details</h5>
-                        <div class="form-group">
-                            <label for="program-name">Duration</label>
-                            <p type="number" class="form-control   m-0" id="program-name" disabled>@Program.GetDuration()</p>
-                        </div>
+                    <div class="col-12 my-3">
+                         <h5>Accreditation Details</h5>
+                         @if (
+                              @Program.AccreditStatusId == 3 || 
+                              @Program.AccreditStatusId == 4)
+                         {
+                              <p type="number" class="m-0" id="program-name">
+                                   Accredited for @Program.GetDuration().ToString()
+                                   <br/> 
+                                   From @Program.ValidFrom.Date.ToString() to @Program.ValidTo.Date.ToString()
+                              </p>
+                         }
+                         else
+                         {
+                              <div class="form-group my-1">
+                                   <label for="program-name">Audite Information</label>
+                                   <p>
+                                        Program accreditation information is only available after the program is accredited
+                                   </p>
+                              </div>
+                         }
 
-                        <div class="form-group">
-                            <label for="program-name">Audite Information</label>
-                            <input type="number" class="form-control" id="program-name" placeholder="Audit information is still under review" disabled />
-                        </div>
+                
                        
                     </div>
 
@@ -204,12 +212,12 @@
      public string ErrorMessage { get; set; } = "";
      public string SuccessMessage { get; set; } = "";
     [Parameter]
-    public AWProgram Program { get; set; } = new();
+    public Program Program { get; set; } = new();
     [Parameter]
     public bool IsVisible { get; set; } = false;
     public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
     public List<School> Schools { get; set; } = new List<School>();
-    public List<AccrediteStatus> AccrediteStatuses { get; set; } = new List<AccrediteStatus>();
+    public List<AccreditStatus> AccrediteStatuses { get; set; } = new List<AccreditStatus>();
     Task Close()
     {
         IsVisible = false;
@@ -223,12 +231,12 @@
           ErrorMessage = "Please enter a comment";
           else
           {
-               Note.Name = AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccrediteStatusId)?.Name;
+               Note.Name = AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccreditStatusId)?.Name;
                Note.ProgramId = Program.Id;
                Note.UserId = await AuthService.GetId();
                ErrorMessage = "";
 
-               Program.AccrediteStatusId = Program.AccrediteStatusId == 1 ? 2 : Program.AccrediteStatusId;
+               Program.AccreditStatusId = Program.AccreditStatusId == 1 ? 2 : Program.AccreditStatusId;
                await NoteService.Create(Note);
                await ProgramService.Update(Program);
                SuccessMessage = "Status Updated";
