@@ -11,7 +11,7 @@
                 }
                 else if (UserService.Objects.Count == 0)
                 {
-                    <p>No programs found.</p>
+                    <p>No Users found.</p>
                 }
                 else
                 {
@@ -75,7 +75,7 @@
                 <p class="text-danger">@ErrorMessage</p>
                 <p class="text-success">@SuccessMessage</p>
                 <span class="text-danger">@ErrorMessage</span>
-                <EditForm Model="newUser" OnValidSubmit="AddUser">
+                <form>
                     @*<DataAnnotationsValidator />*@
                     <div class="form-group">
                         <label for="Name">Name</label>
@@ -91,16 +91,18 @@
                     </div>
                     <div class="form-group">
                         <label for="Role">Role</label>
-                        <InputSelect class="form-control" id="Role" @bind-Value="newUser.Role">
-                            <option value="Admin">Admin</option>
-                            <option value="User">User</option>
-                        </InputSelect>
+                        <select type="text" @bind="@newUser.Role" class="form-control" placeholder="Basic">
+                            @foreach (var role in Enum.GetValues(typeof(Role)))
+                            {
+                                <option value="@role">@role</option>
+                            }
+                        </select>
                     </div>
-                </EditForm>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-success">Create</button>
+                <button type="submit" class="btn btn-success"  data-bs-dismiss="modal"  @onclick="AddUser">Create</button>
             </div>
         </div>
     </div>

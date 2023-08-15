@@ -35,6 +35,7 @@ namespace Accreditation_Watch.Shared.Objects
             int daysThreshold = 30;
 
             // Loop through each program in the list
+            if(_programs != null)
             foreach (var program in _programs)
             {
                 // A string to store the summary for the current program

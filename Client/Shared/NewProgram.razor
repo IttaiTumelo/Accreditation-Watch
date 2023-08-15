@@ -1,6 +1,6 @@
 @inject IProgramService programService
 @inject IDepartmentService departmentService
-@*@inject IAccrediteService accrediteService*@
+@inject IAccrediteStatusService AccrediteStatusService
 @inject ISchoolService schoolService
 @if( Departments is null || Schools is null)
 {
@@ -34,20 +34,25 @@ else
                         }
                     </InputSelect>
                 </div>
-
+              
                 <div class="form-group">
-                    <label for="program-name">School</label>
-                    <InputSelect @bind-Value="SchoolId" class="form-control" placeholder="School">
-                        @foreach (var school in Schools)
+                    <label for="program-name">Accreditation Status</label>
+                    <InputSelect @bind-Value="newProgram.AccreditStatusId" class="form-control" placeholder="Program Name">
+                        @foreach(var status in AccrediteStatusService.Objects)
                         {
-                            <option value="@school.Id">@school.Name</option>
+                            <option value="@status.Id">@status.Name</option>
                         }
                     </InputSelect>
                 </div>
 
                 <div class="form-group">
-                    <label for="program-name">Accreditation Status</label>
-                    <InputNumber @bind-Value="newProgram.AccreditStatusId" class="form-control" placeholder="Program Name" />
+                    <label for="program-name">Degree Level</label>
+                    <InputSelect @bind-Value="newProgram.Degree" class="form-control" placeholder="Program Name">
+                        @foreach(var degree in Enum.GetValues(typeof(Degree)))
+                        {
+                            <option value="@degree">@degree</option>
+                        }
+                    </InputSelect>
                 </div>
                <button class="button-success col-12 my-2" type="submit">Stubmit</button>
           </EditForm>
@@ -57,7 +62,6 @@ else
     public string SuccessMessage = "";
     public int DepartmentId { get; set; }
     public int AccrediteId { get; set; }
-    public int SchoolId { get; set; }
     public CreateProgramDto newProgram { get; set; } = new();
     [Parameter]
     public bool IsVisible { get; set; } = true;
@@ -94,6 +98,7 @@ else
 
     protected override async void OnInitialized()
     {
+        await AccrediteStatusService.Get();
         Departments = await departmentService.Get();
         Schools = await schoolService.Get();
         StateHasChanged();

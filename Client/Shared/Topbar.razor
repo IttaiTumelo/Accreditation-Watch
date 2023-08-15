@@ -1,0 +1,426 @@
+@inject INoteService NoteService  
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAuthService AuthService
+@inject IUserService UserService
+@inject INoteMessageService NoteMessageService
+
+
+<!-- Vertically centered Modal -->
+<div class="modal fade" id="noti" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            @if (Note is not null)
+            {
+              <h5 class="modal-title">@Note.Name</h5>
+            }
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            
+            <div class="col-12">
+              
+              <div class="row h-25">
+                <div class="col-4">
+                  <div class="col-12">
+                    @if (Note is not null)
+                    {
+                      <small>@Note.Name</small>
+                      <p>@Note.Content</p>
+                    }
+                  </div>
+                </div>
+                <div class="solu_description h-50 overflow-scroll">
+
+                  <div class="col-12">
+                    @if (Note is not null)
+                    {
+                      @if (Note.Messages is not null)
+                      {
+                        @foreach (var message in Note.Messages)
+                        {
+                          if (message.UserId == MyId)
+                          {
+                                                  @* Message float to the left  *@
+                            <div class="row">
+                              <div class="col-12">
+                                <div class="float-end alert alert-primary  p-1 m-1 col-7"
+                                     role="alert">
+                                  <small class="text-muted p-0 m-0">
+                                    @message.Content - @AWFunctions.HowLongAgo(message.Time)
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                          else
+                          {
+                                                  @* Message float to the right  *@
+                            <div class="row">
+                              <div class="col-12">
+                                <div class="float-start alert alert-secondary p-1 m-1 col-7"
+                                     role="alert">
+                                  <small class="p-0 m-0">@UserService.Objects.FirstOrDefault(x => x.Id == message.UserId).Name</small>
+                                  <small class="text-muted p-0 m-0">
+                                    @message.Content - @AWFunctions.HowLongAgo(message.Time)
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        }
+                      }
+                      else
+                      {
+                        <p>No messages in the notes</p>
+                      }
+                    }
+                    else
+                    {
+                      <p>failed messages in the notes</p>
+
+                    }
+                    
+
+                    @* Write message box and send *@
+
+                  </div>
+                </div>
+
+                @* <div class="row"> *@
+                @*      @if(ShowMoreDetails.HasDelegate) *@
+                @*      { *@
+                @*           <div class="col-6 p-3"> *@
+                @*                     <button class="p-0 col-12 btn btn-light" @onclick="()=>ShowMoreDetails.InvokeAsync(Note.Id)"  data-bs-toggle="modal" data-bs-target="#fullscreenModal">Show More</button> *@
+                @*           </div> *@
+                @*      } *@
+                @*      @if(Note is not null) *@
+                @*      { *@
+                @*           @if(Note.State != NoteState.Expired) *@
+                @*           { *@
+                @*                <div class="col-6 p-3"> *@
+                @*                          <button class=" p-0 col-12 btn btn-light" @onclick="()=>DismissNote(Note)">Dismiss</button> *@
+                @*                </div> *@
+                @*           } *@
+                @*      } else { *@
+                @*           <div> *@
+                @*                <p>The note is null</p> *@
+                @*           </div> *@
+                @*      } *@
+                @*       *@
+                @* </div> *@
+                @* @if(loading) *@
+                @* { *@
+                @*      <Loading /> *@
+                @* } *@
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button class=" p-0 col-12 btn btn-light" @onclick="() => DismissNote(Note)" data-bs-dismiss="modal">Dismiss</button>
+              <div class="p-0 col-12">
+                <EditForm Model="@newMessage" OnSubmit="PostMessage">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="input-group mb-3">
+                        <input type="text" class="form-control"
+                               placeholder="Write a message"
+                               aria-label="Recipient's username"
+                               @bind="@newMessage.Content"
+                               aria-describedby="button-addon2">
+                        <button class="btn btn-outline-secondary"
+                                id="button-addon2"
+                                type="submit">Send</button>
+                      </div>
+                    </div>
+                  </div>
+                </EditForm>
+              </div>
+
+              @* <small>@note</small> *@
+            </div>
+              @* <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> *@
+
+            </div>
+        </div>
+    </div>
+</div><!-- End Vertically centered Modal-->
+
+
+
+<!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a class="logo d-flex align-items-center">
+        <span class="d-none d-lg-block">Accreditation Watch</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    @* <div class="search-bar"> *@
+    @*   <form class="search-form d-flex align-items-center" method="POST" action="#"> *@
+    @*     <input type="text" name="query" placeholder="Search" title="Enter search keyword"> *@
+    @*     <button type="submit" title="Search"><i class="bi bi-search"></i></button> *@
+    @*   </form> *@
+    @* </div><!-- End Search Bar --> *@
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li><!-- End Search Icon-->
+
+        <li class="nav-item dropdown">
+
+          @if (NoteService.Objects is null)
+          {
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          }
+          else
+          {
+                      <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-primary badge-number">@NoteService.Active.Count.ToString()</span>
+          </a><!-- End Notification Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+            <li class="dropdown-header">
+              You have @NoteService.Active.Count.ToString() new notifications
+              <a @onclick="ViewAllNotes"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <div class="grid-max-height">
+              @if (notes is null)
+              {
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              }
+              else
+              {
+                @if (notes.Count == 0)
+                {
+                  <div class="px-2 pt-1 text-success text-center">
+                    <h4>There are no notes to display</h4>
+                  </div>
+                }
+                else
+                {
+                  @foreach (var item in NoteService.Active)
+                  {
+                    <li class="notification-item" @onclick="()=>SelectNote(item)"  data-bs-toggle="modal" data-bs-target="#noti">
+                      <i class="bi bi-info-circle text-primary"></i>
+                      <div>
+                        <h4>@item.Name</h4>
+                        <p>@item.Messages</p>
+                        <p>@item.Content</p>
+                        <p>@item.Date.ToString()</p>
+                      </div>
+                    </li>
+
+                    <li>
+                      <hr class="dropdown-divider">
+                    </li>
+
+                  @* <div class="px-2 pt-1"> *@
+                  @*   <Card MainTitle="@item.Name" Note="item" OnNoteDismissed="ReloadContent"  SupportingTitle="@item.State" Description="@item.Content" TimeStamp="@AWFunctions.HowLongAgo(item.Date)" /> *@
+                  @* </div> *@
+                  }
+                }
+
+              }
+            </div>
+            <li class="dropdown-footer">
+              <a @onclick="ViewAllNotes" >Show all notes</a>
+            </li>
+
+          </ul><!-- End Notification Dropdown Items -->
+
+          }
+
+        </li><!-- End Notification Nav -->
+        @* TODO:Create A way to only get messages assigned to the user *@
+        @* *@
+        @* <li class="nav-item dropdown"> *@
+        @* *@
+        @*   <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown"> *@
+        @*     <i class="bi bi-chat-left-text"></i> *@
+        @*     <span class="badge bg-success badge-number">3</span> *@
+        @*   </a><!-- End Messages Icon --> *@
+        @* *@
+        @*   <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages"> *@
+        @*     <li class="dropdown-header"> *@
+        @*       You have 3 new messages *@
+        @*       <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a> *@
+        @*     </li> *@
+        @*     <li> *@
+        @*       <hr class="dropdown-divider"> *@
+        @*     </li> *@
+        @* *@
+        @*     <li class="message-item"> *@
+        @*       <a href="#"> *@
+        @*         <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle"> *@
+        @*         <div> *@
+        @*           <h4>Maria Hudson</h4> *@
+        @*           <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p> *@
+        @*           <p>4 hrs. ago</p> *@
+        @*         </div> *@
+        @*       </a> *@
+        @*     </li> *@
+        @*     <li> *@
+        @*       <hr class="dropdown-divider"> *@
+        @*     </li> *@
+        @* *@
+        @*     <li class="message-item"> *@
+        @*       <a href="#"> *@
+        @*         <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle"> *@
+        @*         <div> *@
+        @*           <h4>Anna Nelson</h4> *@
+        @*           <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p> *@
+        @*           <p>6 hrs. ago</p> *@
+        @*         </div> *@
+        @*       </a> *@
+        @*     </li> *@
+        @*     <li> *@
+        @*       <hr class="dropdown-divider"> *@
+        @*     </li> *@
+        @* *@
+        @*     <li class="message-item"> *@
+        @*       <a href="#"> *@
+        @*         <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle"> *@
+        @*         <div> *@
+        @*           <h4>David Muldon</h4> *@
+        @*           <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p> *@
+        @*           <p>8 hrs. ago</p> *@
+        @*         </div> *@
+        @*       </a> *@
+        @*     </li> *@
+        @*     <li> *@
+        @*       <hr class="dropdown-divider"> *@
+        @*     </li> *@
+        @* *@
+        @*     <li class="dropdown-footer"> *@
+        @*       <a href="#">Show all messages</a> *@
+        @*     </li> *@
+        @* *@
+        @*   </ul><!-- End Messages Dropdown Items --> *@
+        @* *@
+        @* </li><!-- End Messages Nav --> *@
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            @* <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle"> *@
+            <span class="d-none d-md-block dropdown-toggle ps-2">@userName</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>@userName</h6>
+              <span>@userRole</span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="settings">
+                <i class="bi bi-gear"></i>
+                <span>Account Settings</span>    
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" @onclick="() => AuthService.LogOut()">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+
+@code {
+  bool active = true;
+  public Note Note { get; set; }
+  string userName;
+  string userRole;
+  List<Note> notes 
+  {
+    get
+    {
+      if(active)
+      {
+        return NoteService.Active;
+      }else
+      {
+        return NoteService.Dismissed;
+      }
+    }
+  }
+  public void SelectNote(Note _note)
+  {
+    Note = _note;
+    StateHasChanged();
+  }
+   int MyId = 1;
+  public NoteMessageDto newMessage = new NoteMessageDto();
+  protected override async void OnInitialized()
+  {
+    
+    await NoteMessageService.Get();
+    await NoteService.Get();
+    await UserService.Get();
+    var user = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User;
+    userName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value.ToString();
+    userRole = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value.ToString();
+    MyId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value.ToString());
+
+
+    StateHasChanged();
+  }
+  
+  Task ViewAllNotes(){
+    NavigationManager.NavigateTo("/notes");
+    return Task.CompletedTask;
+  }
+  async Task PostMessage(){
+    newMessage.Name = $"Message from {UserService.Objects.First(x=>x.Id==MyId).Name}";
+    newMessage.NoteId = Note.Id;
+    newMessage.UserId = await AuthService.GetId();
+    await NoteMessageService.Create(newMessage);
+    newMessage = new();
+    await NoteService.Get(true);
+    StateHasChanged();
+  }
+  
+  
+  async Task DismissNote(Note note){
+    note.State = NoteState.Expired;
+    await NoteService.Update(note);
+    Console.WriteLine("Note Dismissed");
+    // await OnNoteDismissed.InvokeAsync();
+    StateHasChanged();
+  }
+}

@@ -6,6 +6,26 @@
 @inject IUserService UserService
 @inject IAWTaskService AWTaskService
 @inject IJSRuntime JS
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">@SelectedProblem?.Name</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        @SelectedProblem?.Description
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        @* <button type="button" class="btn btn-primary">Save changes</button> *@
+      </div>
+    </div>
+  </div>
+</div>
 <div class="@Visibility">
     <div class="progress mt-0">
         <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: @percentage%" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100"></div>
@@ -32,119 +52,119 @@
 </div><!-- End Modal Dialog Scrollable-->
 
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Program Summaries</h5>
-        <div class="row">
-
-            @foreach (var context in messages)
-            {
-                <div class="col-lg-4 col-md-3 col-sm-12">
-                    @switch (context.Serverity)
-                    {
-
-                        case Serverity.Medium:
-                            <div class="alert alert-info  alert-dismissible fade show" role="alert">
-                                <h4 class="alert-heading">Attention will be needed</h4>
-                                <p>@context.Description</p>
-                                <hr>
-                                <p class="mb-0">@context.Program.Name</p>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                            break;
-                        case Serverity.High:
-                            <div class="alert alert-warning  alert-dismissible fade show" role="alert">
-                                <h4 class="alert-heading"> Attention needed</h4>
-                                <p>@context.Description</p>
-                                <hr>
-                                <p class="mb-0">@context.Program.Name</p>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                            break;
-
-                        case Serverity.Critical:
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <h4 class="alert-heading">Urgent Attention Required</h4>
-                                <p>@context.Description</p>
-                                <hr>
-                                <p class="mb-0">@context.Program.Name</p>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                            break;
-                        default:
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <h4 class="alert-heading">Attention May be needed</h4>
-                                <p>@context.Description</p>
-                                <hr>
-                                <p class="mb-0">@context.Program.Name</p>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                            break;
-
-
-
-
-
-
-                    }
-
-                </div>
-            }
-
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-    </div>
-</div>
+@* <div class="card"> *@
+@*     <div class="card-body"> *@
+@*         <h5 class="card-title">Program Summaries</h5> *@
+@*         <div class="row"> *@
+@* *@
+@*             @foreach (var context in messages) *@
+@*             { *@
+@*                 <div class="col-lg-4 col-md-3 col-sm-12"> *@
+@*                     @switch (context.Serverity) *@
+@*                     { *@
+@* *@
+@*                         case Serverity.Medium: *@
+@*                             <div class="alert alert-info  alert-dismissible fade show" role="alert"> *@
+@*                                 <h4 class="alert-heading">Attention will be needed</h4> *@
+@*                                 <p>@context.Description</p> *@
+@*                                 <hr> *@
+@*                                 <p class="mb-0">@context.Program.Name</p> *@
+@*                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> *@
+@*                             </div> *@
+@*                             break; *@
+@*                         case Serverity.High: *@
+@*                             <div class="alert alert-warning  alert-dismissible fade show" role="alert"> *@
+@*                                 <h4 class="alert-heading"> Attention needed</h4> *@
+@*                                 <p>@context.Description</p> *@
+@*                                 <hr> *@
+@*                                 <p class="mb-0">@context.Program.Name</p> *@
+@*                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> *@
+@*                             </div> *@
+@*                             break; *@
+@* *@
+@*                         case Serverity.Critical: *@
+@*                             <div class="alert alert-danger alert-dismissible fade show" role="alert"> *@
+@*                                 <h4 class="alert-heading">Urgent Attention Required</h4> *@
+@*                                 <p>@context.Description</p> *@
+@*                                 <hr> *@
+@*                                 <p class="mb-0">@context.Program.Name</p> *@
+@*                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> *@
+@*                             </div> *@
+@*                             break; *@
+@*                         default: *@
+@*                             <div class="alert alert-success alert-dismissible fade show" role="alert"> *@
+@*                                 <h4 class="alert-heading">Attention May be needed</h4> *@
+@*                                 <p>@context.Description</p> *@
+@*                                 <hr> *@
+@*                                 <p class="mb-0">@context.Program.Name</p> *@
+@*                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> *@
+@*                             </div> *@
+@*                             break; *@
+@* *@
+@* *@
+@* *@
+@* *@
+@* *@
+@* *@
+@*                     } *@
+@* *@
+@*                 </div> *@
+@*             } *@
+@* *@
+@*         </div> *@
+@* *@
+@* *@
+@* *@
+@* *@
+@* *@
+@* *@
+@* *@
+@* *@
+@* *@
+@* *@
+@* *@
+@*     </div> *@
+@* </div> *@
 <div class="row">
     <div class="col-lg-12">
-        <div class="row">
-            <div class="">
-                <h3 class="d-flex">
-                    <img src="/images/triangle.svg" width="20" class="m-2" />
-                    Program Summaries
-                </h3>
-                <div class="grid">
-                    <ol>
-                        @if (messages is not null)
-                        {
-                            @for (int i = 0; i < limit && i < messages.Count; i++)//must change to variable
-                            {
-                                <li>
-                                    <div class="row">
-                                        <div class="col">
-                                            <h5>@messages[i].Description </h5>
-                                        </div>
-                                    </div>
-                                </li>
-                            }
-                        }
-                       
-                        else {
-                            <li>
-                                <div class="row">
-                                    <div class="col">
-                                        <h5>No Programs</h5>
-                                    </div>
-                                </div>
-                            </li>
-                        }
-                    </ol>
-                </div>
-                <div class="col">
-                    <span @onclick="SetUnlimited" class="badge rounded-pill bg-dark p-2 float-end">@viewprogram</span>
-                </div>
-            </div>
-        </div>
+        @* <div class="row"> *@
+        @*     <div class=""> *@
+        @*         <h3 class="d-flex"> *@
+        @*             <img src="/images/triangle.svg" width="20" class="m-2" /> *@
+        @*             Program Summaries *@
+        @*         </h3> *@
+        @*         <div class="grid"> *@
+        @*             <ol> *@
+        @*                 @if (messages is not null) *@
+        @*                 { *@
+        @*                     @for (int i = 0; i < limit && i < messages.Count; i++)//must change to variable *@
+        @*                     { *@
+        @*                         <li> *@
+        @*                             <div class="row"> *@
+        @*                                 <div class="col"> *@
+        @*                                     <h5>@messages[i].Description </h5> *@
+        @*                                 </div> *@
+        @*                             </div> *@
+        @*                         </li> *@
+        @*                     } *@
+        @*                 } *@
+        @*                 *@
+        @*                 else { *@
+        @*                     <li> *@
+        @*                         <div class="row"> *@
+        @*                             <div class="col"> *@
+        @*                                 <h5>No Programs</h5> *@
+        @*                             </div> *@
+        @*                         </div> *@
+        @*                     </li> *@
+        @*                 } *@
+        @*             </ol> *@
+        @*         </div> *@
+        @*         <div class="col"> *@
+        @*             <span @onclick="SetUnlimited" class="badge rounded-pill bg-dark p-2 float-end">@viewprogram</span> *@
+        @*         </div> *@
+        @*     </div> *@
+        @* </div> *@
 
 
         @if (ProblemService.Objects?.Count > 0)
@@ -170,7 +190,7 @@
                     <tr>
                         <th scope="row">@context.Id</th>
                         <td>@context.Name</td>
-                        <td>@context.ShortDescription</td>
+                        <td data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="()=>Messages(context)">@context.ShortDescription</td>
                         <td>
                             <button @onclick ="@(() => SelectedProblem = context)" class=" button-outlined p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Details</button>
                             @if(!context.Noted){
@@ -228,6 +248,13 @@
 
 
 @code {
+    string message = "";
+    public void Messages(Problem problem)
+    {
+        SelectedProblem = problem;
+        message = problem.Description;
+        StateHasChanged();
+    }
     public bool IsVisible { get; set; } = true;
     public string Visibility => IsVisible ? "" : "d-none";
     public string SuccessMessage { get; set; } = "";

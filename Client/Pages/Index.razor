@@ -20,14 +20,29 @@
                           <li class="nav-item" role="presentation">
                               <button class="nav-link active" id="pills-all-tab" data-bs-toggle="pill" data-bs-target="#pills-all" type="button" role="tab" aria-controls="pills-all" aria-selected="true">All</button>
                           </li>
+                          
+                          
+                          
                           <li class="nav-item" role="presentation">
-                              <button class="nav-link" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Degree</button>
+                              <button class="nav-link" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pill-cert" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Certificates</button>
+                          </li>
+                          
+                          <li class="nav-item" role="presentation">
+                              <button class="nav-link" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pill-diploma" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Diploma</button>
+                          </li>
+                          
+                          <li class="nav-item" role="presentation">
+                              <button class="nav-link" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-bachelors" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Degree</button>
+                          </li>
+                          
+                          <li class="nav-item" role="presentation">
+                              <button class="nav-link" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-g-cert" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Post Graduates Diploma</button>
                           </li>
                           <li class="nav-item" role="presentation">
-                              <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Masters</button>
+                              <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-master" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Masters</button>
                           </li>
                           <li class="nav-item" role="presentation">
-                              <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">PhD</button>
+                              <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-doc" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">PhD</button>
                           </li>
                       </ul>
                   </div>
@@ -36,16 +51,25 @@
       <!-- Pills Tabs -->
 <div class="tab-content pt-2" id="myTabContent">
     
-          <div class="tab-pane fade show active" id="pills-all" role="tabpanel" aria-labelledby="all-tab">
-              <Dashboard   Degree="@Degree.Bachelors"/>
-          </div>
-    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="home-tab">
+    <div class="tab-pane fade" id="pills-all" role="tabpanel" aria-labelledby="pill-all">
+        <Dashboard Degree="@Degree.Unset"/>
+    </div>
+    <div class="tab-pane fade show active" id="pill-cert" role="tabpanel" aria-labelledby="pill-cert">
+        <Dashboard Degree="@Degree.Certificates"/>
+    </div>
+    <div class="tab-pane fade show active" id="pill-diploma" role="tabpanel" aria-labelledby="pill-diploma">
+        <Dashboard Degree="@Degree.Diploma"/>
+    </div>
+    <div class="tab-pane fade show active" id="pills-bachelors" role="tabpanel" aria-labelledby="pills-bachelors">
         <Dashboard Degree="@Degree.Bachelors"/>
     </div>
-    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="profile-tab">
+    <div class="tab-pane fade show active" id="pills-g-cert" role="tabpanel" aria-labelledby="pills-g-cert">
+        <Dashboard Degree="@Degree.GraduatesCertificates"/>
+    </div>
+    <div class="tab-pane fade" id="pills-master" role="tabpanel" aria-labelledby="pills-doc">
         <Dashboard Degree="@Degree.Masters"/>
     </div>
-    <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="contact-tab">
+    <div class="tab-pane fade" id="pills-doc" role="tabpanel" aria-labelledby="pills-doc">
         <Dashboard Degree="@Degree.Doctorate"/>
     </div>
 </div><!-- End Pills Tabs -->

@@ -14,6 +14,11 @@
     public class programController : BaseController<Program, CreateProgramDto>
     {
         public programController(DataContext dataContext) : base(dataContext) { }
+        
+        [HttpGet]
+        public override async Task<ActionResult<IEnumerable<Program>>> Get() => await _context.Programs.Include(p => p.Department).ThenInclude(d=>d.School ).ToListAsync();
+          
+
     }
     public class DepartmentController : BaseController<Department, CreateDepartmentDto>
     {

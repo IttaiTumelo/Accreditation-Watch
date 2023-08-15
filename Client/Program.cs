@@ -17,6 +17,7 @@ builder.Services.AddScoped<IAWTaskService, AWTaskService>();
 builder.Services.AddScoped<IProblemService, ProblemService>();
 builder.Services.AddScoped<INoteService, NoteService>();
 builder.Services.AddScoped<INoteMessageService, NoteMessageService>();
+builder.Services.AddScoped<IMailService, MailService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 //in charge of authorization

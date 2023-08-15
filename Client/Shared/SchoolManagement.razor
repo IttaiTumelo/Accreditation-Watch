@@ -76,7 +76,7 @@
     }
     else if (SchoolService.Objects.Count == 0)
     {
-        <p>No programs found.</p>
+        <p>No schools found.</p>
     }
     else
     {
@@ -86,10 +86,10 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
-                <th scope="col">Dean Email</th>
                 <th scope="col">Number of Programs</th>
                 <th scope="col">Department</th>
                 <th scope="col">Actions</th>
+                <th scope="col">Dean Email</th>
             </tr>
             </thead>
             <tbody class="grid-max-height">
@@ -100,12 +100,12 @@
                     <tr>
                         <th>@context.Id.ToString()</th>
                         <th>@context.Name</th>
-                        <th>@context.Email</th>
                         <th>@GetNumberOfSchools(context).ToString()</th>
                         <th>@GetNumberOfDepartments(context).ToString()</th>
                         <th>
                             <button class="button-outlined p-1 m-1" @onclick="() => ShowDetails(context)" data-bs-toggle="modal" data-bs-target="#schooldetails">View details</button>
                         </th>
+                        <th>@context.Email</th>
                     </tr>
                 }
             }

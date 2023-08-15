@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using Microsoft.AspNetCore.Components;
 
 namespace Accreditation_Watch.Client.Services
 {
@@ -7,7 +8,7 @@ namespace Accreditation_Watch.Client.Services
     public class UserService : BaseService<User>, IUserService
     {
         private readonly HttpClient _httpClient;
-        public UserService(HttpClient httpClient) : base(httpClient)
+        public UserService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
             _httpClient = httpClient;
         }
@@ -31,23 +32,23 @@ namespace Accreditation_Watch.Client.Services
             }
         }
 
-          public Task<User> UpdateRole(User dto)
+          public async Task<User> UpdateRole(User dto)
           {
-                var request = _httpClient.PutAsJsonAsync<User>($"api/{typeof(User).Name}/updateUserRole", dto);
-                if (request.Result.IsSuccessStatusCode)
+                var request = await _httpClient.PutAsJsonAsync<User>($"api/{typeof(User).Name}/updateUserRole", dto);
+                if (request.IsSuccessStatusCode)
                 {
-                    var response = request.Result.Content.ReadFromJsonAsync<User>().Result;
+                    var response = request.Content.ReadFromJsonAsync<User>().Result;
                     if (response != null)
                     {
                         Objects.Remove(Objects.First(o => o.Id == response.Id));
                         Objects.Add(response);
-                        return Task.FromResult(response);
+                        return response;
                     }
-                    else return Task.FromResult<User>(null);
+                    else throw new Exception($"Could no update user role for user with id {dto.Id}");
                 }
                 else
                 {
-                    throw new Exception(request.Result.ReasonPhrase);
+                    throw new Exception(request.ReasonPhrase);
                 }
           }
 

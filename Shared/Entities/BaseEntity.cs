@@ -4,8 +4,8 @@ namespace Accreditation_Watch.Shared.Entities
 {
     public class BaseEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public int Id { get; set; } 
+        public string Name { get; set; } = String.Empty;
         public bool IsDeleted { get; set; }
         [NotMapped]
         public string? ShortName 

@@ -204,30 +204,68 @@ namespace Accreditation_Watch.Shared.General
         return $"{span.Seconds}s ago";
     }
 
-     public static string GetTimeLeft(DateTime endDate)
-     {
-         // Get the current date and time
-         DateTime currentDate = DateTime.Now;
+public static string GetTimeLeft(DateTime endDate)
+{
+    // Get the current date and time
+    DateTime currentDate = DateTime.Now;
 
-         // Check if the end date is in the future
-         if (endDate > currentDate)
-         {
-             // Calculate the time span between the two dates
-             TimeSpan timeLeft = endDate - currentDate;
+    // Check if the end date is in the future
+    if (endDate > currentDate)
+    {
+        // Calculate the time span between the two dates
+        TimeSpan timeLeft = endDate - currentDate;
 
-             // Format the time span as a string
-             // string formattedTimeLeft = string.Format("{0} days, {1} hours, {2} minutes, {3} seconds", timeLeft.Days, timeLeft.Hours, timeLeft.Minutes, timeLeft.Seconds);
-             string formattedTimeLeft = string.Format("{0} days, {1} hours", timeLeft.Days, timeLeft.Hours, timeLeft.Minutes, timeLeft.Seconds);
+        // Initialize the output string
+        string formattedTimeLeft = "";
 
-             // Return the formatted string
-             return formattedTimeLeft;
-         }
-         else
-         {
-             // Return an empty string if the end date is in the past
-             return "This program has expired";
-         }
-     }
+        // Calculate the number of years
+        int years = timeLeft.Days / 365;
+        if (years > 0)
+        {
+            // Add the years to the output string
+            formattedTimeLeft += years + " year" + (years > 1 ? "s" : "") + ", ";
+            // Subtract the years from the time span
+            timeLeft -= new TimeSpan(years * 365, 0, 0, 0);
+        }
+
+        // Calculate the number of months
+        int months = (timeLeft.Days % 365) / 30;
+        if (months > 0)
+        {
+            // Add the months to the output string
+            formattedTimeLeft += months + " month" + (months > 1 ? "s" : "") + ", ";
+            // Subtract the months from the time span
+            timeLeft -= new TimeSpan(months * 30, 0, 0, 0);
+        }
+
+        // Calculate the number of weeks
+        int weeks = ((timeLeft.Days % 365) % 30) / 7;
+        if (weeks > 0)
+        {
+            // Add the weeks to the output string
+            formattedTimeLeft += weeks + " week" + (weeks > 1 ? "s" : "") + ", ";
+            // Subtract the weeks from the time span
+            timeLeft -= new TimeSpan(weeks * 7, 0, 0, 0);
+        }
+
+        // Add the remaining days, hours, minutes, and seconds to the output string
+        formattedTimeLeft += string.Format("{0} day{1}, {2} hour{3}", 
+                                           timeLeft.Days, 
+                                           timeLeft.Days > 1 ? "s" : "", 
+                                           timeLeft.Hours, 
+                                           timeLeft.Hours > 1 ? "s" : "");
+
+        // Return the formatted string
+        return formattedTimeLeft;
+    }
+    else
+    {
+        // Return an empty string if the end date is in the past
+        return "This program has expired";
+    }
+}
+
+
 
 
 

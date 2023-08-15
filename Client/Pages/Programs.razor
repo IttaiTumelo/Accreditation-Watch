@@ -6,6 +6,9 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Program=Accreditation_Watch.Shared.Entities.Program
 @inject NavigationManager  NavigationManager;
+
+
+
 <!-- Modal Dialog Scrollable -->
 <div class="modal fade" id="modalDialogScrollable" tabindex="-1">
     <div class="modal-dialog modal-dialog-scrollable">
@@ -120,7 +123,7 @@
                                            <th scope="col">@context.Id</th>
                                            <th scope="col">@context.Name</th>
                                            <th scope="col">@AWFunctions.GetTimeLeft(context.ValidTo)</th>
-                                           <th scope="col">@context.Department.ShortName</th>
+                                           <th scope="col">@context.Department?.ShortName</th>
                                            <th scope="col">@context.IsExpired()</th>
                                            <th scope="col">
                                                <button @onclick="@(() => ShowDetails(context))" class="button-outlined  p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Details</button>
@@ -137,7 +140,7 @@
                                            <th scope="col">@context.Id</th>
                                            <th scope="col">@context.Name</th>
                                            <th scope="col">@AWFunctions.GetTimeLeft(context.ValidTo)</th>
-                                           <th scope="col">@context.Department.ShortName</th>
+                                           <th scope="col">@context.Department?.ShortName</th>
                                            <th scope="col">@context.IsExpired()</th>
                                            <th scope="col">
                                                <button @onclick="@(() => ShowDetails(context))" class="button-outlined  p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Details</button>

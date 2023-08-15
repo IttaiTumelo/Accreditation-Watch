@@ -16,22 +16,21 @@ namespace Accreditation_Watch.Server.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AccreditStatus>().HasData(
-                 new AccreditStatus { Id = 1, Name = "ADC Approved" },
+                 new AccreditStatus { Id = 1, Name = "AT CAD" },
                  new AccreditStatus { Id = 2, Name = "Applied to HEA" },
-                 new AccreditStatus { Id = 3, Name = "Regular Accreditation" }, //TODO: Must have Accreditation information
+                 new AccreditStatus { Id = 3, Name = "Full Accreditation" }, //TODO: Must have Accreditation information
                  
                  new AccreditStatus { Id = 4, Name = "Conditional Accreditation" }, //TODO : Must come with conditions
-                 
-                 new AccreditStatus { Id = 5, Name = "Rejected" }, //TODO: must come with reasons
-                 
-                 new AccreditStatus { Id = 6, Name = "School-Department Review" }, // should go back to level 2 after this stage
 
-                 new AccreditStatus { Id = 7, Name = "Pending Review" },
-                 new AccreditStatus { Id = 8, Name = "Under Review" },
-                 new AccreditStatus { Id = 9, Name = "Reviewed" },
-                 new AccreditStatus { Id = 10, Name = "About to Expire" },
+                 new AccreditStatus { Id = 5, Name = "Rejected awaiting resubmission" }, //TODO: must come with reasons
+                 new AccreditStatus { Id = 6, Name = "Rejected - Resubmitted" }, //TODO: must come with reasons
+                 new AccreditStatus { Id = 7, Name = "School-Department Review" }, // should go back to level 2 after this stage
 
-                 new AccreditStatus { Id = 11, Name = "Expired" }
+                 new AccreditStatus { Id = 8, Name = "Pending Review" },
+                 new AccreditStatus { Id = 9, Name = "Under Review" },
+                 new AccreditStatus { Id = 10, Name = "Reviewed" },
+                 new AccreditStatus { Id = 11, Name = "About to Expire" },
+                 new AccreditStatus { Id = 12, Name = "Expired" }
 
             );
 

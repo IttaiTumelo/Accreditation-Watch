@@ -1,41 +1,44 @@
-﻿namespace Accreditation_Watch.Client.Services
+﻿using Microsoft.AspNetCore.Components;
+
+namespace Accreditation_Watch.Client.Services
 {
     using Program=Accreditation_Watch.Shared.Entities.Program;
     using Task=Accreditation_Watch.Shared.Entities.Task;
 
     public class AccrediteService : BaseService<Accredite>, IAccrediteService
     {
-        public AccrediteService(HttpClient httpClient) : base(httpClient)
+        public AccrediteService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
     }
     public class AccrediteStatusService : BaseService<AccreditStatus>, IAccrediteStatusService
     {
-        public AccrediteStatusService(HttpClient httpClient) : base(httpClient)
+        public AccrediteStatusService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
     }
     public class DepartmentService : BaseService<Department>, IDepartmentService
     {
-        public DepartmentService(HttpClient httpClient) : base(httpClient)
+        
+        public DepartmentService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
     }
     public class HistoryService : BaseService<History>, IHistoryService
     {
-        public HistoryService(HttpClient httpClient) : base(httpClient)
+        public HistoryService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
     }
     public class PendingImplimentationService : BaseService<PendingImplementation>, IPendingImplimentationService
     {
-        public PendingImplimentationService(HttpClient httpClient) : base(httpClient)
+        public PendingImplimentationService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
     }
     public class ProgramService : BaseService<Program>, IProgramService
     {
-        public ProgramService(HttpClient httpClient) : base(httpClient)
+        public ProgramService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
 
@@ -54,26 +57,26 @@
     }
     public class SchoolService : BaseService<School>, ISchoolService
     {
-        public SchoolService(HttpClient httpClient) : base(httpClient)
+        public SchoolService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
     }
 
     public class AWTaskService : BaseService<Task>, IAWTaskService
     {
-        public AWTaskService(HttpClient httpClient) : base(httpClient)
+        public AWTaskService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
     }
     public class ProblemService : BaseService<Problem>, IProblemService
     {
-        public ProblemService(HttpClient httpClient) : base(httpClient)
+        public ProblemService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
     }
     public class NoteService : BaseService<Note>, INoteService
     {
-        public NoteService(HttpClient httpClient) : base(httpClient)
+        public NoteService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
 
@@ -82,7 +85,7 @@
      }
     public class NoteMessageService : BaseService<NoteMessage>, INoteMessageService
     {
-        public NoteMessageService(HttpClient httpClient) : base(httpClient)
+        public NoteMessageService(HttpClient httpClient, NavigationManager navigationManager ) : base(httpClient, navigationManager)
         {
         }
     }

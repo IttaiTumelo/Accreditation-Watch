@@ -1,10 +1,12 @@
 @using Program=Accreditation_Watch.Shared.Entities.Program
+@using Microsoft.IdentityModel.Tokens
 @inject IDepartmentService DepartmentService
 @inject ISchoolService SchoolService
 @inject IAccrediteStatusService AccrediteStatusService
 @inject IProgramService ProgramService
 @inject INoteService NoteService
 @inject IAuthService AuthService
+@inject IMailService MailService
  @if(busy){
                <Loading/>
             }
@@ -25,10 +27,16 @@
                             <label for="program-name">Name</label>
                             <input type="text" class="form-control" id="program-name" @bind="Program.Name" disabled />
                         </div>
-                        <div class="form-group">
-                            <label for="program-name">Level</label>
-                            <input type="text" class="form-control" id="program-name" placeholder="Bachelors" disabled /> @*need to be bound to something*@
-                        </div>
+                         <div class="form-group">
+                              
+                              <label for="program-name">Degree Level</label>
+                              <InputSelect @bind-Value="Program.Degree" class="form-control" placeholder="Program Name">
+                                   @foreach (var degree in Enum.GetValues(typeof(Degree)))
+                                   {
+                                        <option value="@degree">@degree</option>
+                                   }
+                              </InputSelect>
+                         </div>
 
                         <div class="form-group">
                             <label for="program-name">Department</label>
@@ -53,10 +61,9 @@
                          <div>
                               @if (AccrediteStatuses is not null)
                                 {
-                                   
-                                    @for (int i = 0; i < AccrediteStatuses.Count && i< 6; i++)
+                                    @for (int i = 0; i < AccrediteStatuses.Count && i < 3; i++)
                                     {
-                                        @if(Program.AccreditStatusId > 10){
+                                        @if(Program.AccreditStatusId ==3){
                                              <div class=" step step-completed">
                                                  <div>
                                                       <div class="circle">@AccrediteStatuses[i].Id</div>
@@ -68,7 +75,7 @@
                                             </div>
                                         }else
                                         {
-                                             @if(i == 3)
+                                             @if(i > 3)
                                              {
                                                   @if(AWFunctions.IsBetween(Program.AccreditStatusId, 7, 10, true))
                                                   {
@@ -78,7 +85,7 @@
                                                             </div>
                                                             <div>
                                                                  <div class="title">@AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccreditStatusId)?.Name</div>
-                                                                 <div class="caption">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores, repellendus maxime vero voluptate, animi veritatis nemo error iusto suscipit dolorem illum harum. Eveniet officia at facilis alias suscipit minus?</div>
+                                                                 <div class="caption">requires attention</div>
                                                             </div>
                                                        </div>
                                                   }
@@ -121,7 +128,7 @@
                                              }    
                                         }
                                     }
-                                     @if(AWFunctions.IsBetween(Program.AccreditStatusId, 10, 14))
+                                     @if(AWFunctions.IsBetween(Program.AccreditStatusId, 4, 14))
                                              {
                                                   <div class="step step-danger">
                                                        <div>
@@ -129,19 +136,7 @@
                                                        </div>
                                                        <div>
                                                             <div class="title">@AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccreditStatusId)?.Name</div>
-                                                            <div class="caption">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores, repellendus maxime vero voluptate, animi veritatis nemo error iusto suscipit dolorem illum harum. Eveniet officia at facilis alias suscipit minus?</div>
-                                                       </div>
-                                                  </div>
-                                             }
-                                   else if (Program.AccreditStatusId >= 14)
-                                             {
-                                                  <div class="step step-completed">
-                                                       <div>
-                                                            <div class="circle">i</div>
-                                                       </div>
-                                                       <div>
-                                                            <div class="title">@AccrediteStatuses.FirstOrDefault(x=>x.Id==Program.AccreditStatusId)?.Name</div>
-                                                            <div class="caption">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores, repellendus maxime vero voluptate, animi veritatis nemo error iusto suscipit dolorem illum harum. Eveniet officia at facilis alias suscipit minus?</div>
+                                                            @* <div class="caption">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores, repellendus maxime vero voluptate, animi veritatis nemo error iusto suscipit dolorem illum harum. Eveniet officia at facilis alias suscipit minus?</div> *@
                                                        </div>
                                                   </div>
                                              }
@@ -154,23 +149,38 @@
                                 <option value="@Program.AccreditStatusId">@AccrediteStatusService.Objects.First(acc=>acc.Id==Program.AccreditStatusId).Name</option>
                                 @if (AccrediteStatuses is not null)
                                 {
-                                   @if(Program.AccreditStatusId == 1)
-                                   {
-                                        <option value="2">@AccrediteStatusService.Objects.First(x=>x.Id==2).Name</option>
-                                   }else if(Program.AccreditStatusId > 1)
-                                   {
-                                             <option value="@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId-1).Id">@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId-1).Name</option>
-                                             <option value="@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId+1).Id">@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId+1).Name</option>
-                                   }
+                                     @foreach(var item in AccrediteStatuses)
+                                     {
+                                          if(item.Id != Program.AccreditStatusId)
+                                          {
+                                               
+                                               @* <option value="@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId-1).Id">@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId-1).Name</option> *@
+                                               <option value="@item.Id">@item.Name</option>
+                                          }
+                                     }
+                                   @* @if(Program.AccreditStatusId == 1) *@
+                                   @* { *@
+                                   @*      <option value="2">@AccrediteStatusService.Objects.First(x=>x.Id==2).Name</option> *@
+                                   @* }else if(Program.AccreditStatusId > 1) *@
+                                   @* { *@
+                                   @*           <option value="@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId-1).Id">@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId-1).Name</option> *@
+                                   @*           <option value="@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId+1).Id">@AccrediteStatusService.Objects.First(x=>x.Id==Program.AccreditStatusId+1).Name</option> *@
+                                   @* } *@
                                 }
                             </InputSelect>
                             <p>@ErrorMessage</p>
                             <p>@SuccessMessage</p>
                             <InputTextArea @bind-Value="Note.Content" class="form-control" placeholder="Comment" />
                                <button class=" button-success col-12 my-1" @onclick="()=>UpdateStatus().ToString()">Update</button>
-
-                              <button class=" button-success col-12 my-1" @onclick="()=>UpdateStatus().ToString()">Update</button>
-                              <button class=" button-danger col-12 my-1" @onclick="()=>UpdateStatus().ToString()">Delete Program</button>
+                              @if (!Program.Department.Email.IsNullOrEmpty())
+                              {
+                                   <button class=" button-success col-12 my-1" @onclick="()=>NotifyDepartment()">Notify Department</button>
+                              }
+                              @if (!Program.Department.School.Email.IsNullOrEmpty())
+                              {
+                                   <button class=" button-success col-12 my-1" @onclick="()=>NotifySchool()">NotifySchool</button>
+                              }
+                              <button class=" button-danger col-12 my-1" @onclick="()=>UpdateStatus()">Delete Program</button>
                          </div>
                     </div>
 
@@ -256,6 +266,45 @@
 
     }
 
+     async Task NotifyDepartment()
+     {
+          busy = true;
+          if(!(Note.Content.Length >0))
+               ErrorMessage = "Please enter a comment";
+          else
+          {
+               await MailService.SendEmail(new()
+               {
+                    Email = new(){ Program.Department.Email },
+                    Subject = $"Notification on {Program.Name}",
+                    Message =  $"Note  Content : {Note.Content} \n "
+               });
+               SuccessMessage = "Department Notified";
+               StateHasChanged();
+          }
+          busy = false;
+     }
+     
+     async Task NotifySchool()
+     {
+          busy = true;
+          if(!(Note.Content.Length >0))
+               ErrorMessage = "Please enter a comment";
+          else
+          {
+               await MailService.SendEmail(new()
+               {
+                    Name = "Accreditation Watch",
+                    Email = new(){ Program.Department.School.Email },
+                    Subject = $"Notification on {Program.Name}",
+                    Message =  $"Note  Content : {Note.Content} \n "
+               });
+               SuccessMessage = "School Notified";
+               StateHasChanged();
+          }
+          busy = false;
+     }
+     
     bool busy { get; set; } = false;
 
 }

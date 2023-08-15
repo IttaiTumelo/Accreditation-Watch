@@ -24,17 +24,7 @@
             if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
             User user = AWFunctions.GetDeatailsFromToken(accessToken);
 
-            History history = new History()
-            {
-                Name = "Get All request",
-                Description = $"User {user.Email} requested all {typeof(T).Name}(s)",
-                UserId = user.Id,
-                Date = DateTime.Now,
-                Action = "Get All",
-                Severity = Severity.Low,
-                InitialState = "",
-                FinalState = "",
-            };
+
             var query = _context.Set<T>().AsQueryable();
             //remove entities that have their status set to deleted
             query = query.Where(x => !x.IsDeleted);
@@ -56,8 +46,6 @@
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
-                        history.ActionResult = $"Failed because of {e.Message}";
-                        _context.Histories.Add(history);
                         _context.SaveChanges();
                         return Ok(value: e.Message + "\n\n " + e.StackTrace);
                     }
@@ -65,21 +53,15 @@
                 //else return NotFound($"No {typeof(T).Name}(s) found");
                 else
                 {
-                    history.ActionResult = "Success";
-                    _context.Histories.Add(history);
                     _context.SaveChanges();
                     return Ok(value: new List<T>());
                 }
             }
             else
             {
-                history.ActionResult = $"Failed because of {query}";
-                _context.Histories.Add(history);
                 _context.SaveChanges();
                 return Ok(value: new());
             }
-            history.ActionResult = "Success";
-            _context.Histories.Add(history);
             _context.SaveChanges();
             return Ok(value: query.ToList());
         }
@@ -141,18 +123,6 @@
             T entity2 = new T();
             if (entity2.RequiresAuthentication() && accessToken is null) return Unauthorized("You need to be logged in to access this resource");
             User user = AWFunctions.GetDeatailsFromToken(accessToken);
-
-            History history = new History()
-            {
-                Name = "Get with filters request",
-                Description = $"User {user.Email} requested get get the details of {typeof(T).Name}(s) with the following name {name}",
-                UserId = user.Id,
-                Date = DateTime.Now,
-                Action = "Get All",
-                Severity = Severity.Low,
-                InitialState = "",
-                FinalState = "",
-            };
 
             var query = _context.Set<T>().AsQueryable();
             var result = query.FirstOrDefault(x => x.Name.Trim().ToLower().Equals(name.ToLower().Trim()));
