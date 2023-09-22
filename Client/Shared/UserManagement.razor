@@ -5,6 +5,15 @@
      
         <div class="row parent">
             <div class="col-12 ">
+                @if (!message.Equals(""))
+                {
+                    <div class="alert @style alert-dismissible fade show" role="alert">
+                        <h4 class="alert-heading">Alert</h4>
+                        <p>@message</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    
+                }
                 @if (UserService.Objects == null)
                 {
                     <Loading/>
@@ -139,10 +148,25 @@
         Users = await UserService.Get();
         StateHasChanged();
     }
+    string message = string.Empty;
+    string style = "alert-success";
     async Task SetRole(User user)
-    {
-        await UserService.UpdateRole(user);
-        StateHasChanged();
+    {   
+        try
+        {
+            await UserService.UpdateRole(user);
+            message = "Role updated successfully";
+
+            StateHasChanged();
+        }
+        catch(Exception e)
+        {
+            message = e.Message;
+            StateHasChanged();
+        }
+        Task.Delay(2000);
+        message = string.Empty;
+            StateHasChanged();
     }
 
 }

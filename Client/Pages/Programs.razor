@@ -79,7 +79,9 @@
                            <div class="row">
                            <h5 class="card-title col">Program list</h5>
                                <div class="col row">
-                                   <button @onclick="()=>NewProgram()" class="col-5 button-outlined" data-bs-toggle="modal" data-bs-target="#modalDialogScrollableAddProgram">New Program</button>
+                                <div class="col-5">
+                                    <button @onclick="()=>NewProgram()" class="btn  button-outlined" data-bs-toggle="modal" data-bs-target="#modalDialogScrollableAddProgram">New Program</button>
+                                </div>
                                    @* TODO: Inform the user that they can add departments and schools from the settings*@
                                    <div class="col">
                                        <div class="row mb-3">
@@ -137,7 +139,7 @@
                                            <th scope="col">@context.Id</th>
                                            <th scope="col">@context.Name</th>
                                            <th scope="col">@AWFunctions.GetTimeLeft(context.ValidTo)</th>
-                                           <th scope="col">@context.Department.ShortName</th>
+                                           <th scope="col">@context?.Department?.ShortName</th>
                                            <th scope="col">@context.IsExpired()</th>
                                            <th scope="col">
                                                <button @onclick="@(() => ShowDetails(context))" class="button-outlined  p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">Details</button>
