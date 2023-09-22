@@ -2,6 +2,7 @@
 @inject IDepartmentService departmentService
 @*@inject IAccrediteService accrediteService*@
 @inject ISchoolService schoolService
+@using Program = Accreditation_Watch.Shared.Entities.Program
 @if( Departments is null || Schools is null)
 {
     <div class="spinner-border text-primary" role="status">
@@ -12,22 +13,22 @@ else
 {
             <p class="text-danger">@ErrorMessage</p>
             <p class="text-success">@SuccessMessage</p>
-          <EditForm Model="newProgram" OnSubmit="Hundle">
+    <EditForm Model="program" OnSubmit="Hundle">
                 <div class="form-group">
                     <label for="program-name">Name</label>
-                    <InputText @bind-Value="newProgram.Name" class="form-control" placeholder="Program Name" />
+            <InputText @bind-Value="program.Name" class="form-control" placeholder="Program Name" />
                 </div>
                 <div class="form-group">
                     <label for="program-name">Dates</label>
                     <div class="row">
-                        <div class="col"><InputDate @bind-Value="newProgram.ValidFrom" class="form-control" placeholder="Valid From" /></div>
-                        <div class="col"><InputDate @bind-Value="newProgram.ValidTo" class="form-control" placeholder="Program Name" /></div>
+                <div class="col"><InputDate @bind-Value="program.ValidFrom" class="form-control" placeholder="Valid From" /></div>
+                <div class="col"><InputDate @bind-Value="program.ValidTo" class="form-control" placeholder="Program Name" /></div>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="program-name">Department</label>
-                    <InputSelect @bind-Value="newProgram.DepartmentId" class="form-control" placeholder="Program Name">
+            <InputSelect @bind-Value="program.DepartmentId" class="form-control" placeholder="Program Name">
                         @foreach (var department in Departments)
                         {
                             <option value="@department.Id">@department.Name</option>
@@ -47,7 +48,7 @@ else
 
                 <div class="form-group">
                     <label for="program-name">Accreditation Status</label>
-                    <InputNumber @bind-Value="newProgram.AccreditStatusId" class="form-control" placeholder="Program Name" />
+            <InputNumber @bind-Value="program.AccreditStatusId" class="form-control" placeholder="Program Name" />
                 </div>
                <button class="button-success col-12 my-2" type="submit">Stubmit</button>
           </EditForm>
@@ -58,10 +59,17 @@ else
     public int DepartmentId { get; set; }
     public int AccrediteId { get; set; }
     public int SchoolId { get; set; }
-    public CreateProgramDto newProgram { get; set; } = new();
+    [Parameter]
+    public Accreditation_Watch.Shared.Entities.Program program { get; set; } = new();
+    // public Program Program{ get; }
     [Parameter]
     public bool IsVisible { get; set; } = true;
     public string Visibility => IsVisible ? "show-overlay" : "hide-overlay";
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+    }
     Task Close()
     {
         // IsVisible = false;
@@ -76,11 +84,23 @@ else
         // newProgram.School = Accredites.First(x => x.Id == AccrediteId);
         try
         {
-            var request = programService.Create(newProgram);
-            SuccessMessage = "Created";
-            await Task.Delay(2000);
-            IsVisible = false;
-            StateHasChanged();
+            if(program.Id != 0)
+            {
+                var request = programService.Update(program);
+                SuccessMessage = "Updated";
+                await Task.Delay(2000);
+                IsVisible = false;
+                StateHasChanged();
+            }
+            else
+            {
+                var request = programService.Create(program as CreateProgramDto);
+                SuccessMessage = "Created";
+                await Task.Delay(2000);
+                IsVisible = false;
+                StateHasChanged();
+            }
+            
         }catch(Exception ex)
         {
             ErrorMessage = ex.Message;

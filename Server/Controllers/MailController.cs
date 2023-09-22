@@ -30,7 +30,7 @@ namespace Accreditation_Watch.Server.Controllers
             };
             using var smtp = new SmtpClient();
             smtp.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            smtp.Authenticate("ittai1tumelo@gmail.com", "oboesevbwetsuien");
+            smtp.Authenticate("ittai1tumelo@gmail.com", "zyxb clkw toli mtko");
             try
             {
                 var response = await smtp.SendAsync(mailMessage);

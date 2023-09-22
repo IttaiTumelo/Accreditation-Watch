@@ -118,7 +118,7 @@ namespace Accreditation_Watch.Shared.Objects
             // Group the programs by their school or department
             IEnumerable<IGrouping<string, Program>> groups;
             if (byDepartment) groups = _programs.GroupBy(p => p.Department.Name);
-            else groups = _programs.GroupBy(p => p.Department.SchoolId.ToString());
+            else groups = _programs?.GroupBy(p => p.Department?.SchoolId?.ToString());
 
             // Loop through each group
             foreach (var group in groups)

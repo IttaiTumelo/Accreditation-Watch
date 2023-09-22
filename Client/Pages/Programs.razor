@@ -40,8 +40,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                
-                <NewProgram/>
+                 
+                <NewProgram program="@programToUpdate"/>
 
             </div>
             <div class="modal-footer">
@@ -147,6 +147,8 @@
                                                {
                                                    <button  data-bs-target="#modalDialogScrollable" @onclick="() => ShowCards(context)" class="button-outlined p-1 m-1">Comments/Notes</button>
                                                }
+                                                <button @onclick="@(() => UpdateProgram(context))" class="button-outlined  p-1 m-1" data-bs-toggle="modal" data-bs-target="#modalDialogScrollableAddProgram">Update </button>
+
                                            </th>
                                        </tr>
                                    }
@@ -172,7 +174,7 @@
 @code {
 
 
-     public bool isLoading { get; set; } = true;
+    public bool isLoading { get; set; } = true;
 
     void Update(){
         pagination = new PaginationState { ItemsPerPage = rows };
@@ -257,25 +259,25 @@
     }
     Task ViewSchool()
     {
-            NavigationManager.NavigateTo("settings/schools");
+        NavigationManager.NavigateTo("settings/schools");
         return Task.CompletedTask;
     }
     PaginationState pagination = new PaginationState { ItemsPerPage = rows };
 
-     Program SelectedProgram { get; set; }
+    Program SelectedProgram { get; set; }
 
-     private PieConfig _config;
+    private PieConfig _config;
 
-protected override async void OnInitialized()
-     {
+    protected override async void OnInitialized()
+    {
         await ProgramService.Get();
         await SchoolService.Get();
         await DepartmentService.Get();
         await NoteService.Get();
         isLoading =!(ProgramService.Objects is not null && SchoolService.Objects is not null && DepartmentService.Objects is not null && NoteService.Objects is not null);
         itemsQueryable = ProgramService.Objects.AsQueryable();
-          StateHasChanged();
-    _config = new PieConfig
+        StateHasChanged();
+        _config = new PieConfig
     {
         Options = new PieOptions
         {
@@ -288,12 +290,12 @@ protected override async void OnInitialized()
         }
     };
 
-    foreach (string color in new[] { "Red", "Yellow", "Green", "Blue" })
-    {
-        _config.Data.Labels.Add(color);
-    }
+        foreach (string color in new[] { "Red", "Yellow", "Green", "Blue" })
+        {
+            _config.Data.Labels.Add(color);
+        }
 
-    PieDataset<int> dataset = new PieDataset<int>(new[] { 6, 5, 3, 7 })
+        PieDataset<int> dataset = new PieDataset<int>(new[] { 6, 5, 3, 7 })
     {
         BackgroundColor = new[]
         {
@@ -304,9 +306,18 @@ protected override async void OnInitialized()
         }
     };
 
-    _config.Data.Datasets.Add(dataset);
-    StateHasChanged();
-}
+
+        _config.Data.Datasets.Add(dataset);
+        StateHasChanged();
+    }
+
+    Program programToUpdate { get; set; }
+    void UpdateProgram(Program program)
+    {
+        programToUpdate = program;
+        StateHasChanged();
+
+    }
   
 }
 
